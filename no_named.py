@@ -62,6 +62,7 @@ elif os.path.isfile(light):
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
 
+ui.set_default_color_theme("dark-blue") 
 
 class no_named_specialFrame(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -133,10 +134,16 @@ class no_named_specialFrame(ui.CTkFrame):
 class Main(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.add("Store")
-        self.add("Configuring")
-        self.add("Other GUI tools")
-        self.add("Other tools")
+        if os.path.isfile(en):
+            tab1 = self.add("Store")
+            tab2 = self.add("Configuring")
+            tab3 = self.add("Other Graphical Tools")
+            tab4 = self.add("Other Tools")
+        elif os.path.isfile(tr):
+            tab1 = self.add("Mağaza")
+            tab2 = self.add("Yapılandırma")
+            tab3 = self.add("Diğer Grafiksel Araçlar")
+            tab4 = self.add("Diğer Araçlar")
 
 class Root(ui.CTk):
     def __init__(self):
