@@ -36,16 +36,20 @@ light = "/home/"+username+"/.config/no_named/theme/light.txt"
 dark = "/home/"+username+"/.config/no_named/theme/dark.txt"
 r_true = "/home/"+username+"/.config/no_named/restart/true.txt"
 r_false = "/home/"+username+"/.config/no_named/restart/false.txt"
+s_true = "/home/"+username+"/.config/no_named/startup/true.txt"
+s_false = "/home/"+username+"/.config/no_named/startup/false.txt"
 
 if not os.path.isdir(config):
-    os.system("cd /home/"+username+"/.config ; mkdir no_named ; cd no_named ; mkdir language ; mkdir theme ; mkdir restart ; cd language ; touch en.txt ; cd .. ; cd theme; touch system.txt ; cd .. ; cd restart ; touch false.txt")
-    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme; touch system.txt ; cd .. ; cd restart ; touch false.txt")
+    os.system("cd /home/"+username+"/.config ; mkdir no_named ; cd no_named ; mkdir language ; mkdir theme ; mkdir restart ; mkdir startup")
+    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd restart ; touch false.txt ; cd .. ; cd startup ; touch true.txt")
 if not os.path.isdir(config+"language/"):
     os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
 if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
 if not os.path.isdir(config+"restart/"):
     os.system("cd "+config+" ; mkdir restart ; cd restart ; touch false.txt")
+if not os.path.isdir(config+"startup/"):
+    os.system("cd "+config+" ; mkdir restart ; cd startup ; touch true.txt")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -64,7 +68,7 @@ elif os.path.isfile(dark):
 
 ui.set_default_color_theme("dark-blue") 
 
-class no_named_specialFrame(ui.CTkFrame):
+class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(5, weight=1)
@@ -74,12 +78,17 @@ class no_named_specialFrame(ui.CTkFrame):
             self.restart_var = ui.StringVar(value="on")
         elif os.path.isfile(r_false):
             self.restart_var = ui.StringVar(value="off")
+        if os.path.isfile(s_true):
+            self.startup_var = ui.StringVar(value="on")
+        elif os.path.isfile(s_false):
+            self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
             self.button_1 = ui.CTkButton(self, text="About", command=self.about)
             self.button_2 = ui.CTkButton(self, text="Update", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Reset", command=self.reset)
-            self.button_4 = ui.CTkButton(self, text="Uninstall :(", command=self.uninstall)
+            self.button_4 = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.restart = ui.CTkCheckBox(self, text="Instant Restart For\nSome Operations", command=self.restart_option, variable=self.restart_var, onvalue="on", offvalue="off")
+            self.startup = ui.CTkCheckBox(self, text="Startup Informations", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
@@ -94,8 +103,9 @@ class no_named_specialFrame(ui.CTkFrame):
             self.button_1 = ui.CTkButton(self, text="Hakkında", command=self.about)
             self.button_2 = ui.CTkButton(self, text="Güncelle", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
-            self.button_4 = ui.CTkButton(self, text="Kaldır :(", command=self.uninstall)
+            self.button_4 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.restart = ui.CTkCheckBox(self, text="Bazı İşlemler İçin\nAnında Yeniden Başlatma", command=self.restart_option, variable=self.restart_var, onvalue="on", offvalue="off")
+            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
@@ -111,11 +121,12 @@ class no_named_specialFrame(ui.CTkFrame):
         self.button_2.grid(row=2, column=0, padx=20, pady=10)
         self.button_3.grid(row=3, column=0, padx=20, pady=10)
         self.button_4.grid(row=4, column=0, padx=20, pady=10)
-        self.restart.grid(row=6, column=0)
-        self.appearance_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.appearance_menu.grid(row=8, column=0, padx=20, pady=(10, 10))
-        self.language_label.grid(row=9, column=0, padx=20, pady=(10, 0))
-        self.language_menu.grid(row=10, column=0, padx=20, pady=(10, 10))
+        self.restart.grid(row=6, column=0, pady=(0, 10))
+        self.startup.grid(row=7, column=0, pady=10)
+        self.appearance_label.grid(row=8, column=0, padx=20, pady=(10, 0))
+        self.appearance_menu.grid(row=9, column=0, padx=20, pady=(0, 10))
+        self.language_label.grid(row=10, column=0, padx=20, pady=(10, 0))
+        self.language_menu.grid(row=11, column=0, padx=20, pady=(0, 10))
     def about(self):
         pass
     def update(self):
@@ -129,6 +140,11 @@ class no_named_specialFrame(ui.CTkFrame):
             os.system("cd "+config+"restart/ ; rm * ; touch true.txt")
         elif self.restart_var.get() == "off":
             os.system("cd "+config+"restart/ ; rm * ; touch false.txt")
+    def startup_option(self):
+        if self.startup_var.get() == "on":
+            os.system("cd "+config+"startup/ ; rm * ; touch true.txt")
+        elif self.startup_var.get() == "off":
+            os.system("cd "+config+"startup/ ; rm * ; touch false.txt")
     def change_appearance(self, new_appearance: str):
         if new_appearance == "System" or new_appearance == "Sistem":
             os.system("cd "+config+"theme ; rm * ; touch system.txt")
@@ -141,11 +157,44 @@ class no_named_specialFrame(ui.CTkFrame):
             os.system("cd "+config+"theme ; rm * ; touch dark.txt")
     def change_language(self, new_language: str):
         if new_language == "English":
+            root.destroy()
             os.system("cd "+config+"language ; rm * ; touch en.txt")
-            mb.showinfo("Information","Language changing has been applied. Please restart the application.")
         elif new_language == "Türkçe":
+            root.destroy()
             os.system("cd "+config+"language ; rm * ; touch tr.txt")
-            mb.showinfo("Bilgilendirme","Dil değişikliği uygulandı. Lütfen uygulamayı yeniden başlatın.")
+
+class Home(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        if os.path.isfile(s_true):
+            if os.path.isfile(en):
+                self.label1 = ui.CTkLabel(self, text="System Information Obtained Using Neofetch\n", font=ui.CTkFont(size=16, weight="normal"))
+                self.label2 = ui.CTkLabel(self, text="Weather Report According To wttr.in\n", font=ui.CTkFont(size=16, weight="normal"))
+                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?F0TP', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            elif os.path.isfile(tr):
+                self.label1 = ui.CTkLabel(self, text="Neofetch Kullanılarak Elde Edilen Sistem Bilgileri\n", font=ui.CTkFont(size=16, weight="normal"))
+                self.label2 = ui.CTkLabel(self, text="wttr.in'e Göre Hava Beklentisi\n", font=ui.CTkFont(size=16, weight="normal"))
+                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?F0TP', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.label1.grid(row=0, column=0)
+            self.label2.grid(row=0, column=1, padx=(10, 0))
+            self.textbox1 = ui.CTkTextbox(self, width=800, height=400, fg_color="transparent")
+            self.textbox1.grid(row=1, column=0, sticky="nsew")
+            self.textbox2 = ui.CTkTextbox(self, height=400, fg_color="transparent")
+            self.textbox2.grid(row=1, column=1, padx=(10, 0), sticky="nsew")
+            neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.textbox1.insert("0.0", neofetch)
+            self.textbox1.configure(state="disabled")
+            self.textbox2.insert("0.0", weather)
+            self.textbox2.configure(state="disabled")
+        elif os.path.isfile(s_false):
+            if os.path.isfile(en):
+                self.label1 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=50, weight="normal"))
+            elif os.path.isfile(tr):
+                self.label1 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=50, weight="normal"))
+            self.label1.grid(row=0, column=0, sticky="nsew")
+
 
 class AppStore(ui.CTkTabview):
     def __init__(self, master, **kwargs):
@@ -353,18 +402,25 @@ class AppStore(ui.CTkTabview):
     def a11c3(self):
         pass
 
+class FlatpakStore(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+class OtherStore(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
 class DEWMStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
 class PkgMgrStore(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-class OtherStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
@@ -378,45 +434,58 @@ class Store(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            tab1 = self.tabview.add("App")
-            tab2 = self.tabview.add("Desktop Environment\nWindow Manager")
-            tab3 = self.tabview.add("Package Manager")
-            tab4 = self.tabview.add("Other")
+            tab1 = self.tabview.add("Apps")
+            tab2 = self.tabview.add("Flatpak Apps")
+            tab3 = self.tabview.add("Other Apps")
+            tab4 = self.tabview.add("Desktop Environment\nWindow Manager")
+            tab5 = self.tabview.add("Package Manager")
         elif os.path.isfile(tr):
-            tab1 = self.tabview.add("Uygulama")
-            tab2 = self.tabview.add("Masaüstü Ortamı\nPencere Yöneticisi")
-            tab3 = self.tabview.add("Paket Yöneticisi")
-            tab4 = self.tabview.add("Diğer")
+            tab1 = self.tabview.add("Uygulamalar")
+            tab2 = self.tabview.add("Flatpak Uygulamaları")
+            tab3 = self.tabview.add("Diğer Uygulamalar")
+            tab4 = self.tabview.add("Masaüstü Ortamı\nPencere Yöneticisi")
+            tab5 = self.tabview.add("Paket Yöneticisi")
+
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.store_frame=AppStore(tab1)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
-        self.store_frame=DEWMStore(tab2)
+        self.store_frame=FlatpakStore(tab2)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
         tab3.grid_columnconfigure(0, weight=1)
         tab3.grid_rowconfigure(0, weight=1)
-        self.store_frame=PkgMgrStore(tab3)
+        self.store_frame=OtherStore(tab3)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
         tab4.grid_columnconfigure(0, weight=1)
         tab4.grid_rowconfigure(0, weight=1)
-        self.store_frame=OtherStore(tab4)
+        self.store_frame=DEWMStore(tab4)
+        self.store_frame.grid(row=0, column=0, sticky="nsew")
+        tab5.grid_columnconfigure(0, weight=1)
+        tab5.grid_rowconfigure(0, weight=1)
+        self.store_frame=PkgMgrStore(tab5)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
 
 class Main(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(en):
+            tab0 = self.add("Home")
             tab1 = self.add("Store")
             tab2 = self.add("Configuring")
             tab3 = self.add("Other Graphical Tools")
             tab4 = self.add("Other Tools")
         elif os.path.isfile(tr):
+            tab0 = self.add("Ev")
             tab1 = self.add("Mağaza")
             tab2 = self.add("Yapılandırma")
             tab3 = self.add("Diğer Grafiksel Araçlar")
             tab4 = self.add("Diğer Araçlar")
+        tab0.grid_columnconfigure(0, weight=1)
+        tab0.grid_rowconfigure(0, weight=1)
+        self.home_frame=Home(tab0)
+        self.home_frame.grid(row=0, column=0, sticky="nsew")       
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.store_frame=Store(tab1)
@@ -431,7 +500,7 @@ class Root(ui.CTk):
         self.resizable(0, 0)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-        self.sidebar_frame = no_named_specialFrame(self, corner_radius=0)
+        self.sidebar_frame = Sidebar(self, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
         self.tabview = Main(self, corner_radius=50)
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
