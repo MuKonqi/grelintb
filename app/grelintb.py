@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2021-2024 MuKonqi (Muhammed S.)
+# Copyright (C) 2024 MuKonqi (Muhammed S.)
 
 # GrelinTB is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "0.2.1.0 (Alpha)"
+version_current = "0.2.1.1 (Alpha)"
 
 import customtkinter as ui
 from tkinter import messagebox as mb
