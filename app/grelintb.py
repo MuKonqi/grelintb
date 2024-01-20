@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2021-2024 MuKonqi (Muhammed S. / Muhammed Abdurrahman)
+# Copyright (C) 2021-2024 MuKonqi (Muhammed S.)
 
-# no_named_special is free software: you can redistribute it and/or modify
+# GrelinTB is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# no_named_special is distributed in the hope that it will be useful,
+# GrelinTB is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with no_named_special.  If not, see <https://www.gnu.org/licenses/>.
+# along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-# no_named_special: New name's true writing (etc. MetterXP)
-# no_named: New name's writing in lowercase (etc. metterxp)
-# nn: New name's short writing in lowercase (etc. mxp)
+version_current = "0.2.1.0 (Alpha)"
 
 import customtkinter as ui
 from tkinter import messagebox as mb
@@ -28,19 +26,19 @@ import getpass
 
 username = getpass.getuser()
 
-config = "/home/"+username+"/.config/no_named/"
-en = "/home/"+username+"/.config/no_named/language/en.txt"
-tr = "/home/"+username+"/.config/no_named/language/tr.txt"
-system = "/home/"+username+"/.config/no_named/theme/system.txt"
-light = "/home/"+username+"/.config/no_named/theme/light.txt"
-dark = "/home/"+username+"/.config/no_named/theme/dark.txt"
-r_true = "/home/"+username+"/.config/no_named/restart/true.txt"
-r_false = "/home/"+username+"/.config/no_named/restart/false.txt"
-s_true = "/home/"+username+"/.config/no_named/startup/true.txt"
-s_false = "/home/"+username+"/.config/no_named/startup/false.txt"
+config = "/home/"+username+"/.config/grelintb/"
+en = "/home/"+username+"/.config/grelintb/language/en.txt"
+tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
+system = "/home/"+username+"/.config/grelintb/theme/system.txt"
+light = "/home/"+username+"/.config/grelintb/theme/light.txt"
+dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
+r_true = "/home/"+username+"/.config/grelintb/restart/true.txt"
+r_false = "/home/"+username+"/.config/grelintb/restart/false.txt"
+s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
+s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
 
 if not os.path.isdir(config):
-    os.system("cd /home/"+username+"/.config ; mkdir no_named ; cd no_named ; mkdir language ; mkdir theme ; mkdir restart ; mkdir startup")
+    os.system("cd /home/"+username+"/.config ; mkdir grelintb ; cd grelintb ; mkdir language ; mkdir theme ; mkdir restart ; mkdir startup")
     os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd restart ; touch false.txt ; cd .. ; cd startup ; touch true.txt")
 if not os.path.isdir(config+"language/"):
     os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
@@ -68,11 +66,49 @@ elif os.path.isfile(dark):
 
 ui.set_default_color_theme("dark-blue") 
 
+class AboutWindow(ui.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.geometry("680x340")
+        self.resizable(0, 0)
+        self.button1 = ui.CTkButton(self, fg_color="transparent", text="GrelinTB\nGreat Tool Box for Linux", command=self.grelintb, font=ui.CTkFont(size=20, weight="bold"))
+        if os.path.isfile(en):
+            self.title("About")
+            if version_current == version_latest:
+                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+            elif version_current != version_latest:
+                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current+"\nLatest Version: "+version_latest, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button4 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+        elif os.path.isfile(tr):
+            self.title("Hakkında")
+            if version_current == version_latest:
+                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+            elif version_current != version_latest:
+                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current+"\nSon Sürüm: "+version_latest, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button4 = ui.CTkButton(self, fg_color="transparent", text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+        self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+        self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=20)
+        self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
+        self.button4.grid(row=3, column=0, sticky="nsew", padx=20, pady=20)
+    def grelintb(self):
+        pass
+    def changelog(self):
+        pass
+    def gplv3(self):
+        pass
+    def mukonqi(self):
+        os.system("xdg-open https://mukonqi.github.io")
+
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(5, weight=1)
-        self.text = ui.CTkLabel(self, text="no_named_special", font=ui.CTkFont(size=20, weight="bold"))
+        self.text = ui.CTkLabel(self, text="GrelinTB", font=ui.CTkFont(size=20, weight="bold"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
         if os.path.isfile(r_true):
             self.restart_var = ui.StringVar(value="on")
@@ -117,18 +153,22 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(dark):
                 self.appearance_menu.set("Koyu")
         self.text.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.button_3.grid(row=3, column=0, padx=20, pady=10)
-        self.button_4.grid(row=4, column=0, padx=20, pady=10)
-        self.restart.grid(row=6, column=0, pady=(0, 10))
-        self.startup.grid(row=7, column=0, pady=10)
-        self.appearance_label.grid(row=8, column=0, padx=20, pady=(10, 0))
-        self.appearance_menu.grid(row=9, column=0, padx=20, pady=(0, 10))
-        self.language_label.grid(row=10, column=0, padx=20, pady=(10, 0))
-        self.language_menu.grid(row=11, column=0, padx=20, pady=(0, 10))
+        self.button_1.grid(row=1, column=0, padx=10, pady=10)
+        self.button_2.grid(row=2, column=0, padx=10, pady=10)
+        self.button_3.grid(row=3, column=0, padx=10, pady=10)
+        self.button_4.grid(row=4, column=0, padx=10, pady=10)
+        self.restart.grid(row=6, column=0, padx=10, pady=(0, 10))
+        self.startup.grid(row=7, column=0, padx=10, pady=10)
+        self.appearance_label.grid(row=8, column=0, padx=10, pady=(10, 0))
+        self.appearance_menu.grid(row=9, column=0, padx=10, pady=(0, 10))
+        self.language_label.grid(row=10, column=0, padx=10, pady=(10, 0))
+        self.language_menu.grid(row=11, column=0, padx=10, pady=(0, 10))
+        self.about_window = None
     def about(self):
-        pass
+        if self.about_window is None or not self.about_window.winfo_exists():
+            self.about_window = AboutWindow(self)
+        else:
+            self.about_window.focus()
     def update(self):
         pass
     def reset(self):
@@ -163,37 +203,37 @@ class Sidebar(ui.CTkFrame):
             root.destroy()
             os.system("cd "+config+"language ; rm * ; touch tr.txt")
 
-class Home(ui.CTkFrame):
+class StartPage(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
         if os.path.isfile(s_true):
             if os.path.isfile(en):
-                self.label1 = ui.CTkLabel(self, text="System Information Obtained Using Neofetch\n", font=ui.CTkFont(size=16, weight="normal"))
-                self.label2 = ui.CTkLabel(self, text="Weather Report According To wttr.in\n", font=ui.CTkFont(size=16, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?F0TP', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
+                self.label1 = ui.CTkLabel(self, text="System Information Obtained Using Neofetch\nWeather Report According To wttr.in", font=ui.CTkFont(size=15, weight="normal"))
+                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
-                self.label1 = ui.CTkLabel(self, text="Neofetch Kullanılarak Elde Edilen Sistem Bilgileri\n", font=ui.CTkFont(size=16, weight="normal"))
-                self.label2 = ui.CTkLabel(self, text="wttr.in'e Göre Hava Beklentisi\n", font=ui.CTkFont(size=16, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?F0TP', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.label1.grid(row=0, column=0)
-            self.label2.grid(row=0, column=1, padx=(10, 0))
-            self.textbox1 = ui.CTkTextbox(self, width=800, height=400, fg_color="transparent")
-            self.textbox1.grid(row=1, column=0, sticky="nsew")
-            self.textbox2 = ui.CTkTextbox(self, height=400, fg_color="transparent")
-            self.textbox2.grid(row=1, column=1, padx=(10, 0), sticky="nsew")
+                self.label0 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
+                self.label1 = ui.CTkLabel(self, text="Neofetch Kullanılarak Elde Edilen Sistem Bilgileri\nwttr.in'e Göre Hava Beklentisi", font=ui.CTkFont(size=15, weight="normal"))
+                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.label0.grid(row=0, column=0, pady=(0, 10))
+            self.label1.grid(row=1, column=0, pady=(0, 10))
+            self.textbox1 = ui.CTkTextbox(self, width=960, height=350, fg_color="transparent")
+            self.textbox1.grid(row=2, column=0, sticky="nsew")
+            self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
+            self.textbox2.grid(row=3, column=0, sticky="nsew")
             neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox1.insert("0.0", neofetch)
             self.textbox1.configure(state="disabled")
             self.textbox2.insert("0.0", weather)
             self.textbox2.configure(state="disabled")
         elif os.path.isfile(s_false):
+            self.grid_rowconfigure(0, weight=1)
+            self.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
-                self.label1 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=50, weight="normal"))
+                self.label0 = ui.CTkLabel(self, text="Welcome\n"+username+"!", font=ui.CTkFont(size=80, weight="normal"))
             elif os.path.isfile(tr):
-                self.label1 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=50, weight="normal"))
-            self.label1.grid(row=0, column=0, sticky="nsew")
+                self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username+"!", font=ui.CTkFont(size=80, weight="normal"))
+            self.label0.grid(row=0, column=0, sticky="nsew")
 
 
 class AppStore(ui.CTkTabview):
@@ -471,20 +511,20 @@ class Main(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(en):
-            tab0 = self.add("Home")
+            tab0 = self.add("Start Page")
             tab1 = self.add("Store")
             tab2 = self.add("Configuring")
             tab3 = self.add("Other Graphical Tools")
             tab4 = self.add("Other Tools")
         elif os.path.isfile(tr):
-            tab0 = self.add("Ev")
+            tab0 = self.add("Başlangıç Sayfası")
             tab1 = self.add("Mağaza")
             tab2 = self.add("Yapılandırma")
             tab3 = self.add("Diğer Grafiksel Araçlar")
             tab4 = self.add("Diğer Araçlar")
         tab0.grid_columnconfigure(0, weight=1)
         tab0.grid_rowconfigure(0, weight=1)
-        self.home_frame=Home(tab0)
+        self.home_frame=StartPage(tab0)
         self.home_frame.grid(row=0, column=0, sticky="nsew")       
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
@@ -495,7 +535,7 @@ class Main(ui.CTkTabview):
 class Root(ui.CTk):
     def __init__(self):
         super().__init__()
-        self.title("no_named_special")
+        self.title("GrelinTB")
         self.geometry("1280x640")
         self.resizable(0, 0)
         self.grid_rowconfigure(0, weight=1)
