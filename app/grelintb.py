@@ -28,7 +28,6 @@ import sys
 import getpass
 
 username = getpass.getuser()
-
 config = "/home/"+username+"/.config/grelintb/"
 en = "/home/"+username+"/.config/grelintb/language/en.txt"
 tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
@@ -80,25 +79,25 @@ class AboutWindow(ui.CTkToplevel):
         self.grid_columnconfigure(0, weight=1)
         self.geometry("640x320")
         self.minsize(640, 320)
-        self.button1 = ui.CTkButton(self, fg_color="transparent", text="GrelinTB\nGreat Tool Box for Linux", command=self.grelintb, font=ui.CTkFont(size=20, weight="bold"))
+        self.button1 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="GrelinTB\nGreat Tool Box for Linux", command=self.grelintb, font=ui.CTkFont(size=20, weight="bold"))
         if os.path.isfile(en):
             self.title("About")
-            self.button2 = ui.CTkButton(self, fg_color="transparent", text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+            self.button2 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
             if version_current == version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))        
-                self.button5 = ui.CTkButton(self, fg_color="transparent", text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))      
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))        
+                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))      
         elif os.path.isfile(tr):
             self.title("Hakkında")
-            self.button2 = ui.CTkButton(self, fg_color="transparent", text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+            self.button2 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
             if version_current == version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
-                self.button5 = ui.CTkButton(self, fg_color="transparent", text="Son Sürüm: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
+                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Son Sürüm: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
         self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=5)
         self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
         self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=5)
@@ -251,11 +250,10 @@ class Sidebar(ui.CTkFrame):
             os.system("cd "+config+"theme ; rm * ; touch dark.txt")
     def change_language(self, new_language: str):
         if new_language == "English":
-            root.destroy()
             os.system("cd "+config+"language ; rm * ; touch en.txt")
         elif new_language == "Türkçe":
-            root.destroy()
             os.system("cd "+config+"language ; rm * ; touch tr.txt")
+        root.destroy()
 
 class StartPage(ui.CTkFrame):
     def __init__(self, master, **kwargs):
