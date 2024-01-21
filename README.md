@@ -2,6 +2,7 @@
 ## Dependencies
 - A distro based on Debian GNU/Linux or Fedora Linux or Solus or Arch Linux
 - Curl (package name: `curl`)
+- Neofetch (package name: `neofetch`)
 - Python3 (package name: `python3`)
 - Pip (package name: usually `pip`)
 - CustomTkinter (run this command: `pip install customtkinter`)

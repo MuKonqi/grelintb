@@ -15,7 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "0.2.1.1 (Alpha)"
+version_current = "0.2.1.2 (Alpha)" # temporary
+# version_file=open("/usr/local/bin/girelintb/version.txt", "r")
+# version_current=version_file.readline()
+# version_file.close()
 
 import customtkinter as ui
 from tkinter import messagebox as mb
@@ -91,10 +94,10 @@ class AboutWindow(ui.CTkToplevel):
                 self.button2 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current+"\nSon Sürüm: "+version_latest, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
             self.button3 = ui.CTkButton(self, fg_color="transparent", text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
             self.button4 = ui.CTkButton(self, fg_color="transparent", text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
-        self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
-        self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=20)
-        self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
-        self.button4.grid(row=3, column=0, sticky="nsew", padx=20, pady=20)
+        self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=5)
+        self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
+        self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=5)
+        self.button4.grid(row=3, column=0, sticky="nsew", padx=20, pady=5)
     def grelintb(self):
         pass
     def changelog(self):
@@ -209,22 +212,22 @@ class StartPage(ui.CTkFrame):
         if os.path.isfile(s_true):
             if os.path.isfile(en):
                 self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="System Information Obtained Using Neofetch\nWeather Report According To wttr.in", font=ui.CTkFont(size=15, weight="normal"))
+                self.label1 = ui.CTkLabel(self, text="Weather Forecast According To wttr.in\nSystem Information Obtained Using Neofetch", font=ui.CTkFont(size=15, weight="normal"))
                 weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.label0 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="Neofetch Kullanılarak Elde Edilen Sistem Bilgileri\nwttr.in'e Göre Hava Beklentisi", font=ui.CTkFont(size=15, weight="normal"))
+                self.label1 = ui.CTkLabel(self, text="wttr.in'e Göre Hava Durumu\nNeofetch Kullanılarak Elde Edilen Sistem Bilgileri", font=ui.CTkFont(size=15, weight="normal"))
                 weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.label0.grid(row=0, column=0, pady=(0, 10))
             self.label1.grid(row=1, column=0, pady=(0, 10))
-            self.textbox1 = ui.CTkTextbox(self, width=960, height=350, fg_color="transparent")
+            self.textbox1 = ui.CTkTextbox(self, width=940, height=25, fg_color="transparent")
             self.textbox1.grid(row=2, column=0, sticky="nsew")
-            self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
+            self.textbox2 = ui.CTkTextbox(self, width=940, height=350, fg_color="transparent")
             self.textbox2.grid(row=3, column=0, sticky="nsew")
             neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.textbox1.insert("0.0", neofetch)
+            self.textbox1.insert("0.0", weather)
             self.textbox1.configure(state="disabled")
-            self.textbox2.insert("0.0", weather)
+            self.textbox2.insert("0.0", neofetch)
             self.textbox2.configure(state="disabled")
         elif os.path.isfile(s_false):
             self.grid_rowconfigure(0, weight=1)
@@ -545,5 +548,7 @@ class Root(ui.CTk):
         self.tabview = Main(self, corner_radius=50)
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
-root = Root()
-root.mainloop()
+
+if __name__ == "__main__":
+    root = Root()
+    root.mainloop()
