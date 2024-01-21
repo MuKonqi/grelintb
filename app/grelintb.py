@@ -84,7 +84,7 @@ class AboutWindow(ui.CTkToplevel):
         if os.path.isfile(en):
             self.title("About")
             self.button2 = ui.CTkButton(self, fg_color="transparent", text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button2 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
             if version_current == version_latest:
                 self.button4 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
