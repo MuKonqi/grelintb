@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "0.2.1.2 (Alpha)" # temporary
-# version_file=open("/usr/local/bin/grelintb/version.txt", "r")
-# version_current=version_file.readline()
+version_current = "v0.2.1.3 (Alpha)" # temporary
+# version_file = open("/usr/local/bin/grelintb/version.txt", "r")
+# version_current = version_file.readline()
 # version_file.close()
 
 import customtkinter as ui
@@ -50,7 +50,7 @@ if not os.path.isdir(config+"theme/"):
 if not os.path.isdir(config+"restart/"):
     os.system("cd "+config+" ; mkdir restart ; cd restart ; touch false.txt")
 if not os.path.isdir(config+"startup/"):
-    os.system("cd "+config+" ; mkdir restart ; cd startup ; touch true.txt")
+    os.system("cd "+config+" ; mkdir startup ; cd startup ; touch true.txt")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -72,38 +72,89 @@ ui.set_default_color_theme("dark-blue")
 class AboutWindow(ui.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        global version_latest
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.geometry("680x340")
-        self.resizable(0, 0)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        if version_current != version_latest:
+            self.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.geometry("640x320")
+        self.minsize(640, 320)
         self.button1 = ui.CTkButton(self, fg_color="transparent", text="GrelinTB\nGreat Tool Box for Linux", command=self.grelintb, font=ui.CTkFont(size=20, weight="bold"))
         if os.path.isfile(en):
             self.title("About")
+            self.button2 = ui.CTkButton(self, fg_color="transparent", text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button2 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
             if version_current == version_latest:
-                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
-                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current+"\nLatest Version: "+version_latest, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button4 = ui.CTkButton(self, fg_color="transparent", text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))        
+                self.button5 = ui.CTkButton(self, fg_color="transparent", text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))      
         elif os.path.isfile(tr):
             self.title("Hakkında")
+            self.button2 = ui.CTkButton(self, fg_color="transparent", text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
+            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
             if version_current == version_latest:
-                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
-                self.button2 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current+"\nSon Sürüm: "+version_latest, command=self.changelog, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button4 = ui.CTkButton(self, fg_color="transparent", text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
+                self.button5 = ui.CTkButton(self, fg_color="transparent", text="Son Sürüm: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
         self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=5)
         self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
         self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=5)
         self.button4.grid(row=3, column=0, sticky="nsew", padx=20, pady=5)
+        if version_current != version_latest:
+            self.button5.grid(row=4, column=0, sticky="nsew", padx=20, pady=5)
     def grelintb(self):
-        pass
-    def changelog(self):
-        pass
+        os.system("xdg open https://github.com/mukonqi/grelintb")
+    def changelog_current(self):
+        self.ccw = ui.CTkToplevel()
+        self.ccw.geometry("560x560")
+        self.ccw.minsize(560, 560)
+        self.ccw.grid_rowconfigure(0, weight=1)
+        self.ccw.grid_columnconfigure(0, weight=1)
+        # if os.path.isfile(en):
+        #     self.ccw.title("Changelog For "+version_current)
+        #     cc_file = open("/usr/local/bin/grelintb/changelog-en.txt", "r")
+        # elif os.path.isfile(tr):
+        #     self.ccw.title(version_current+" için Değişiklik Günlüğü")
+        #     cc_file = open("/usr/local/bin/grelintb/changelog-tr.txt", "r")
+        # cc_text = cc_file.read()
+        # cc_file.close()
+        # self.textbox = ui.CTkTextbox(self.ccw, fg_color="transparent")
+        # self.textbox.insert("0.0", cc_text)
+        # self.textbox.grid(row=0, column=0, sticky="nsew")
+    def changelog_latest(self):
+        self.clw = ui.CTkToplevel()
+        self.clw.geometry("560x560")
+        self.clw.minsize(560, 560)
+        self.clw.grid_rowconfigure(0, weight=1)
+        self.clw.grid_columnconfigure(0, weight=1)
+        # if os.path.isfile(en):
+        #     self.clw.title("Changelog For "+version_latest)
+        #     cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        # elif os.path.isfile(tr):
+        #     self.clw.title(version_latest+" için Değişiklik Günlüğü")
+        #     cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        # self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
+        # self.textbox.insert("0.0", cl_text)
+        # self.textbox.grid(row=0, column=0, sticky="nsew")
     def gplv3(self):
-        pass
+        self.lw = ui.CTkToplevel()
+        self.lw.geometry("560x560")
+        self.lw.minsize(560, 560)
+        self.lw.grid_rowconfigure(0, weight=1)
+        self.lw.grid_columnconfigure(0, weight=1)
+        # if os.path.isfile(en):
+        #     self.lw.title("GPLv3 License")
+        # elif os.path.isfile(tr):
+        #     self.lw.title("GPlv3 Lisansı")
+        # license_file = open("/usr/local/bin/grelintb/LICENSE.txt", "r")
+        # license_text = license_file.read()
+        # license_file.close()
+        # self.textbox = ui.CTkTextbox(self.lw, fg_color="transparent")
+        # self.textbox.insert("0.0", license_text)
+        # self.textbox.grid(row=0, column=0, sticky="nsew")
     def mukonqi(self):
         os.system("xdg-open https://mukonqi.github.io")
 
@@ -222,7 +273,7 @@ class StartPage(ui.CTkFrame):
             self.label1.grid(row=1, column=0, pady=(0, 10))
             self.textbox1 = ui.CTkTextbox(self, width=940, height=25, fg_color="transparent")
             self.textbox1.grid(row=2, column=0, sticky="nsew")
-            self.textbox2 = ui.CTkTextbox(self, width=940, height=350, fg_color="transparent")
+            self.textbox2 = ui.CTkTextbox(self, width=940, height=400, fg_color="transparent")
             self.textbox2.grid(row=3, column=0, sticky="nsew")
             neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox1.insert("0.0", weather)
