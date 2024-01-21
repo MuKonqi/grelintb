@@ -16,7 +16,7 @@
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
 version_current = "0.2.1.2 (Alpha)" # temporary
-# version_file=open("/usr/local/bin/girelintb/version.txt", "r")
+# version_file=open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current=version_file.readline()
 # version_file.close()
 
