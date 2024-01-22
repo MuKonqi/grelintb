@@ -15,16 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.1.3 (Alpha)" # temporary
+version_current = "v0.2.2.0 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
 
 import customtkinter as ui
 from tkinter import messagebox as mb
+import threading
 import subprocess
 import os
-import sys
 import getpass
 
 username = getpass.getuser()
@@ -57,8 +57,6 @@ solus = "/etc/solus-release"
 arch1 = "/bin/pacman"
 arch2 = "/usr/bin/pacman"
 
-args = sys.argv[1:]
-
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -66,7 +64,20 @@ elif os.path.isfile(light):
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
 
-ui.set_default_color_theme("dark-blue") 
+ui.set_default_color_theme("dark-blue")
+
+if os.path.isfile(en):
+    install_text = "Install"
+    reinstall_text = "Reinstall"
+    uninstall_text = "Uninstall"
+    search_text = "Search"
+    enter_pkg_text = "Entry package name..."
+elif os.path.isfile(tr):
+    install_text = "Kur"
+    reinstall_text = "Yeniden Kur"
+    uninstall_text = "Kaldır"
+    search_text = "Ara"
+    enter_pkg_text = "Paket adı girin..."
 
 class AboutWindow(ui.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -105,7 +116,7 @@ class AboutWindow(ui.CTkToplevel):
         if version_current != version_latest:
             self.button5.grid(row=4, column=0, sticky="nsew", padx=20, pady=5)
     def grelintb(self):
-        os.system("xdg open https://github.com/mukonqi/grelintb")
+        os.system("xdg-open https://github.com/mukonqi/grelintb")
     def changelog_current(self):
         self.ccw = ui.CTkToplevel()
         self.ccw.geometry("560x560")
@@ -160,7 +171,7 @@ class AboutWindow(ui.CTkToplevel):
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure(5, weight=1)
+        self.grid_rowconfigure(6, weight=1)
         self.text = ui.CTkLabel(self, text="GrelinTB", font=ui.CTkFont(size=20, weight="bold"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
         if os.path.isfile(r_true):
@@ -175,7 +186,7 @@ class Sidebar(ui.CTkFrame):
             self.button_1 = ui.CTkButton(self, text="About", command=self.about)
             self.button_2 = ui.CTkButton(self, text="Update", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Reset", command=self.reset)
-            self.button_4 = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
+            self.button_4 = ui.CTkButton(self, text=uninstall_text, command=self.uninstall)
             self.restart = ui.CTkCheckBox(self, text="Instant Restart For\nSome Operations", command=self.restart_option, variable=self.restart_var, onvalue="on", offvalue="off")
             self.startup = ui.CTkCheckBox(self, text="Startup Informations", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
@@ -282,9 +293,9 @@ class StartPage(ui.CTkFrame):
             self.grid_rowconfigure(0, weight=1)
             self.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
-                self.label0 = ui.CTkLabel(self, text="Welcome\n"+username+"!", font=ui.CTkFont(size=80, weight="normal"))
+                self.label0 = ui.CTkLabel(self, text="Welcome\n"+username, font=ui.CTkFont(size=80, weight="normal"))
             elif os.path.isfile(tr):
-                self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username+"!", font=ui.CTkFont(size=80, weight="normal"))
+                self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username, font=ui.CTkFont(size=80, weight="normal"))
             self.label0.grid(row=0, column=0, sticky="nsew")
 
 
@@ -293,17 +304,19 @@ class AppStore(ui.CTkTabview):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        app1 = self.add("Firefox")
-        app2 = self.add("Brave")
-        app3 = self.add("VLC")
-        app4 = self.add("Steam")
-        app5 = self.add("Discord")
-        app6 = self.add("VS Code")
-        app7 = self.add("LibreOffice")
-        app8 = self.add("Cups")
-        app9 = self.add("GParted")
-        app10 = self.add("GIMP")
-        app11 = self.add("Wine")
+        app1 = self.add("Mukotes")    
+        app2 = self.add("Firefox")
+        app3 = self.add("Brave")
+        app4 = self.add("VLC")
+        app5 = self.add("LibreOffice")
+        app6 = self.add("Cups")
+        app7 = self.add("GParted")
+        app8 = self.add("GIMP")
+        app9 = self.add("Wine")
+        app10 = self.add("Steam")
+        app11 = self.add("Heroic")
+        app12 = self.add("Discord")
+        app13 = self.add("VS Code")
         app1.grid_columnconfigure(0, weight=1)
         app1.grid_rowconfigure((0, 1, 2), weight=1)
         app2.grid_columnconfigure(0, weight=1)
@@ -326,74 +339,49 @@ class AppStore(ui.CTkTabview):
         app10.grid_rowconfigure((0, 1, 2), weight=1)
         app11.grid_columnconfigure(0, weight=1)
         app11.grid_rowconfigure((0, 1, 2), weight=1)
-        if os.path.isfile(en):
-            self.a1b1 = ui.CTkButton(app1, text="Install", command=self.a1c1)
-            self.a1b2 = ui.CTkButton(app1, text="Reinstall", command=self.a1c2)
-            self.a1b3 = ui.CTkButton(app1, text="Uninstall", command=self.a1c3)
-            self.a2b1 = ui.CTkButton(app2, text="Install", command=self.a2c1)
-            self.a2b2 = ui.CTkButton(app2, text="Reinstall", command=self.a2c2)
-            self.a2b3 = ui.CTkButton(app2, text="Uninstall", command=self.a2c3)
-            self.a3b1 = ui.CTkButton(app3, text="Install", command=self.a3c1)
-            self.a3b2 = ui.CTkButton(app3, text="Reinstall", command=self.a3c2)
-            self.a3b3 = ui.CTkButton(app3, text="Uninstall", command=self.a3c3)
-            self.a4b1 = ui.CTkButton(app4, text="Install", command=self.a4c1)
-            self.a4b2 = ui.CTkButton(app4, text="Reinstall", command=self.a4c2)
-            self.a4b3 = ui.CTkButton(app4, text="Uninstall", command=self.a4c3)
-            self.a5b1 = ui.CTkButton(app5, text="Install", command=self.a5c1)
-            self.a5b2 = ui.CTkButton(app5, text="Reinstall", command=self.a5c2)
-            self.a5b3 = ui.CTkButton(app5, text="Uninstall", command=self.a5c3)
-            self.a6b1 = ui.CTkButton(app6, text="Install", command=self.a6c1)
-            self.a6b2 = ui.CTkButton(app6, text="Reinstall", command=self.a6c2)
-            self.a6b3 = ui.CTkButton(app6, text="Uninstall", command=self.a6c3)
-            self.a7b1 = ui.CTkButton(app7, text="Install", command=self.a7c1)
-            self.a7b2 = ui.CTkButton(app7, text="Reinstall", command=self.a7c2)
-            self.a7b3 = ui.CTkButton(app7, text="Uninstall", command=self.a7c3)
-            self.a8b1 = ui.CTkButton(app8, text="Install", command=self.a8c1)
-            self.a8b2 = ui.CTkButton(app8, text="Reinstall", command=self.a8c2)
-            self.a8b3 = ui.CTkButton(app8, text="Uninstall", command=self.a8c3)
-            self.a9b1 = ui.CTkButton(app9, text="Install", command=self.a9c1)
-            self.a9b2 = ui.CTkButton(app9, text="Reinstall", command=self.a9c2)
-            self.a9b3 = ui.CTkButton(app9, text="Uninstall", command=self.a9c3)
-            self.a10b1 = ui.CTkButton(app10, text="Install", command=self.a10c1)
-            self.a10b2 = ui.CTkButton(app10, text="Reinstall", command=self.a10c2)
-            self.a10b3 = ui.CTkButton(app10, text="Uninstall", command=self.a10c3)
-            self.a11b1 = ui.CTkButton(app11, text="Install", command=self.a11c1)
-            self.a11b2 = ui.CTkButton(app11, text="Reinstall", command=self.a11c2)
-            self.a11b3 = ui.CTkButton(app11, text="Uninstall", command=self.a11c3)
-        elif os.path.isfile(tr):
-            self.a1b1 = ui.CTkButton(app1, text="Kur", command=self.a1c1)
-            self.a1b2 = ui.CTkButton(app1, text="Yeniden Kur", command=self.a1c2)
-            self.a1b3 = ui.CTkButton(app1, text="Kaldır", command=self.a1c3)
-            self.a2b1 = ui.CTkButton(app2, text="Kur", command=self.a2c1)
-            self.a2b2 = ui.CTkButton(app2, text="Yeniden Kur", command=self.a2c2)
-            self.a2b3 = ui.CTkButton(app2, text="Kaldır", command=self.a2c3)
-            self.a3b1 = ui.CTkButton(app3, text="Kur", command=self.a3c1)
-            self.a3b2 = ui.CTkButton(app3, text="Yeniden Kur", command=self.a3c2)
-            self.a3b3 = ui.CTkButton(app3, text="Kaldır", command=self.a3c3)
-            self.a4b1 = ui.CTkButton(app4, text="Kur", command=self.a4c1)
-            self.a4b2 = ui.CTkButton(app4, text="Yeniden Kur", command=self.a4c2)
-            self.a4b3 = ui.CTkButton(app4, text="Kaldır", command=self.a4c3)
-            self.a5b1 = ui.CTkButton(app5, text="Kur", command=self.a5c1)
-            self.a5b2 = ui.CTkButton(app5, text="Yeniden Kur", command=self.a5c2)
-            self.a5b3 = ui.CTkButton(app5, text="Kaldır", command=self.a5c3)
-            self.a6b1 = ui.CTkButton(app6, text="Kur", command=self.a6c1)
-            self.a6b2 = ui.CTkButton(app6, text="Yeniden Kur", command=self.a6c2)
-            self.a6b3 = ui.CTkButton(app6, text="Kaldır", command=self.a6c3)
-            self.a7b1 = ui.CTkButton(app7, text="Kur", command=self.a7c1)
-            self.a7b2 = ui.CTkButton(app7, text="Yeniden Kur", command=self.a7c2)
-            self.a7b3 = ui.CTkButton(app7, text="Kaldır", command=self.a7c3)
-            self.a8b1 = ui.CTkButton(app8, text="Kur", command=self.a8c1)
-            self.a8b2 = ui.CTkButton(app8, text="Yeniden Kur", command=self.a8c2)
-            self.a8b3 = ui.CTkButton(app8, text="Kaldır", command=self.a8c3)
-            self.a9b1 = ui.CTkButton(app9, text="Kur", command=self.a9c1)
-            self.a9b2 = ui.CTkButton(app9, text="Yeniden Kur", command=self.a9c2)
-            self.a9b3 = ui.CTkButton(app9, text="Kaldır", command=self.a9c3)
-            self.a10b1 = ui.CTkButton(app10, text="Kur", command=self.a10c1)
-            self.a10b2 = ui.CTkButton(app10, text="Yeniden Kur", command=self.a10c2)
-            self.a10b3 = ui.CTkButton(app10, text="Kaldır", command=self.a10c3)
-            self.a11b1 = ui.CTkButton(app11, text="Kur", command=self.a11c1)
-            self.a11b2 = ui.CTkButton(app11, text="Yeniden Kur", command=self.a11c2)
-            self.a11b3 = ui.CTkButton(app11, text="Kaldır", command=self.a11c3)
+        app12.grid_columnconfigure(0, weight=1)
+        app12.grid_rowconfigure((0, 1, 2), weight=1)
+        app13.grid_columnconfigure(0, weight=1)
+        app13.grid_rowconfigure((0, 1, 2), weight=1)
+        self.a1b1 = ui.CTkButton(app1, text=install_text, command=lambda:self.do("1"))
+        self.a1b2 = ui.CTkButton(app1, text=reinstall_text, command=lambda:self.do("2"))
+        self.a1b3 = ui.CTkButton(app1, text=uninstall_text, command=lambda:self.do("3"))
+        self.a2b1 = ui.CTkButton(app2, text=install_text, command=lambda:self.do("4"))
+        self.a2b2 = ui.CTkButton(app2, text=reinstall_text, command=lambda:self.do("5"))
+        self.a2b3 = ui.CTkButton(app2, text=uninstall_text, command=lambda:self.do("6"))
+        self.a3b1 = ui.CTkButton(app3, text=install_text, command=lambda:self.do("7"))
+        self.a3b2 = ui.CTkButton(app3, text=reinstall_text, command=lambda:self.do("8"))
+        self.a3b3 = ui.CTkButton(app3, text=uninstall_text, command=lambda:self.do("9"))
+        self.a4b1 = ui.CTkButton(app4, text=install_text, command=lambda:self.do("10"))
+        self.a4b2 = ui.CTkButton(app4, text=reinstall_text, command=lambda:self.do("11"))
+        self.a4b3 = ui.CTkButton(app4, text=uninstall_text, command=lambda:self.do("12"))
+        self.a5b1 = ui.CTkButton(app5, text=install_text, command=lambda:self.do("13"))
+        self.a5b2 = ui.CTkButton(app5, text=reinstall_text, command=lambda:self.do("14"))
+        self.a5b3 = ui.CTkButton(app5, text=uninstall_text, command=lambda:self.do("15"))
+        self.a6b1 = ui.CTkButton(app6, text=install_text, command=lambda:self.do("16"))
+        self.a6b2 = ui.CTkButton(app6, text=reinstall_text, command=lambda:self.do("17"))
+        self.a6b3 = ui.CTkButton(app6, text=uninstall_text, command=lambda:self.do("18"))
+        self.a7b1 = ui.CTkButton(app7, text=install_text, command=lambda:self.do("19"))
+        self.a7b2 = ui.CTkButton(app7, text=reinstall_text, command=lambda:self.do("20"))
+        self.a7b3 = ui.CTkButton(app7, text=uninstall_text, command=lambda:self.do("21"))
+        self.a8b1 = ui.CTkButton(app8, text=install_text, command=lambda:self.do("22"))
+        self.a8b2 = ui.CTkButton(app8, text=reinstall_text, command=lambda:self.do("23"))
+        self.a8b3 = ui.CTkButton(app8, text=uninstall_text, command=lambda:self.do("24"))
+        self.a9b1 = ui.CTkButton(app9, text=install_text, command=lambda:self.do("25"))
+        self.a9b2 = ui.CTkButton(app9, text=reinstall_text, command=lambda:self.do("26"))
+        self.a9b3 = ui.CTkButton(app9, text=uninstall_text, command=lambda:self.do("27"))
+        self.a10b1 = ui.CTkButton(app10, text=install_text, command=lambda:self.do("28"))
+        self.a10b2 = ui.CTkButton(app10, text=reinstall_text, command=lambda:self.do("29"))
+        self.a10b3 = ui.CTkButton(app10, text=uninstall_text, command=lambda:self.do("30"))
+        self.a11b1 = ui.CTkButton(app11, text=install_text, command=lambda:self.do("31"))
+        self.a11b2 = ui.CTkButton(app11, text=reinstall_text, command=lambda:self.do("32"))
+        self.a11b3 = ui.CTkButton(app11, text=uninstall_text, command=lambda:self.do("33"))
+        self.a12b1 = ui.CTkButton(app12, text=install_text, command=lambda:self.do("34"))
+        self.a12b2 = ui.CTkButton(app12, text=reinstall_text, command=lambda:self.do("35"))
+        self.a12b3 = ui.CTkButton(app12, text=uninstall_text, command=lambda:self.do("36"))
+        self.a13b1 = ui.CTkButton(app13, text=install_text, command=lambda:self.do("37"))
+        self.a13b2 = ui.CTkButton(app13, text=reinstall_text, command=lambda:self.do("38"))
+        self.a13b3 = ui.CTkButton(app13, text=uninstall_text, command=lambda:self.do("39"))
         self.a1b1.grid(row=0, column=0)
         self.a1b2.grid(row=1, column=0)
         self.a1b3.grid(row=2, column=0)
@@ -427,72 +415,14 @@ class AppStore(ui.CTkTabview):
         self.a11b1.grid(row=0, column=0)
         self.a11b2.grid(row=1, column=0)
         self.a11b3.grid(row=2, column=0)
-    def a1c1(self):
-        pass
-    def a1c2(self):
-        pass
-    def a1c3(self):
-        pass
-    def a2c1(self):
-        pass
-    def a2c2(self):
-        pass
-    def a2c3(self):
-        pass
-    def a3c1(self):
-        pass
-    def a3c2(self):
-        pass
-    def a3c3(self):
-        pass
-    def a4c1(self):
-        pass
-    def a4c2(self):
-        pass
-    def a4c3(self):
-        pass
-    def a5c1(self):
-        pass
-    def a5c2(self):
-        pass
-    def a5c3(self):
-        pass
-    def a6c1(self):
-        pass
-    def a6c2(self):
-        pass
-    def a6c3(self):
-        pass
-    def a7c1(self):
-        pass
-    def a7c2(self):
-        pass
-    def a7c3(self):
-        pass
-    def a8c1(self):
-        pass
-    def a8c2(self):
-        pass
-    def a8c3(self):
-        pass
-    def a9c1(self):
-        pass
-    def a9c2(self):
-        pass
-    def a9c3(self):
-        pass
-    def a10c1(self):
-        pass
-    def a10c2(self):
-        pass
-    def a10c3(self):
-        pass
-    def a11c1(self):
-        pass
-    def a11c2(self):
-        pass
-    def a11c3(self):
-        pass
+        self.a12b1.grid(row=0, column=0)
+        self.a12b2.grid(row=1, column=0)
+        self.a12b3.grid(row=2, column=0)
+        self.a13b1.grid(row=0, column=0)
+        self.a13b2.grid(row=1, column=0)
+        self.a13b3.grid(row=2, column=0)
+    def do(self, name: str):
+        print(name)
 
 class FlatpakStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -505,14 +435,46 @@ class OtherStore(ui.CTkFrame):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self, width=300, height=300)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self)
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.entry = ui.CTkEntry(self.frame, placeholder_text=enter_pkg_text)
+        self.button1 = ui.CTkButton(self.frame, text=search_text, command=self.go_search)
+        self.button2 = ui.CTkButton(self.frame, text=install_text, command=self.install)
+        self.button3 = ui.CTkButton(self.frame, text=reinstall_text, command=self.reinstall)
+        self.button4 = ui.CTkButton(self.frame, text=uninstall_text, command=self.uninstall)
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=10)
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 10), padx=10)
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=10)
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=10)
+        self.button4.grid(row=4, column=0, sticky="nsew", padx=10)
+    def search_main(self):
+        if os.path.isfile(debian):
+            cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        elif os.path.isfile(fedora):
+            cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        elif os.path.isfile(solus):
+            cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.textbox.configure(state="normal")
+        self.textbox.insert("0.0", cmd)
+        self.textbox.configure(state="disabled")
+    def go_search(self):
+        t = threading.Thread(target=self.search_main, daemon=False)
+        t.start()
+    def install(self):
+        pass
+    def reinstall(self):
+        pass
+    def uninstall(self):
+        pass
 
 class DEWMStore(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
-class PkgMgrStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
@@ -530,14 +492,11 @@ class Store(ui.CTkFrame):
             tab2 = self.tabview.add("Flatpak Apps")
             tab3 = self.tabview.add("Other Apps")
             tab4 = self.tabview.add("Desktop Environment\nWindow Manager")
-            tab5 = self.tabview.add("Package Manager")
         elif os.path.isfile(tr):
             tab1 = self.tabview.add("Uygulamalar")
             tab2 = self.tabview.add("Flatpak Uygulamaları")
             tab3 = self.tabview.add("Diğer Uygulamalar")
             tab4 = self.tabview.add("Masaüstü Ortamı\nPencere Yöneticisi")
-            tab5 = self.tabview.add("Paket Yöneticisi")
-
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.store_frame=AppStore(tab1)
@@ -553,10 +512,6 @@ class Store(ui.CTkFrame):
         tab4.grid_columnconfigure(0, weight=1)
         tab4.grid_rowconfigure(0, weight=1)
         self.store_frame=DEWMStore(tab4)
-        self.store_frame.grid(row=0, column=0, sticky="nsew")
-        tab5.grid_columnconfigure(0, weight=1)
-        tab5.grid_rowconfigure(0, weight=1)
-        self.store_frame=PkgMgrStore(tab5)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
 
 class Main(ui.CTkTabview):
