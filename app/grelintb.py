@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.2.0 (Alpha)" # temporary
+version_current = "v0.2.3.0 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
@@ -34,26 +34,21 @@ tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
 system = "/home/"+username+"/.config/grelintb/theme/system.txt"
 light = "/home/"+username+"/.config/grelintb/theme/light.txt"
 dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
-r_true = "/home/"+username+"/.config/grelintb/restart/true.txt"
-r_false = "/home/"+username+"/.config/grelintb/restart/false.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
 
 if not os.path.isdir(config):
-    os.system("cd /home/"+username+"/.config ; mkdir grelintb ; cd grelintb ; mkdir language ; mkdir theme ; mkdir restart ; mkdir startup")
-    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd restart ; touch false.txt ; cd .. ; cd startup ; touch true.txt")
+    os.system("cd /home/"+username+"/.config ; mkdir grelintb ; cd grelintb ; mkdir language ; mkdir theme ; mkdir startup")
+    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd startup ; touch true.txt")
 if not os.path.isdir(config+"language/"):
     os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
 if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
-if not os.path.isdir(config+"restart/"):
-    os.system("cd "+config+" ; mkdir restart ; cd restart ; touch false.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch true.txt")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
-solus = "/etc/solus-release"
 arch1 = "/bin/pacman"
 arch2 = "/usr/bin/pacman"
 
@@ -71,13 +66,17 @@ if os.path.isfile(en):
     reinstall_text = "Reinstall"
     uninstall_text = "Uninstall"
     search_text = "Search"
-    enter_pkg_text = "Entry package name..."
+    enter_pkg_text = "Enter package name..."
+    source_text = "Source"
+    repos_text = "Repositories"
 elif os.path.isfile(tr):
     install_text = "Kur"
     reinstall_text = "Yeniden Kur"
     uninstall_text = "Kaldır"
     search_text = "Ara"
     enter_pkg_text = "Paket adı girin..."
+    source_text = "Kaynak"
+    repos_text = "Depolar"
 
 class AboutWindow(ui.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -171,13 +170,9 @@ class AboutWindow(ui.CTkToplevel):
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure(6, weight=1)
+        self.grid_rowconfigure(5, weight=1)
         self.text = ui.CTkLabel(self, text="GrelinTB", font=ui.CTkFont(size=20, weight="bold"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
-        if os.path.isfile(r_true):
-            self.restart_var = ui.StringVar(value="on")
-        elif os.path.isfile(r_false):
-            self.restart_var = ui.StringVar(value="off")
         if os.path.isfile(s_true):
             self.startup_var = ui.StringVar(value="on")
         elif os.path.isfile(s_false):
@@ -187,7 +182,6 @@ class Sidebar(ui.CTkFrame):
             self.button_2 = ui.CTkButton(self, text="Update", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Reset", command=self.reset)
             self.button_4 = ui.CTkButton(self, text=uninstall_text, command=self.uninstall)
-            self.restart = ui.CTkCheckBox(self, text="Instant Restart For\nSome Operations", command=self.restart_option, variable=self.restart_var, onvalue="on", offvalue="off")
             self.startup = ui.CTkCheckBox(self, text="Startup Informations", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
@@ -204,7 +198,6 @@ class Sidebar(ui.CTkFrame):
             self.button_2 = ui.CTkButton(self, text="Güncelle", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.button_4 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.restart = ui.CTkCheckBox(self, text="Bazı İşlemler İçin\nAnında Yeniden Başlatma", command=self.restart_option, variable=self.restart_var, onvalue="on", offvalue="off")
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
@@ -221,12 +214,11 @@ class Sidebar(ui.CTkFrame):
         self.button_2.grid(row=2, column=0, padx=10, pady=10)
         self.button_3.grid(row=3, column=0, padx=10, pady=10)
         self.button_4.grid(row=4, column=0, padx=10, pady=10)
-        self.restart.grid(row=6, column=0, padx=10, pady=(0, 10))
-        self.startup.grid(row=7, column=0, padx=10, pady=10)
-        self.appearance_label.grid(row=8, column=0, padx=10, pady=(10, 0))
-        self.appearance_menu.grid(row=9, column=0, padx=10, pady=(0, 10))
-        self.language_label.grid(row=10, column=0, padx=10, pady=(10, 0))
-        self.language_menu.grid(row=11, column=0, padx=10, pady=(0, 10))
+        self.startup.grid(row=6, column=0, padx=10, pady=10)
+        self.appearance_label.grid(row=7, column=0, padx=10, pady=(10, 0))
+        self.appearance_menu.grid(row=8, column=0, padx=10, pady=(0, 10))
+        self.language_label.grid(row=9, column=0, padx=10, pady=(10, 0))
+        self.language_menu.grid(row=10, column=0, padx=10, pady=(0, 10))
         self.about_window = None
     def about(self):
         if self.about_window is None or not self.about_window.winfo_exists():
@@ -239,11 +231,6 @@ class Sidebar(ui.CTkFrame):
         pass
     def uninstall(self):
         pass
-    def restart_option(self):
-        if self.restart_var.get() == "on":
-            os.system("cd "+config+"restart/ ; rm * ; touch true.txt")
-        elif self.restart_var.get() == "off":
-            os.system("cd "+config+"restart/ ; rm * ; touch false.txt")
     def startup_option(self):
         if self.startup_var.get() == "on":
             os.system("cd "+config+"startup/ ; rm * ; touch true.txt")
@@ -313,10 +300,10 @@ class AppStore(ui.CTkTabview):
         app7 = self.add("GParted")
         app8 = self.add("GIMP")
         app9 = self.add("Wine")
-        app10 = self.add("Steam")
+        app10 = self.add("VS Codium")
         app11 = self.add("Heroic")
-        app12 = self.add("Discord")
-        app13 = self.add("VS Code")
+        app12 = self.add("Steam")
+        app13 = self.add("Discord")
         app1.grid_columnconfigure(0, weight=1)
         app1.grid_rowconfigure((0, 1, 2), weight=1)
         app2.grid_columnconfigure(0, weight=1)
@@ -422,57 +409,99 @@ class AppStore(ui.CTkTabview):
         self.a13b2.grid(row=1, column=0)
         self.a13b3.grid(row=2, column=0)
     def do(self, name: str):
-        print(name)
-
-class FlatpakStore(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        pass
 
 class OtherStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self, width=300, height=300)
+        self.textbox = ui.CTkTextbox(self)
         self.textbox.grid(row=0, column=0, sticky="nsew")
         self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self)
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
         self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.frame.grid_rowconfigure((3, 4, 5, 6), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
+        self.repos_var = ui.StringVar(value = "repos")
+        self.source = ui.CTkLabel(self.frame, text=source_text)
+        self.repos = ui.CTkSwitch(self.frame, text=repos_text+"/Flathub", offvalue="repos", onvalue="flathub", variable=self.repos_var, command=self.repos_command)
         self.entry = ui.CTkEntry(self.frame, placeholder_text=enter_pkg_text)
         self.button1 = ui.CTkButton(self.frame, text=search_text, command=self.go_search)
         self.button2 = ui.CTkButton(self.frame, text=install_text, command=self.install)
         self.button3 = ui.CTkButton(self.frame, text=reinstall_text, command=self.reinstall)
         self.button4 = ui.CTkButton(self.frame, text=uninstall_text, command=self.uninstall)
-        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=10)
-        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 10), padx=10)
-        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=10)
-        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=10)
-        self.button4.grid(row=4, column=0, sticky="nsew", padx=10)
+        self.source.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
+        self.repos.grid(row=1, column=0, sticky="nsew", pady=0, padx=(25, 0))
+        self.entry.grid(row=2, column=0, sticky="nsew", pady=(20, 0), padx=(25, 0))
+        self.button1.grid(row=3, column=0, sticky="nsew", pady=(20, 5), padx=(25, 0))
+        self.button2.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button4.grid(row=6, column=0, sticky="nsew", padx=(25, 0))
+    def install_flatpak(self):
+        global ask_f
+        if os.path.isfile(en):
+            ask_f = mb.askyesno("Warning","Flatpak can't found on your system.\nWe can try installing Flatpak to your computer.\nDo you approve it?")
+        elif os.path.isfile(tr):
+            ask_f = mb.askyesno("Uyarı","Flatpak sisteminizde bulunamadı.\nBiz sisteminize Flatpak yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+        if ask_f == True:
+            pass
+        elif ask_f == False:
+            if os.path.isfile(en):
+                mb.showinfo("Information","Flatpak installation and process cancelled.")
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Flatpak kurulumu ve işlem iptal edildi.")
+    def repos_command(self):
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak") and self.repos_var.get() == "flathub":
+            self.install_flatpak()
     def search_main(self):
-        if os.path.isfile(debian):
-            cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        elif os.path.isfile(solus):
-            cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.textbox.configure(state="normal")
-        self.textbox.insert("0.0", cmd)
-        self.textbox.configure(state="disabled")
+        if self.repos_var.get() == "repos":
+            if os.path.isfile(debian):
+                cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            elif os.path.isfile(fedora):
+                cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            elif os.path.isfile(arch1) or os.path.isfile(arch2):
+                cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.textbox.configure(state="normal")
+            self.textbox.insert("0.0", cmd)
+            self.textbox.configure(state="disabled")
+        elif self.repos_var.get() == "flathub":
+            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+                self.install_flatpak()
+                if ask_f == False:
+                    return
+            pass
     def go_search(self):
         t = threading.Thread(target=self.search_main, daemon=False)
         t.start()
     def install(self):
-        pass
+        if self.repos_var.get() == "repos":
+            pass
+        elif self.repos_var.get() == "flathub":
+            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+                self.install_flatpak()
+                if ask_f == False:
+                    return
+            pass
     def reinstall(self):
-        pass
+        if self.repos_var.get() == "repos":
+            pass
+        elif self.repos_var.get() == "flathub":
+            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+                self.install_flatpak()
+                if ask_f == False:
+                    return
+            pass
     def uninstall(self):
-        pass
+        if self.repos_var.get() == "repos":
+            pass
+        elif self.repos_var.get() == "flathub":
+            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+                self.install_flatpak()
+                if ask_f == False:
+                    return
+            pass
 
 class DEWMStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -488,30 +517,24 @@ class Store(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            tab1 = self.tabview.add("Apps")
-            tab2 = self.tabview.add("Flatpak Apps")
-            tab3 = self.tabview.add("Other Apps")
-            tab4 = self.tabview.add("Desktop Environment\nWindow Manager")
+            tab1 = self.tabview.add("General Apps")
+            tab2 = self.tabview.add("Other Apps")
+            tab3 = self.tabview.add("Desktop Environments\nWindow Managers")
         elif os.path.isfile(tr):
-            tab1 = self.tabview.add("Uygulamalar")
-            tab2 = self.tabview.add("Flatpak Uygulamaları")
-            tab3 = self.tabview.add("Diğer Uygulamalar")
-            tab4 = self.tabview.add("Masaüstü Ortamı\nPencere Yöneticisi")
+            tab1 = self.tabview.add("Genel Uygulamalar")
+            tab2 = self.tabview.add("Diğer Uygulamalar")
+            tab3 = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.store_frame=AppStore(tab1)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
-        self.store_frame=FlatpakStore(tab2)
+        self.store_frame=OtherStore(tab2)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
         tab3.grid_columnconfigure(0, weight=1)
         tab3.grid_rowconfigure(0, weight=1)
-        self.store_frame=OtherStore(tab3)
-        self.store_frame.grid(row=0, column=0, sticky="nsew")
-        tab4.grid_columnconfigure(0, weight=1)
-        tab4.grid_rowconfigure(0, weight=1)
-        self.store_frame=DEWMStore(tab4)
+        self.store_frame=DEWMStore(tab3)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
 
 class Main(ui.CTkTabview):
