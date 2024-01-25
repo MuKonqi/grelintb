@@ -1,7 +1,8 @@
-# GrelinTB (very alpha stage)
+# GrelinTB (in alpha stage)
 ## Dependencies
 - A distro based on Debian GNU/Linux or Fedora Linux or Solus or Arch Linux
 - Curl (package name: `curl`)
+- xdg-utils (package name: `xdg-utils`)
 - Neofetch (package name: `neofetch`)
 - Python3 (package name: `python3`)
 - Pip (package name: usually `pip`)

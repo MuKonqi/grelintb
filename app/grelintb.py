@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.3.0 (Alpha)" # temporary
+version_current = "v0.2.3.1 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
@@ -253,7 +253,7 @@ class Sidebar(ui.CTkFrame):
             os.system("cd "+config+"language ; rm * ; touch tr.txt")
         root.destroy()
 
-class StartPage(ui.CTkFrame):
+class Starting(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(s_true):
@@ -301,9 +301,9 @@ class AppStore(ui.CTkTabview):
         app8 = self.add("GIMP")
         app9 = self.add("Wine")
         app10 = self.add("VS Codium")
-        app11 = self.add("Heroic")
-        app12 = self.add("Steam")
-        app13 = self.add("Discord")
+        app11 = self.add("Steam")
+        app12 = self.add("Heroic")
+        app13 = self.add("Element")
         app1.grid_columnconfigure(0, weight=1)
         app1.grid_rowconfigure((0, 1, 2), weight=1)
         app2.grid_columnconfigure(0, weight=1)
@@ -537,34 +537,86 @@ class Store(ui.CTkFrame):
         self.store_frame=DEWMStore(tab3)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
 
+class Tools(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+class Scripts(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        if os.path.isfile(en):
+            self.button1 = ui.CTkButton(self, command=self.cups, text="Open Cups Configuration Page")
+            self.button2 = ui.CTkButton(self, command=self.wine, text="Open Wine Configuration App")
+            self.button3 = ui.CTkButton(self, command=self.update, text="Update System And Packages")
+            self.button4 = ui.CTkButton(self, command=self.clear, text="Clear Package Cache")
+        elif os.path.isfile(tr):
+            self.button1 = ui.CTkButton(self, command=self.cups, text="Cups Yapılandırma Sayfasını Aç")
+            self.button2 = ui.CTkButton(self, command=self.wine, text="Wine Yapılandırma Uygulamasını Aç")
+            self.button3 = ui.CTkButton(self, command=self.update, text="Sistemi Ve Paketleri Güncelle")
+            self.button4 = ui.CTkButton(self, command=self.clear, text="Paket Önbelleğini Temizle")
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 50), padx=50)
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 50), padx=50)
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 50), padx=50)
+        self.button4.grid(row=3, column=0, sticky="nsew", padx=50)
+    def cups(self):
+        subprocess.Popen('xdg-open localhost:631', shell=True)
+    def wine(self):
+        if not os.path.isfile("/usr/bin/winecfg") and not os.path.isfile("/bin/winecfg"):
+            if os.path.isfile(en):
+                ask_w = mb.askyesno("Warning","Wine can't found on your system.\nWe can try installing Wine to your computer.\nDo you approve it?")
+            elif os.path.isfile(tr):
+                ask_w = mb.askyesno("Uyarı","Wine sisteminizde bulunamadı.\nBiz sisteminize Wine yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+            if ask_w == True:
+                pass
+            elif ask_w == False:
+                if os.path.isfile(en):
+                    mb.showinfo("Information","Wine installation and process cancelled.")
+                elif os.path.isfile(tr):
+                    mb.showinfo("Bilgilendirme","Wine kurulumu ve işlem iptal edildi.")
+                return
+        subprocess.Popen('winecfg', shell=True)
+    def update(self):
+        pass
+    def clear(self):
+        pass
+
 class Main(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(en):
-            tab0 = self.add("Start Page")
+            tab0 = self.add("Starting")
             tab1 = self.add("Store")
-            tab2 = self.add("Configuring")
-            tab3 = self.add("Other Graphical Tools")
-            tab4 = self.add("Other Tools")
+            tab2 = self.add("Tools")
+            tab3 = self.add("Scripts")
         elif os.path.isfile(tr):
-            tab0 = self.add("Başlangıç Sayfası")
+            tab0 = self.add("Başlangıç")
             tab1 = self.add("Mağaza")
-            tab2 = self.add("Yapılandırma")
-            tab3 = self.add("Diğer Grafiksel Araçlar")
-            tab4 = self.add("Diğer Araçlar")
+            tab2 = self.add("Araçlar")
+            tab3 = self.add("Betikler")
         tab0.grid_columnconfigure(0, weight=1)
         tab0.grid_rowconfigure(0, weight=1)
-        self.home_frame=StartPage(tab0)
-        self.home_frame.grid(row=0, column=0, sticky="nsew")       
+        self.starting_frame=Starting(tab0)
+        self.starting_frame.grid(row=0, column=0, sticky="nsew")       
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.store_frame=Store(tab1)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
-
+        tab2.grid_columnconfigure(0, weight=1)
+        tab2.grid_rowconfigure(0, weight=1)
+        self.tools_frame=Tools(tab2)
+        self.tools_frame.grid(row=0, column=0, sticky="nsew")
+        tab3.grid_columnconfigure(0, weight=1)
+        tab3.grid_rowconfigure(0, weight=1)
+        self.scripts_frame=Scripts(tab3)
+        self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
 class Root(ui.CTk):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.title("GrelinTB")
         self.geometry("1280x640")
         self.resizable(0, 0)
@@ -574,7 +626,6 @@ class Root(ui.CTk):
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
         self.tabview = Main(self, corner_radius=50)
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
-
 
 if __name__ == "__main__":
     root = Root()
