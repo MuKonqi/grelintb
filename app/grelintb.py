@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.3.1 (Alpha)" # temporary
+version_current = "v0.2.4.0 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
 
 import customtkinter as ui
 from tkinter import messagebox as mb
+from tkinter import filedialog as fd
 import threading
 import subprocess
 import os
@@ -29,6 +30,7 @@ import getpass
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
+notes = "/home/"+username+"/Notes/"
 en = "/home/"+username+"/.config/grelintb/language/en.txt"
 tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
 system = "/home/"+username+"/.config/grelintb/theme/system.txt"
@@ -46,6 +48,8 @@ if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch true.txt")
+if not os.path.isdir(notes):
+    os.system("cd /home/"+username+" ; mkdir Notes")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -77,6 +81,22 @@ elif os.path.isfile(tr):
     enter_pkg_text = "Paket adı girin..."
     source_text = "Kaynak"
     repos_text = "Depolar"
+
+def install_app(appname: str, packagename: str):
+    global ask_a
+    if os.path.isfile(en):
+        ask_a = mb.askyesno("Warning",appname+" can't found on your system.\nWe can try installing "+appname+" to your computer.\nDo you approve it?")
+    elif os.path.isfile(tr):
+        ask_a = mb.askyesno("Uyarı",appname+" sisteminizde bulunamadı.\nBiz sisteminize "+appname+" yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+    if ask_a == True:
+        import time
+        time.sleep(3)
+        print(packagename)
+    elif ask_a == False:
+        if os.path.isfile(en):
+            mb.showinfo("Information",appname+" installation and process cancelled.")
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme",appname+" kurulumu ve işlem iptal edildi.")
 
 class AboutWindow(ui.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -285,6 +305,128 @@ class Starting(ui.CTkFrame):
                 self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username, font=ui.CTkFont(size=80, weight="normal"))
             self.label0.grid(row=0, column=0, sticky="nsew")
 
+class Notes(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.file_a = None
+        self.file_l = None
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.content = ui.CTkTextbox(self)
+        self.content.grid(row=0, column=0, sticky="nsew")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.list = ui.CTkTextbox(self.frame)
+        self.list.insert("0.0", self.command)
+        self.list.configure(state="disabled")
+        if os.path.isfile(en):
+            self.label = ui.CTkLabel(self.frame, text="Your notes listed below:")
+            self.entry = ui.CTkEntry(self.frame, placeholder_text="Enter note name...")
+            self.button1 = ui.CTkButton(self.frame, text="Open From List", command=self.open_list)
+            self.button2 = ui.CTkButton(self.frame, text="Open Any Note", command=self.open_any)
+            self.button3 = ui.CTkButton(self.frame, text="Delete", command=self.delete)
+            self.button4 = ui.CTkButton(self.frame, text="Save", command=self.save)
+        elif os.path.isfile(tr):
+            self.label = ui.CTkLabel(self.frame, text="Notlarınız aşağıda listelenmiştir:")
+            self.entry = ui.CTkEntry(self.frame, placeholder_text="Not adı girin...")
+            self.button1 = ui.CTkButton(self.frame, text="Listeden Aç", command=self.open_list)
+            self.button2 = ui.CTkButton(self.frame, text="Herhangi Bir Notu Aç", command=self.open_any)
+            self.button3 = ui.CTkButton(self.frame, text="Sil", command=self.delete)
+            self.button4 = ui.CTkButton(self.frame, text="Kaydet", command=self.save)
+        self.label.grid(row=0, column=0, sticky="nsew", pady=(0, 0), padx=(25, 0))
+        self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.entry.grid(row=2, column=0, sticky="nsew", pady=(5, 5), padx=(25, 0))
+        self.button1.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button2.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button4.grid(row=6, column=0, sticky="nsew", pady=(0, 0), padx=(25, 0))
+    def error_message(self):
+        if os.path.isfile(en):
+            mb.showerror("Error","The note could not be opened.")
+        elif os.path.isfile(tr):
+            mb.showerror("Hata","Not açılamadı.")
+    def open_list(self):
+        if self.file_a != None:
+            self.file_a = None
+        try:
+            with open(notes+self.entry.get(), "r") as self.file_l:
+                self.text = self.file_l.read()
+        except:
+            self.error_message()
+            return
+        self.content.delete("0.0", 'end')
+        self.content.insert("0.0", self.text)
+    def open_any(self):
+        if self.file_l != None:
+            self.file_l = None
+        try:
+            self.file_a = fd.askopenfilename()
+            with open(self.file_a, "r") as self.file_ao:
+                self.text = self.file_ao.read()
+        except:
+            self.error_message()
+            return
+        self.content.delete("0.0", 'end')
+        self.content.insert("0.0", self.text)
+    def delete(self):
+        if not os.path.isfile(notes+self.entry.get()):
+            if os.path.isfile(en):
+                mb.showerror("Error","There is no such note.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Öyle bir not yok.")
+            return
+        os.system("cd "+notes+" ; rm "+self.entry.get())
+        if os.path.isfile(notes+self.entry.get()):
+            if os.path.isfile(en):
+                mb.showerror("Error","The note could not be deleted.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not silinemedi.")
+        else:
+            if os.path.isfile(en):
+                mb.showinfo("Information","The note deleted.")
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Not silindi.")
+        self.list.configure(state="normal")
+        self.list.delete("0.0", 'end')
+        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.list.insert("0.0", self.command)
+        self.list.configure(state="disabled")
+    def save(self):
+        if self.file_l != None or self.file_l == None and self.file_a == None:
+            if self.entry.get() == None:
+                if os.path.isfile(en):
+                    mb.showerror("Error","You did not enter a note name.")
+                elif os.path.isfile(tr):
+                    mb.showerror("Hata","Not adı girmediniz.")        
+                return
+            with open(notes+self.entry.get(), "w+") as self.file:
+                self.file.write(self.content.get("0.0", 'end'))
+            with open(notes+self.entry.get()) as self.file:    
+                self.output = self.file.read()
+        elif self.file_a != None:
+            with open(self.file_a, "w+") as self.file:
+                self.file.write(self.content.get("0.0", 'end'))
+            with open(self.file_a) as self.file:
+                self.output = self.file.read()
+        self.list.configure(state="normal")
+        self.list.delete("0.0", 'end')
+        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.list.insert("0.0", self.command)
+        self.list.configure(state="disabled")
+        if self.output == self.content.get("0.0", 'end'):
+            if os.path.isfile(en):
+                mb.showinfo("Information","The note saved.")
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Not kaydedildi.")
+        else:
+            if os.path.isfile(en):
+                mb.showerror("Error","The note could not be saved.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not kaydedilemedi.") 
 
 class AppStore(ui.CTkTabview):
     def __init__(self, master, **kwargs):
@@ -429,9 +571,9 @@ class OtherStore(ui.CTkFrame):
         self.repos = ui.CTkSwitch(self.frame, text=repos_text+"/Flathub", offvalue="repos", onvalue="flathub", variable=self.repos_var, command=self.repos_command)
         self.entry = ui.CTkEntry(self.frame, placeholder_text=enter_pkg_text)
         self.button1 = ui.CTkButton(self.frame, text=search_text, command=self.go_search)
-        self.button2 = ui.CTkButton(self.frame, text=install_text, command=self.install)
-        self.button3 = ui.CTkButton(self.frame, text=reinstall_text, command=self.reinstall)
-        self.button4 = ui.CTkButton(self.frame, text=uninstall_text, command=self.uninstall)
+        self.button2 = ui.CTkButton(self.frame, text=install_text, command=self.go_install)
+        self.button3 = ui.CTkButton(self.frame, text=reinstall_text, command=self.go_reinstall)
+        self.button4 = ui.CTkButton(self.frame, text=uninstall_text, command=self.go_uninstall)
         self.source.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.repos.grid(row=1, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.entry.grid(row=2, column=0, sticky="nsew", pady=(20, 0), padx=(25, 0))
@@ -439,22 +581,9 @@ class OtherStore(ui.CTkFrame):
         self.button2.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
         self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
         self.button4.grid(row=6, column=0, sticky="nsew", padx=(25, 0))
-    def install_flatpak(self):
-        global ask_f
-        if os.path.isfile(en):
-            ask_f = mb.askyesno("Warning","Flatpak can't found on your system.\nWe can try installing Flatpak to your computer.\nDo you approve it?")
-        elif os.path.isfile(tr):
-            ask_f = mb.askyesno("Uyarı","Flatpak sisteminizde bulunamadı.\nBiz sisteminize Flatpak yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
-        if ask_f == True:
-            pass
-        elif ask_f == False:
-            if os.path.isfile(en):
-                mb.showinfo("Information","Flatpak installation and process cancelled.")
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","Flatpak kurulumu ve işlem iptal edildi.")
     def repos_command(self):
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak") and self.repos_var.get() == "flathub":
-            self.install_flatpak()
+            install_app("Flatpak", "flatpak")
     def search_main(self):
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
@@ -468,40 +597,49 @@ class OtherStore(ui.CTkFrame):
             self.textbox.configure(state="disabled")
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                self.install_flatpak()
-                if ask_f == False:
+                install_app("Flatpak", "flatpak")
+                if ask_a == False:
                     return
             pass
     def go_search(self):
         t = threading.Thread(target=self.search_main, daemon=False)
         t.start()
-    def install(self):
+    def install_main(self):
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                self.install_flatpak()
-                if ask_f == False:
+                install_app("Flatpak", "flatpak")
+                if ask_a == False:
                     return
             pass
-    def reinstall(self):
+    def go_install(self):
+        t = threading.Thread(target=self.install_main, daemon=False)
+        t.start()
+    def reinstall_main(self):
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                self.install_flatpak()
-                if ask_f == False:
+                install_app("Flatpak", "flatpak")
+                if ask_a == False:
                     return
             pass
-    def uninstall(self):
+    def go_reinstall(self):
+        t = threading.Thread(target=self.reinstall_main, daemon=False)
+        t.start()
+    def uninstall_main(self):
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                self.install_flatpak()
-                if ask_f == False:
+                install_app("Flatpak", "flatpak")
+                if ask_a == False:
                     return
             pass
+    def go_uninstall(self):
+        t = threading.Thread(target=self.uninstall_main, daemon=False)
+        t.start()
 
 class DEWMStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -546,39 +684,45 @@ class Tools(ui.CTkFrame):
 class Scripts(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
             self.button1 = ui.CTkButton(self, command=self.cups, text="Open Cups Configuration Page")
-            self.button2 = ui.CTkButton(self, command=self.wine, text="Open Wine Configuration App")
-            self.button3 = ui.CTkButton(self, command=self.update, text="Update System And Packages")
-            self.button4 = ui.CTkButton(self, command=self.clear, text="Clear Package Cache")
+            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Open Wine Configuration App")
+            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Open Grub Customizer")
+            self.button4 = ui.CTkButton(self, command=self.update, text="Update System And Packages")
+            self.button5 = ui.CTkButton(self, command=self.clear, text="Clear Package Cache")
         elif os.path.isfile(tr):
             self.button1 = ui.CTkButton(self, command=self.cups, text="Cups Yapılandırma Sayfasını Aç")
-            self.button2 = ui.CTkButton(self, command=self.wine, text="Wine Yapılandırma Uygulamasını Aç")
-            self.button3 = ui.CTkButton(self, command=self.update, text="Sistemi Ve Paketleri Güncelle")
-            self.button4 = ui.CTkButton(self, command=self.clear, text="Paket Önbelleğini Temizle")
+            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine Yapılandırma Uygulamasını Aç")
+            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Grub Customizer Uygulamasını Aç")
+            self.button4 = ui.CTkButton(self, command=self.update, text="Sistemi Ve Paketleri Güncelle")
+            self.button5 = ui.CTkButton(self, command=self.clear, text="Paket Önbelleğini Temizle")
         self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 50), padx=50)
         self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 50), padx=50)
         self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 50), padx=50)
-        self.button4.grid(row=3, column=0, sticky="nsew", padx=50)
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 50), padx=50)
+        self.button5.grid(row=4, column=0, sticky="nsew", padx=50)
     def cups(self):
         subprocess.Popen('xdg-open localhost:631', shell=True)
-    def wine(self):
+    def wine_main(self):
         if not os.path.isfile("/usr/bin/winecfg") and not os.path.isfile("/bin/winecfg"):
-            if os.path.isfile(en):
-                ask_w = mb.askyesno("Warning","Wine can't found on your system.\nWe can try installing Wine to your computer.\nDo you approve it?")
-            elif os.path.isfile(tr):
-                ask_w = mb.askyesno("Uyarı","Wine sisteminizde bulunamadı.\nBiz sisteminize Wine yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
-            if ask_w == True:
-                pass
-            elif ask_w == False:
-                if os.path.isfile(en):
-                    mb.showinfo("Information","Wine installation and process cancelled.")
-                elif os.path.isfile(tr):
-                    mb.showinfo("Bilgilendirme","Wine kurulumu ve işlem iptal edildi.")
+            install_app("Wine", "wine")
+            if ask_a == False:
                 return
         subprocess.Popen('winecfg', shell=True)
+    def go_wine(self):
+        t = threading.Thread(target=self.wine_main, daemon=False)
+        t.start()
+    def grub_main(self):
+        if not os.path.isfile("/usr/bin/grub-customizer") and not os.path.isfile("/bin/grub-customizer"):
+            install_app("Grub Customizer", "grub-customizer")
+            if ask_a == False:
+                return
+        subprocess.Popen('grub-customizer', shell=True)  
+    def go_grub(self):
+        t = threading.Thread(target=self.grub_main, daemon=False)
+        t.start()      
     def update(self):
         pass
     def clear(self):
@@ -588,30 +732,36 @@ class Main(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(en):
-            tab0 = self.add("Starting")
-            tab1 = self.add("Store")
-            tab2 = self.add("Tools")
-            tab3 = self.add("Scripts")
+            tab_starting = self.add("Starting")
+            tab_notes = self.add("Notes")
+            tab_store = self.add("Store")
+            tab_tools = self.add("Tools")
+            tab_scripts = self.add("Scripts")
         elif os.path.isfile(tr):
-            tab0 = self.add("Başlangıç")
-            tab1 = self.add("Mağaza")
-            tab2 = self.add("Araçlar")
-            tab3 = self.add("Betikler")
-        tab0.grid_columnconfigure(0, weight=1)
-        tab0.grid_rowconfigure(0, weight=1)
-        self.starting_frame=Starting(tab0)
+            tab_starting = self.add("Başlangıç")
+            tab_notes = self.add("Notlar")
+            tab_store = self.add("Mağaza")
+            tab_tools = self.add("Araçlar")
+            tab_scripts = self.add("Betikler")
+        tab_starting.grid_columnconfigure(0, weight=1)
+        tab_starting.grid_rowconfigure(0, weight=1)
+        self.starting_frame=Starting(tab_starting)
         self.starting_frame.grid(row=0, column=0, sticky="nsew")       
-        tab1.grid_columnconfigure(0, weight=1)
-        tab1.grid_rowconfigure(0, weight=1)
-        self.store_frame=Store(tab1)
+        tab_notes.grid_columnconfigure(0, weight=1)
+        tab_notes.grid_rowconfigure(0, weight=1)
+        self.notes_frame=Notes(tab_notes)
+        self.notes_frame.grid(row=0, column=0, sticky="nsew")     
+        tab_store.grid_columnconfigure(0, weight=1)
+        tab_store.grid_rowconfigure(0, weight=1)
+        self.store_frame=Store(tab_store)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
-        tab2.grid_columnconfigure(0, weight=1)
-        tab2.grid_rowconfigure(0, weight=1)
-        self.tools_frame=Tools(tab2)
+        tab_tools.grid_columnconfigure(0, weight=1)
+        tab_tools.grid_rowconfigure(0, weight=1)
+        self.tools_frame=Tools(tab_tools)
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
-        tab3.grid_columnconfigure(0, weight=1)
-        tab3.grid_rowconfigure(0, weight=1)
-        self.scripts_frame=Scripts(tab3)
+        tab_scripts.grid_columnconfigure(0, weight=1)
+        tab_scripts.grid_rowconfigure(0, weight=1)
+        self.scripts_frame=Scripts(tab_scripts)
         self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
 class Root(ui.CTk):
