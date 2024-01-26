@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.4.0 (Alpha)" # temporary
+version_current = "v0.2.4.1 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
@@ -41,13 +41,13 @@ s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
 
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb ; cd grelintb ; mkdir language ; mkdir theme ; mkdir startup")
-    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd startup ; touch true.txt")
+    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd startup ; touch false.txt")
 if not os.path.isdir(config+"language/"):
     os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
 if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
 if not os.path.isdir(config+"startup/"):
-    os.system("cd "+config+" ; mkdir startup ; cd startup ; touch true.txt")
+    os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
 
@@ -117,8 +117,8 @@ class AboutWindow(ui.CTkToplevel):
             if version_current == version_latest:
                 self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
             elif version_current != version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))        
-                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))      
+                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
+                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
         elif os.path.isfile(tr):
             self.title("Hakkında")
             self.button2 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
@@ -138,8 +138,8 @@ class AboutWindow(ui.CTkToplevel):
         os.system("xdg-open https://github.com/mukonqi/grelintb")
     def changelog_current(self):
         self.ccw = ui.CTkToplevel()
-        self.ccw.geometry("560x560")
-        self.ccw.minsize(560, 560)
+        self.ccw.geometry("600x600")
+        self.ccw.minsize(600, 600)
         self.ccw.grid_rowconfigure(0, weight=1)
         self.ccw.grid_columnconfigure(0, weight=1)
         # if os.path.isfile(en):
@@ -155,8 +155,8 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox.grid(row=0, column=0, sticky="nsew")
     def changelog_latest(self):
         self.clw = ui.CTkToplevel()
-        self.clw.geometry("560x560")
-        self.clw.minsize(560, 560)
+        self.clw.geometry("600x600")
+        self.clw.minsize(600, 600)
         self.clw.grid_rowconfigure(0, weight=1)
         self.clw.grid_columnconfigure(0, weight=1)
         # if os.path.isfile(en):
@@ -170,8 +170,8 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox.grid(row=0, column=0, sticky="nsew")
     def gplv3(self):
         self.lw = ui.CTkToplevel()
-        self.lw.geometry("560x560")
-        self.lw.minsize(560, 560)
+        self.lw.geometry("600x600")
+        self.lw.minsize(600, 600)
         self.lw.grid_rowconfigure(0, weight=1)
         self.lw.grid_columnconfigure(0, weight=1)
         # if os.path.isfile(en):
@@ -202,7 +202,7 @@ class Sidebar(ui.CTkFrame):
             self.button_2 = ui.CTkButton(self, text="Update", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Reset", command=self.reset)
             self.button_4 = ui.CTkButton(self, text=uninstall_text, command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Startup Informations", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
@@ -218,7 +218,7 @@ class Sidebar(ui.CTkFrame):
             self.button_2 = ui.CTkButton(self, text="Güncelle", command=self.update)
             self.button_3 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.button_4 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
@@ -260,7 +260,7 @@ class Sidebar(ui.CTkFrame):
         if new_appearance == "System" or new_appearance == "Sistem":
             os.system("cd "+config+"theme ; rm * ; touch system.txt")
             ui.set_appearance_mode("System")
-        elif new_appearance == "Light" or new_appearance == "Açık": 
+        elif new_appearance == "Light" or new_appearance == "Açık":
             ui.set_appearance_mode("Light")
             os.system("cd "+config+"theme ; rm * ; touch light.txt")
         elif new_appearance == "Dark" or new_appearance == "Koyu":
@@ -315,125 +315,169 @@ class Notes(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.content = ui.CTkTextbox(self)
         self.content.grid(row=0, column=0, sticky="nsew")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, fg_color="transparent")
+        self.tabview.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
+        if os.path.isfile(en):
+            self.from_list = self.tabview.add("From List")
+            self.any = self.tabview.add("Any")
+        elif os.path.isfile(tr):
+            self.from_list = self.tabview.add("Listeden")
+            self.any = self.tabview.add("Herhangi")
+        self.from_list.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.from_list.grid_columnconfigure(0, weight=1),
+        self.any.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.any.grid_columnconfigure(0, weight=1)
         self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list = ui.CTkTextbox(self.frame)
+        self.list = ui.CTkTextbox(self.from_list)
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if os.path.isfile(en):
-            self.label = ui.CTkLabel(self.frame, text="Your notes listed below:")
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Enter note name...")
-            self.button1 = ui.CTkButton(self.frame, text="Open From List", command=self.open_list)
-            self.button2 = ui.CTkButton(self.frame, text="Open Any Note", command=self.open_any)
-            self.button3 = ui.CTkButton(self.frame, text="Delete", command=self.delete)
-            self.button4 = ui.CTkButton(self.frame, text="Save", command=self.save)
+            self.label1 = ui.CTkLabel(self.from_list, text="Your notes listed below:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Please enter note name...")
+            self.button11 = ui.CTkButton(self.from_list, text="Open", command=self.open_list)
+            self.button12 = ui.CTkButton(self.from_list, text="Delete", command=self.delete_list)
+            self.button13 = ui.CTkButton(self.from_list, text="Save", command=self.save_list)
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Note name...")
+            self.button21 = ui.CTkButton(self.any, text="Open", command=self.open_any)
+            self.button22 = ui.CTkButton(self.any, text="Delete", command=self.delete_any)
+            self.button23 = ui.CTkButton(self.any, text="Save", command=self.save_any)
         elif os.path.isfile(tr):
-            self.label = ui.CTkLabel(self.frame, text="Notlarınız aşağıda listelenmiştir:")
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Not adı girin...")
-            self.button1 = ui.CTkButton(self.frame, text="Listeden Aç", command=self.open_list)
-            self.button2 = ui.CTkButton(self.frame, text="Herhangi Bir Notu Aç", command=self.open_any)
-            self.button3 = ui.CTkButton(self.frame, text="Sil", command=self.delete)
-            self.button4 = ui.CTkButton(self.frame, text="Kaydet", command=self.save)
-        self.label.grid(row=0, column=0, sticky="nsew", pady=(0, 0), padx=(25, 0))
-        self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
-        self.entry.grid(row=2, column=0, sticky="nsew", pady=(5, 5), padx=(25, 0))
-        self.button1.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
-        self.button2.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
-        self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
-        self.button4.grid(row=6, column=0, sticky="nsew", pady=(0, 0), padx=(25, 0))
-    def error_message(self):
+            self.label1 = ui.CTkLabel(self.from_list, text="Notlarınız aşağıda listelenmiştir:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Lütfen not adı girin...")
+            self.button11 = ui.CTkButton(self.from_list, text="Aç", command=self.open_list)
+            self.button12 = ui.CTkButton(self.from_list, text="Sil", command=self.delete_list)
+            self.button13 = ui.CTkButton(self.from_list, text="Kaydet", command=self.save_list)
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Not adı...")
+            self.button21 = ui.CTkButton(self.any, text="Aç", command=self.open_any)
+            self.button22 = ui.CTkButton(self.any, text="Sil", command=self.delete_any)
+            self.button23 = ui.CTkButton(self.any, text="Kaydet", command=self.save_any)
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 0), padx=(15, 0))
+        self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.entry1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button11.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button12.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button13.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.entry2.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button21.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button22.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button23.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+    def open_error(self):
         if os.path.isfile(en):
             mb.showerror("Error","The note could not be opened.")
         elif os.path.isfile(tr):
             mb.showerror("Hata","Not açılamadı.")
+    def no_note_error(self):
+        if os.path.isfile(en):
+            mb.showerror("Error","There is no such note.")
+        elif os.path.isfile(tr):
+            mb.showerror("Hata","Öyle bir not yok.")
+    def delete_error(self):
+        if os.path.isfile(en):
+            mb.showerror("Error","The note could not be deleted.")
+        elif os.path.isfile(tr):
+            mb.showerror("Hata","Not silinemedi.")
+    def delete_successful(self):
+        if os.path.isfile(en):
+            mb.showinfo("Information","The note deleted.")
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme","Not silindi.")
+    def save_successful(self):
+        if os.path.isfile(en):
+            mb.showinfo("Information","The note saved.")
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme","Not kaydedildi.")
+    def save_error(self):
+        if os.path.isfile(en):
+            mb.showerror("Error","The note could not be saved.")
+        elif os.path.isfile(tr):
+            mb.showerror("Hata","Not kaydedilemedi.")
     def open_list(self):
-        if self.file_a != None:
-            self.file_a = None
         try:
-            with open(notes+self.entry.get(), "r") as self.file_l:
+            with open(notes+self.entry1.get(), "r") as self.file_l:
                 self.text = self.file_l.read()
         except:
-            self.error_message()
+            self.open_error()
             return
         self.content.delete("0.0", 'end')
         self.content.insert("0.0", self.text)
-    def open_any(self):
-        if self.file_l != None:
-            self.file_l = None
-        try:
-            self.file_a = fd.askopenfilename()
-            with open(self.file_a, "r") as self.file_ao:
-                self.text = self.file_ao.read()
-        except:
-            self.error_message()
+    def delete_list(self):
+        if not os.path.isfile(notes+self.entry1.get()):
+            self.no_note_error()
             return
-        self.content.delete("0.0", 'end')
-        self.content.insert("0.0", self.text)
-    def delete(self):
-        if not os.path.isfile(notes+self.entry.get()):
-            if os.path.isfile(en):
-                mb.showerror("Error","There is no such note.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Öyle bir not yok.")
-            return
-        os.system("cd "+notes+" ; rm "+self.entry.get())
-        if os.path.isfile(notes+self.entry.get()):
-            if os.path.isfile(en):
-                mb.showerror("Error","The note could not be deleted.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not silinemedi.")
+        os.system("cd "+notes+" ; rm '"+self.entry1.get()+"'")
+        if os.path.isfile(notes+self.entry1.get()):
+            self.delete_error()
         else:
-            if os.path.isfile(en):
-                mb.showinfo("Information","The note deleted.")
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","Not silindi.")
+            self.delete_successful()
         self.list.configure(state="normal")
         self.list.delete("0.0", 'end')
         self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
-    def save(self):
-        if self.file_l != None or self.file_l == None and self.file_a == None:
-            if self.entry.get() == None:
-                if os.path.isfile(en):
-                    mb.showerror("Error","You did not enter a note name.")
-                elif os.path.isfile(tr):
-                    mb.showerror("Hata","Not adı girmediniz.")        
-                return
-            with open(notes+self.entry.get(), "w+") as self.file:
-                self.file.write(self.content.get("0.0", 'end'))
-            with open(notes+self.entry.get()) as self.file:    
-                self.output = self.file.read()
-        elif self.file_a != None:
-            with open(self.file_a, "w+") as self.file:
-                self.file.write(self.content.get("0.0", 'end'))
-            with open(self.file_a) as self.file:
-                self.output = self.file.read()
+    def save_list(self):
+        if self.entry1.get() == None:
+            if os.path.isfile(en):
+                mb.showerror("Error","You did not enter a note name.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not adı girmediniz.")
+            return
+        with open(notes+self.entry1.get(), "w+") as self.file:
+            self.file.write(self.content.get("0.0", 'end'))
+        with open(notes+self.entry1.get()) as self.file:
+            self.output = self.file.read()
         self.list.configure(state="normal")
         self.list.delete("0.0", 'end')
         self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if self.output == self.content.get("0.0", 'end'):
-            if os.path.isfile(en):
-                mb.showinfo("Information","The note saved.")
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","Not kaydedildi.")
+            self.save_successful()
         else:
-            if os.path.isfile(en):
-                mb.showerror("Error","The note could not be saved.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not kaydedilemedi.") 
+            self.save_error()
+    def open_any(self):
+        if self.entry2.get() == "":
+            try:
+                self.file_a = fd.askopenfilename()
+                with open(self.file_a, "r") as self.file_ao:
+                    self.text = self.file_ao.read()
+                self.entry2.insert(0, self.file_a)
+            except:
+                self.open_error()
+                return
+        else:
+            try:
+                with open(self.entry2.get(), "r") as self.file_a:
+                    self.text = self.file_a.read()
+            except:
+                self.open_error()
+                return
+        self.content.delete("0.0", 'end')
+        self.content.insert("0.0", self.text)
+    def delete_any(self):
+        if not os.path.isfile(self.entry2.get()):
+            self.no_note_error()
+            return
+        os.system("rm '"+self.entry2.get()+"'")
+        if os.path.isfile(self.entry2.get()):
+            self.delete_error()
+        else:
+            self.delete_successful()
+    def save_any(self):
+        with open(self.entry2.get(), "w+") as self.file:
+            self.file.write(self.content.get("0.0", 'end'))
+        with open(self.entry2.get()) as self.file:
+            self.output = self.file.read()
+        if self.output == self.content.get("0.0", 'end'):
+            self.save_successful()
+        else:
+            self.save_error()
 
 class AppStore(ui.CTkTabview):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        app1 = self.add("Mukotes")    
+        app1 = self.add("Mukotes")
         app2 = self.add("Firefox")
         app3 = self.add("Brave")
         app4 = self.add("VLC")
@@ -719,10 +763,10 @@ class Scripts(ui.CTkFrame):
             install_app("Grub Customizer", "grub-customizer")
             if ask_a == False:
                 return
-        subprocess.Popen('grub-customizer', shell=True)  
+        subprocess.Popen('grub-customizer', shell=True)
     def go_grub(self):
         t = threading.Thread(target=self.grub_main, daemon=False)
-        t.start()      
+        t.start()
     def update(self):
         pass
     def clear(self):
@@ -746,11 +790,11 @@ class Main(ui.CTkTabview):
         tab_starting.grid_columnconfigure(0, weight=1)
         tab_starting.grid_rowconfigure(0, weight=1)
         self.starting_frame=Starting(tab_starting)
-        self.starting_frame.grid(row=0, column=0, sticky="nsew")       
+        self.starting_frame.grid(row=0, column=0, sticky="nsew")
         tab_notes.grid_columnconfigure(0, weight=1)
         tab_notes.grid_rowconfigure(0, weight=1)
         self.notes_frame=Notes(tab_notes)
-        self.notes_frame.grid(row=0, column=0, sticky="nsew")     
+        self.notes_frame.grid(row=0, column=0, sticky="nsew")
         tab_store.grid_columnconfigure(0, weight=1)
         tab_store.grid_rowconfigure(0, weight=1)
         self.store_frame=Store(tab_store)
@@ -768,7 +812,7 @@ class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.title("GrelinTB")
-        self.geometry("1280x640")
+        self.geometry("1200x600")
         self.resizable(0, 0)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
