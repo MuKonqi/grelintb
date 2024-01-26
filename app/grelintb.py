@@ -859,7 +859,7 @@ class Tools(ui.CTkFrame):
         if os.path.isfile(en):
             tab1 = self.tabview.add("Configuring .bashrc File")
             tab2 = self.tabview.add("Change Computer's Name")
-            tab3 = self.tabview.add("Informations About Some Distro")
+            tab3 = self.tabview.add("Informations About Some Distributions")
         elif os.path.isfile(tr):
             tab1 = self.tabview.add(".bashrc Dosyasını Yapılandır")
             tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
