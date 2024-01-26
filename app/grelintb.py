@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.4.1 (Alpha)" # temporary
+version_current = "v0.2.5.0 (Alpha)" # temporary
 # version_file = open("/usr/local/bin/grelintb/version.txt", "r")
 # version_current = version_file.readline()
 # version_file.close()
@@ -50,6 +50,8 @@ if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
+if not os.path.isfile("/home/"+username+"/.bashrc-first.bak"):
+    os.system("cd /home/"+username+" ; cp .bashrc .bashrc-first.bak")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -708,22 +710,173 @@ class Store(ui.CTkFrame):
             tab3 = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
-        self.store_frame=AppStore(tab1)
-        self.store_frame.grid(row=0, column=0, sticky="nsew")
+        self.appstore_frame=AppStore(tab1)
+        self.appstore_frame.grid(row=0, column=0, sticky="nsew")
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
-        self.store_frame=OtherStore(tab2)
-        self.store_frame.grid(row=0, column=0, sticky="nsew")
+        self.otherstore_frame=OtherStore(tab2)
+        self.otherstore_frame.grid(row=0, column=0, sticky="nsew")
         tab3.grid_columnconfigure(0, weight=1)
         tab3.grid_rowconfigure(0, weight=1)
-        self.store_frame=DEWMStore(tab3)
-        self.store_frame.grid(row=0, column=0, sticky="nsew")
+        self.dewmstore_frame=DEWMStore(tab3)
+        self.dewmstore_frame.grid(row=0, column=0, sticky="nsew")
+
+class Bashrc(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_columnconfigure((0, 1, 2), weight=1)
+        os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session.bak")
+        if os.path.isfile(en):
+            self.label1 = ui.CTkLabel(self, text="Without Colors")
+            self.button1 = ui.CTkButton(self, text="Add My Username", command=self.username1)
+            self.button2 = ui.CTkButton(self, text="Add System Info Help Of Neofetch", command=self.systeminfo1)
+            self.button3 = ui.CTkButton(self, text="Add Memory Consumption", command=self.memory1)
+            self.label2 = ui.CTkLabel(self, text="With Colors (Help Of Lolcat)")
+            self.button4 = ui.CTkButton(self, text="Add My Username ", command=self.username2)
+            self.button5 = ui.CTkButton(self, text="Add System Info Help Of Neofetch", command=self.systeminfo2)
+            self.button6 = ui.CTkButton(self, text="Add Memory Consumption", command=self.memory2)
+            self.label3 = ui.CTkLabel(self, text="Undo Options")
+            self.button7 = ui.CTkButton(self, text="Undo Last Change", command=self.undo1)
+            self.button8 = ui.CTkButton(self, text="Undo Changes In This Session", command=self.undo2)
+            self.button9 = ui.CTkButton(self, text="Undo Changes Mate So Far", command=self.undo3)
+        elif os.path.isfile(tr):
+            self.label1 = ui.CTkLabel(self, text="Renkler Olmadan")
+            self.button1 = ui.CTkButton(self, text="Kullanıcı Adımı Ekle", command=self.username1)
+            self.button2 = ui.CTkButton(self, text="Sistem Bilgisini Neofetch Yardımıyla Ekle", command=self.systeminfo1)
+            self.button3 = ui.CTkButton(self, text="RAM Tüketimini Ekle", command=self.memory1)
+            self.label2 = ui.CTkLabel(self, text="Renklerle (Lolcat Yardımıyla)")
+            self.button4 = ui.CTkButton(self, text="Kullanıcı Adımı Ekle", command=self.username2)
+            self.button5 = ui.CTkButton(self, text="Sistem Bilgisini Neofetch Yardımıyla Ekle", command=self.systeminfo2)
+            self.button6 = ui.CTkButton(self, text="RAM Tüketimini Ekle", command=self.memory2)
+            self.label3 = ui.CTkLabel(self, text="Geri Alma Seçenekleri")
+            self.button7 = ui.CTkButton(self, text="Son Değişikliği Geri Al", command=self.undo1)
+            self.button8 = ui.CTkButton(self, text="Bu Oturumdaki Değişiklikleri Geri Al", command=self.undo2)
+            self.button9 = ui.CTkButton(self, text="Bugüne Kadar Yapılan Değişiklikleri Geri Al", command=self.undo3)
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=20, padx=10)
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=20, padx=10)
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=20, padx=10)
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=20, padx=10)
+        self.label2.grid(row=0, column=1, sticky="nsew", pady=20, padx=10)
+        self.button4.grid(row=1, column=1, sticky="nsew", pady=20, padx=10)
+        self.button5.grid(row=2, column=1, sticky="nsew", pady=20, padx=10)
+        self.button6.grid(row=3, column=1, sticky="nsew", pady=20, padx=10)
+        self.label3.grid(row=0, column=2, sticky="nsew", pady=20, padx=10)
+        self.button7.grid(row=1, column=2, sticky="nsew", pady=20, padx=10)
+        self.button8.grid(row=2, column=2, sticky="nsew", pady=20, padx=10)
+        self.button9.grid(row=3, column=2, sticky="nsew", pady=20, padx=10)
+    def successful(self):
+        if os.path.isfile(en):
+            mb.showinfo("Information",".bashrc configuration completed.")
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme",".bashrc yapılandırması tamamlandı.")
+    def username1(self):
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        if os.path.isfile(en):
+            os.system("echo 'echo Hello "+username+"!' >> /home/"+username+"/.bashrc")
+        elif os.path.isfile(tr):
+            os.system("echo 'echo Merhabalar "+username+"!' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def username2(self):
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        if not os.path.isfile("/usr/bin/lolcat") and not os.path.isfile("/bin/lolcat"):
+            install_app("Lolcat", "lolcat")
+            if ask_a == False:
+                return
+        if os.path.isfile(en):
+            os.system("echo 'echo Hello "+username+"! | lolcat' >> /home/"+username+"/.bashrc")
+        elif os.path.isfile(tr):
+            os.system("echo 'echo Merhabalar "+username+"! | lolcat' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def systeminfo1(self):
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("echo 'neofetch' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def systeminfo2(self):
+        if not os.path.isfile("/usr/bin/lolcat") and not os.path.isfile("/bin/lolcat"):
+            install_app("Lolcat", "lolcat")
+            if ask_a == False:
+                return
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("echo 'neofetch | lolcat' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def memory1(self):
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("echo 'free -h' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def memory2(self):
+        if not os.path.isfile("/usr/bin/lolcat") and not os.path.isfile("/bin/lolcat"):
+            install_app("Lolcat", "lolcat")
+            if ask_a == False:
+                return
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("echo 'free -h | lolcat' >> /home/"+username+"/.bashrc")
+        self.successful()
+    def undo1(self):
+        os.system("cp /home/"+username+"/.bashrc.bak /home/"+username+"/.bashrc")
+        self.successful()
+    def undo2(self):
+        os.system("cp /home/"+username+"/.bashrc-session.bak /home/"+username+"/.bashrc")
+        self.successful()
+    def undo3(self):
+        os.system("cp /home/"+username+"/.bashrc-first.bak /home/"+username+"/.bashrc")
+        self.successful()
+
+class ComputerName(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        with open("/etc/hostname", "r") as file:
+            computername = file.read()
+        if os.path.isfile(en):
+            self.label = ui.CTkLabel(self, text="Computer's current name: "+computername)
+            self.entry = ui.CTkEntry(self, placeholder_text="Enter a new name for computer...")
+            self.button = ui.CTkButton(self, text="Apply", command=self.apply)
+        elif os.path.isfile(tr):
+            self.label = ui.CTkLabel(self, text="Bilgisayarın mevcut ismi: "+computername)
+            self.entry = ui.CTkEntry(self, placeholder_text="Bilgisayar için yeni bir isim girin...")
+            self.button = ui.CTkButton(self, text="Uygula", command=self.apply)
+        self.label.grid(row=0, column=0, sticky="nsew", padx=60, pady=15)
+        self.entry.grid(row=1, column=0, sticky="nsew", padx=60, pady=30)
+        self.button.grid(row=2, column=0, sticky="nsew", padx=60, pady=30)
+    def apply(self):
+        pass
+
+class Distros(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
 class Tools(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, corner_radius=25)
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        if os.path.isfile(en):
+            tab1 = self.tabview.add("Configuring .bashrc File")
+            tab2 = self.tabview.add("Change Computer's Name")
+            tab3 = self.tabview.add("Informations About Some Distro")
+        elif os.path.isfile(tr):
+            tab1 = self.tabview.add(".bashrc Dosyasını Yapılandır")
+            tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
+            tab3 = self.tabview.add("Bazı Dağıtımlar Hakkında Bilgiler")
+        tab1.grid_columnconfigure(0, weight=1)
+        tab1.grid_rowconfigure(0, weight=1)
+        self.bashrc_frame=Bashrc(tab1)
+        self.bashrc_frame.grid(row=0, column=0, sticky="nsew")
+        tab2.grid_columnconfigure(0, weight=1)
+        tab2.grid_rowconfigure(0, weight=1)
+        self.computername_frame=ComputerName(tab2)
+        self.computername_frame.grid(row=0, column=0, sticky="nsew")
+        tab3.grid_columnconfigure(0, weight=1)
+        tab3.grid_rowconfigure(0, weight=1)
+        self.distros_frame=Distros(tab3)
+        self.distros_frame.grid(row=0, column=0, sticky="nsew")
+
 
 class Scripts(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -734,13 +887,13 @@ class Scripts(ui.CTkFrame):
             self.button1 = ui.CTkButton(self, command=self.cups, text="Open Cups Configuration Page")
             self.button2 = ui.CTkButton(self, command=self.go_wine, text="Open Wine Configuration App")
             self.button3 = ui.CTkButton(self, command=self.go_grub, text="Open Grub Customizer")
-            self.button4 = ui.CTkButton(self, command=self.update, text="Update System And Packages")
+            self.button4 = ui.CTkButton(self, command=self.update, text="Update Packages")
             self.button5 = ui.CTkButton(self, command=self.clear, text="Clear Package Cache")
         elif os.path.isfile(tr):
             self.button1 = ui.CTkButton(self, command=self.cups, text="Cups Yapılandırma Sayfasını Aç")
             self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine Yapılandırma Uygulamasını Aç")
             self.button3 = ui.CTkButton(self, command=self.go_grub, text="Grub Customizer Uygulamasını Aç")
-            self.button4 = ui.CTkButton(self, command=self.update, text="Sistemi Ve Paketleri Güncelle")
+            self.button4 = ui.CTkButton(self, command=self.update, text="Paketleri Güncelle")
             self.button5 = ui.CTkButton(self, command=self.clear, text="Paket Önbelleğini Temizle")
         self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 50), padx=50)
         self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 50), padx=50)
