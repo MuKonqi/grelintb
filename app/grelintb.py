@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.6.1 (Alpha)" # pass
+version_current = "v0.2.6.2 (Alpha)" # pass
 # with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
 #     version_current = version_file.readline()
 
@@ -156,6 +156,7 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox = ui.CTkTextbox(self.ccw, fg_color="transparent")
         # self.textbox.insert("0.0", cc_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
+        # self.textbox.configure(state="disabled")
     def changelog_latest(self):
         self.clw = ui.CTkToplevel()
         self.clw.geometry("600x600")
@@ -171,6 +172,7 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
         # self.textbox.insert("0.0", cl_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
+        # self.textbox.configure(state="disabled")
     def gplv3(self):
         self.lw = ui.CTkToplevel()
         self.lw.geometry("600x600")
@@ -186,6 +188,7 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox = ui.CTkTextbox(self.lw, fg_color="transparent")
         # self.textbox.insert("0.0", license_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
+        # self.textbox.configure(state="disabled")
     def mukonqi(self):
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
 
@@ -1008,8 +1011,8 @@ class Distros(ui.CTkFrame):
             self.button6 = ui.CTkButton(distro6, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
             self.text7 = ui.CTkLabel(distro7, text="Fedora Linux is sponsered by Red Hat. Packages come to Fedora Linux before they come to RHEL."+
                 "\nFedora Linux has many versions for different desktop environments."+
-                "\n\nNote from GrelinTB developer: I'm writing this while using Fedora. The reason is that I think Arch-based distributions are very up to date,"+
-                "\nbut Debian-based ones are a bit behind. For me, Fedora is in the middle.")
+                "\n\nNote from GrelinTB developer: Fedora Linux is really suitable for users who want stability, simplicity, and up to date."+
+                "\nFedora Linux is one of the distributions I recommend.")
             self.button7 = ui.CTkButton(distro7, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
             self.text8 = ui.CTkLabel(distro8, text="Pop!_OS is an operating system for those who use their computer as a tool to discover and create."+
                 "\nIt offers a separate download option for Nvidia users."+
@@ -1048,8 +1051,8 @@ class Distros(ui.CTkFrame):
             self.button6 = ui.CTkButton(distro6, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
             self.text7 = ui.CTkLabel(distro7, text="Fedora Linux Red Hat tarafından desteklenmektedir. Paketler RHEL'e gelmeden önce Fedora Linux'a gelir."+
                 "\nFedora Linux'un farklı masaüstü ortamları için birçok sürümü vardır."+
-                "\n\nGrelinTB geliştiricisinin notu: Bunu Fedora kullanırken yazıyorum. Sebep ise Arch tabanlı dağıtımların çok güncel olduğunu"+
-                "\nfakat Debian tabanlıların da biraz geriden geldiğini düşünüyorum. Bana göre ortası Fedora.")
+                "\n\nGrelinTB geliştiricisinin notu: Fedora Linux gerçekten hem stabillik hem kolaylık hem de güncellik isteyen kullanıcılar için uygun."+
+                "\nFedora Linux, önerdiğim dağıtımlardan bir tanesi.")
             self.button7 = ui.CTkButton(distro7, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
             self.text8 = ui.CTkLabel(distro8, text="Pop!_OS, bilgisayarlarını keşfetmek ve yaratmak için bir araç olarak kullananlar için bir işletim sistemidir."+
                 "\nNvidia kullanıcıları için ayrı bir indirme seçeneği sunar."+
