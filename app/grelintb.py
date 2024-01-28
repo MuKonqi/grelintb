@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.6.0 (Alpha)" # pass
+version_current = "v0.2.6.1 (Alpha)" # pass
 # with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
 #     version_current = version_file.readline()
 
@@ -27,6 +27,7 @@ import subprocess
 import os
 import getpass
 from datetime import date
+import locale
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
@@ -40,18 +41,20 @@ s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
 
 if not os.path.isdir(config):
-    os.system("cd /home/"+username+"/.config ; mkdir grelintb ; cd grelintb ; mkdir language ; mkdir theme ; mkdir startup")
-    os.system("cd "+config+" ; cd language ; touch en.txt ; cd .. ; cd theme ; touch system.txt ; cd .. ; cd startup ; touch false.txt")
+    os.system("cd /home/"+username+"/.config ; mkdir grelintb")
 if not os.path.isdir(config+"language/"):
-    os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
+    if locale.getlocale()[0] == "tr_TR":
+        os.system("cd "+config+" ; mkdir language ; cd language ; touch tr.txt")
+    else:
+        os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
 if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
-if not os.path.isfile("/home/"+username+"/.bashrc-first.bak"):
-    os.system("cd /home/"+username+" ; cp .bashrc .bashrc-first.bak")
+if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
+    os.system("cd /home/"+username+" ; cp .bashrc .bashrc-first-grelintb.bak")
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -135,7 +138,7 @@ class AboutWindow(ui.CTkToplevel):
         if version_current != version_latest:
             self.button5.grid(row=4, column=0, sticky="nsew", padx=20, pady=5)
     def grelintb(self):
-        os.system("xdg-open https://github.com/mukonqi/grelintb")
+        subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True)
     def changelog_current(self):
         self.ccw = ui.CTkToplevel()
         self.ccw.geometry("600x600")
@@ -144,12 +147,12 @@ class AboutWindow(ui.CTkToplevel):
         self.ccw.grid_columnconfigure(0, weight=1)
         # if os.path.isfile(en):
         #     self.ccw.title("Changelog For "+version_current)
-        #     cc_file = open("/usr/local/bin/grelintb/changelog-en.txt", "r")
+        #     with open("/usr/local/bin/grelintb/changelog-en.txt", "r") as cc_file:
+        #         cc_text = cc_file.read()
         # elif os.path.isfile(tr):
         #     self.ccw.title(version_current+" için Değişiklik Günlüğü")
-        #     cc_file = open("/usr/local/bin/grelintb/changelog-tr.txt", "r")
-        # cc_text = cc_file.read()
-        # cc_file.close()
+        #     with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
+        #         cc_text = cc_file.read()
         # self.textbox = ui.CTkTextbox(self.ccw, fg_color="transparent")
         # self.textbox.insert("0.0", cc_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
@@ -178,14 +181,13 @@ class AboutWindow(ui.CTkToplevel):
         #     self.lw.title("GPLv3 License")
         # elif os.path.isfile(tr):
         #     self.lw.title("GPlv3 Lisansı")
-        # license_file = open("/usr/local/bin/grelintb/LICENSE.txt", "r")
-        # license_text = license_file.read()
-        # license_file.close()
+        # with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
+        #     license_text = license_file.read()
         # self.textbox = ui.CTkTextbox(self.lw, fg_color="transparent")
         # self.textbox.insert("0.0", license_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
     def mukonqi(self):
-        os.system("xdg-open https://mukonqi.github.io")
+        subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
 
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -277,6 +279,8 @@ class Starting(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(s_true):
+            self.grid_rowconfigure(3, weight=1)
+            self.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
                 self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
                 self.label1 = ui.CTkLabel(self, text="Weather Forecast According To wttr.in\nSystem Information Obtained Using Neofetch", font=ui.CTkFont(size=15, weight="normal"))
@@ -287,9 +291,9 @@ class Starting(ui.CTkFrame):
                 weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.label0.grid(row=0, column=0, pady=(0, 10))
             self.label1.grid(row=1, column=0, pady=(0, 10))
-            self.textbox1 = ui.CTkTextbox(self, width=940, height=25, fg_color="transparent")
+            self.textbox1 = ui.CTkTextbox(self, fg_color="transparent", height=25)
             self.textbox1.grid(row=2, column=0, sticky="nsew")
-            self.textbox2 = ui.CTkTextbox(self, width=940, height=400, fg_color="transparent")
+            self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
             self.textbox2.grid(row=3, column=0, sticky="nsew")
             neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox1.insert("0.0", weather)
@@ -314,7 +318,7 @@ class Notes(ui.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.content = ui.CTkTextbox(self)
-        self.content.grid(row=0, column=0, sticky="nsew")
+        self.content.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         self.tabview = ui.CTkTabview(self, fg_color="transparent")
         self.tabview.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
         if os.path.isfile(en):
@@ -325,42 +329,45 @@ class Notes(ui.CTkFrame):
             self.any = self.tabview.add("Herhangi")
         self.from_list.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
         self.from_list.grid_columnconfigure(0, weight=1),
-        self.any.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.any.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.any.grid_columnconfigure(0, weight=1)
         self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list = ui.CTkTextbox(self.from_list)
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if os.path.isfile(en):
-            self.label1 = ui.CTkLabel(self.from_list, text="Your notes listed below:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Please enter note name...")
+            self.label1 = ui.CTkLabel(self.from_list, text="- You can enter the note name yourself.\n- Do not enter to take new notes.\nIf you have taken notes, they are listed below:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Note the instruction at the top.")
             self.button11 = ui.CTkButton(self.from_list, text="Open", command=self.open_list)
             self.button12 = ui.CTkButton(self.from_list, text="Delete", command=self.delete_list)
             self.button13 = ui.CTkButton(self.from_list, text="Save", command=self.save_list)
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Note name...")
+            self.label2 = ui.CTkLabel(self.any, text="- You can enter the note name yourself.\n- Do not enter it to select it with the file dialog.")
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Note the instruction at the top.")
             self.button21 = ui.CTkButton(self.any, text="Open", command=self.open_any)
             self.button22 = ui.CTkButton(self.any, text="Delete", command=self.delete_any)
             self.button23 = ui.CTkButton(self.any, text="Save", command=self.save_any)
         elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self.from_list, text="Notlarınız aşağıda listelenmiştir:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Lütfen not adı girin...")
+            self.label1 = ui.CTkLabel(self.from_list, text="- Kendiniz not adı girebilirsiniz.\n- Yeni not almak için girmeyin.\nNotlar aldıysanız aşağıda listelenmiştir:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Üstteki yönergeye dikkat edin.")
             self.button11 = ui.CTkButton(self.from_list, text="Aç", command=self.open_list)
             self.button12 = ui.CTkButton(self.from_list, text="Sil", command=self.delete_list)
             self.button13 = ui.CTkButton(self.from_list, text="Kaydet", command=self.save_list)
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Not adı...")
+            self.label2 = ui.CTkLabel(self.any, text="- Kendiniz not adı girebilirsiniz.\n- Dosya diyoloğu ile seçmek için girmeyin.")
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Üstteki yönergöye dikkat edin.")
             self.button21 = ui.CTkButton(self.any, text="Aç", command=self.open_any)
             self.button22 = ui.CTkButton(self.any, text="Sil", command=self.delete_any)
             self.button23 = ui.CTkButton(self.any, text="Kaydet", command=self.save_any)
-        self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 0), padx=(15, 0))
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=0, padx=(15, 0))
         self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
         self.entry1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
         self.button11.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
         self.button12.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button13.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.entry2.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button21.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button22.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button23.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button13.grid(row=5, column=0, sticky="nsew", pady=(0, 0), padx=(15, 0))
+        self.label2.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.entry2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button21.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button22.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button23.grid(row=4, column=0, sticky="nsew", pady=0, padx=(15, 0))
     def open_error(self):
         if os.path.isfile(en):
             mb.showerror("Error","The note could not be opened.")
@@ -472,26 +479,28 @@ class Notes(ui.CTkFrame):
         else:
             self.save_error()
 
-class AppStore(ui.CTkTabview):
+class AppStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        app1 = self.add("Mukotes")
-        app2 = self.add("Firefox")
-        app3 = self.add("Brave")
-        app4 = self.add("VLC")
-        app5 = self.add("LibreOffice")
-        app6 = self.add("Cups")
-        app7 = self.add("GParted")
-        app8 = self.add("GIMP")
-        app9 = self.add("Wine")
-        app10 = self.add("VS Codium")
-        app11 = self.add("Steam")
-        app12 = self.add("Heroic")
-        app13 = self.add("Element")
-        app14 = self.add("Dolphin")
-        app15 = self.add("Thunar")
+        self.configure(fg_color="transparent")
+        self.tabview = ui.CTkTabview(self)
+        self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+        app1 = self.tabview.add("Firefox")
+        app2 = self.tabview.add("Brave")
+        app3 = self.tabview.add("VLC")
+        app4 = self.tabview.add("LibreOffice")
+        app5 = self.tabview.add("Cups")
+        app6 = self.tabview.add("GParted")
+        app7 = self.tabview.add("GIMP")
+        app8 = self.tabview.add("Wine")
+        app9 = self.tabview.add("VS Codium")
+        app10 = self.tabview.add("Steam")
+        app11 = self.tabview.add("Heroic")
+        app12 = self.tabview.add("Element")
+        app13 = self.tabview.add("Dolphin")
+        app14 = self.tabview.add("Thunar")
         app1.grid_columnconfigure((0), weight=1)
         app1.grid_rowconfigure((0, 1, 2), weight=1)
         app2.grid_columnconfigure(0, weight=1)
@@ -520,8 +529,6 @@ class AppStore(ui.CTkTabview):
         app13.grid_rowconfigure((0, 1, 2), weight=1)
         app14.grid_columnconfigure(0, weight=1)
         app14.grid_rowconfigure((0, 1, 2), weight=1)
-        app15.grid_columnconfigure(0, weight=1)
-        app15.grid_rowconfigure((0, 1, 2), weight=1)
         self.a1b1 = ui.CTkButton(app1, text=install_text, command=lambda:self.do("1"))
         self.a1b2 = ui.CTkButton(app1, text=reinstall_text, command=lambda:self.do("2"))
         self.a1b3 = ui.CTkButton(app1, text=uninstall_text, command=lambda:self.do("3"))
@@ -564,54 +571,48 @@ class AppStore(ui.CTkTabview):
         self.a14b1 = ui.CTkButton(app14, text=install_text, command=lambda:self.do("40"))
         self.a14b2 = ui.CTkButton(app14, text=reinstall_text, command=lambda:self.do("41"))
         self.a14b3 = ui.CTkButton(app14, text=uninstall_text, command=lambda:self.do("42"))
-        self.a15b1 = ui.CTkButton(app15, text=install_text, command=lambda:self.do("43"))
-        self.a15b2 = ui.CTkButton(app15, text=reinstall_text, command=lambda:self.do("44"))
-        self.a15b3 = ui.CTkButton(app15, text=uninstall_text, command=lambda:self.do("45"))
-        self.a1b1.grid(row=0, column=0)
-        self.a1b2.grid(row=1, column=0)
-        self.a1b3.grid(row=2, column=0)
-        self.a2b1.grid(row=0, column=0)
-        self.a2b2.grid(row=1, column=0)
-        self.a2b3.grid(row=2, column=0)
-        self.a3b1.grid(row=0, column=0)
-        self.a3b2.grid(row=1, column=0)
-        self.a3b3.grid(row=2, column=0)
-        self.a4b1.grid(row=0, column=0)
-        self.a4b2.grid(row=1, column=0)
-        self.a4b3.grid(row=2, column=0)
-        self.a5b1.grid(row=0, column=0)
-        self.a5b2.grid(row=1, column=0)
-        self.a5b3.grid(row=2, column=0)
-        self.a6b1.grid(row=0, column=0)
-        self.a6b2.grid(row=1, column=0)
-        self.a6b3.grid(row=2, column=0)
-        self.a7b1.grid(row=0, column=0)
-        self.a7b2.grid(row=1, column=0)
-        self.a7b3.grid(row=2, column=0)
-        self.a8b1.grid(row=0, column=0)
-        self.a8b2.grid(row=1, column=0)
-        self.a8b3.grid(row=2, column=0)
-        self.a9b1.grid(row=0, column=0)
-        self.a9b2.grid(row=1, column=0)
-        self.a9b3.grid(row=2, column=0)
-        self.a10b1.grid(row=0, column=0)
-        self.a10b2.grid(row=1, column=0)
-        self.a10b3.grid(row=2, column=0)
-        self.a11b1.grid(row=0, column=0)
-        self.a11b2.grid(row=1, column=0)
-        self.a11b3.grid(row=2, column=0)
-        self.a12b1.grid(row=0, column=0)
-        self.a12b2.grid(row=1, column=0)
-        self.a12b3.grid(row=2, column=0)
-        self.a13b1.grid(row=0, column=0)
-        self.a13b2.grid(row=1, column=0)
-        self.a13b3.grid(row=2, column=0)
-        self.a14b1.grid(row=0, column=0)
-        self.a14b2.grid(row=1, column=0)
-        self.a14b3.grid(row=2, column=0)
-        self.a15b1.grid(row=0, column=0)
-        self.a15b2.grid(row=1, column=0)
-        self.a15b3.grid(row=2, column=0)
+        self.a1b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a1b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a1b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a2b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a2b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a2b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a3b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a3b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a3b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a4b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a4b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a4b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a5b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a5b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a5b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a6b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a6b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a6b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a7b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a7b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a7b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a8b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a8b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a8b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a9b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a9b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a9b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a10b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a10b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a10b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a11b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a11b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a11b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a12b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a12b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a12b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a13b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a13b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a13b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
+        self.a14b1.grid(row=0, column=0, sticky="nsew", padx=100, pady=25)
+        self.a14b2.grid(row=1, column=0, sticky="nsew", padx=100, pady=25)
+        self.a14b3.grid(row=2, column=0, sticky="nsew", padx=100, pady=25)
     def do(self, name: str):
         pass
 
@@ -734,7 +735,7 @@ class Store(ui.CTkFrame):
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.appstore_frame=AppStore(tab1)
-        self.appstore_frame.grid(row=0, column=0, sticky="nsew")
+        self.appstore_frame.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
         self.otherstore_frame=OtherStore(tab2)
@@ -749,7 +750,7 @@ class Bashrc(ui.CTkFrame):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
-        os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session.bak")
+        os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session-grelintb.bak")
         if os.path.isfile(en):
             self.label1 = ui.CTkLabel(self, text="Without Colors")
             self.button1 = ui.CTkButton(self, text="Add My Username", command=self.username1)
@@ -794,14 +795,14 @@ class Bashrc(ui.CTkFrame):
         elif os.path.isfile(tr):
             mb.showinfo("Bilgilendirme",".bashrc yapılandırması tamamlandı.")
     def username1(self):
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         if os.path.isfile(en):
             os.system("echo 'echo Hello "+username+"!' >> /home/"+username+"/.bashrc")
         elif os.path.isfile(tr):
             os.system("echo 'echo Merhabalar "+username+"!' >> /home/"+username+"/.bashrc")
         self.successful()
     def username2(self):
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         if not os.path.isfile("/usr/bin/lolcat") and not os.path.isfile("/bin/lolcat"):
             install_app("Lolcat", "lolcat")
             if ask_a == False:
@@ -812,7 +813,7 @@ class Bashrc(ui.CTkFrame):
             os.system("echo 'echo Merhabalar "+username+"! | lolcat' >> /home/"+username+"/.bashrc")
         self.successful()
     def systeminfo1(self):
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         os.system("echo 'neofetch' >> /home/"+username+"/.bashrc")
         self.successful()
     def systeminfo2(self):
@@ -820,11 +821,11 @@ class Bashrc(ui.CTkFrame):
             install_app("Lolcat", "lolcat")
             if ask_a == False:
                 return
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         os.system("echo 'neofetch | lolcat' >> /home/"+username+"/.bashrc")
         self.successful()
     def memory1(self):
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         os.system("echo 'free -h' >> /home/"+username+"/.bashrc")
         self.successful()
     def memory2(self):
@@ -832,17 +833,17 @@ class Bashrc(ui.CTkFrame):
             install_app("Lolcat", "lolcat")
             if ask_a == False:
                 return
-        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc.bak")
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
         os.system("echo 'free -h | lolcat' >> /home/"+username+"/.bashrc")
         self.successful()
     def undo1(self):
-        os.system("cp /home/"+username+"/.bashrc.bak /home/"+username+"/.bashrc")
+        os.system("cp /home/"+username+"/.bashrc-grelintb.bak /home/"+username+"/.bashrc")
         self.successful()
     def undo2(self):
-        os.system("cp /home/"+username+"/.bashrc-session.bak /home/"+username+"/.bashrc")
+        os.system("cp /home/"+username+"/.bashrc-session-grelintb.bak /home/"+username+"/.bashrc")
         self.successful()
     def undo3(self):
-        os.system("cp /home/"+username+"/.bashrc-first.bak /home/"+username+"/.bashrc")
+        os.system("cp /home/"+username+"/.bashrc-first-grelintb.bak /home/"+username+"/.bashrc")
         self.successful()
 
 class ComputerName(ui.CTkFrame):
@@ -860,9 +861,9 @@ class ComputerName(ui.CTkFrame):
             self.label = ui.CTkLabel(self, text="Bilgisayarın mevcut ismi: "+computername)
             self.entry = ui.CTkEntry(self, placeholder_text="Bilgisayar için yeni bir isim girin...")
             self.button = ui.CTkButton(self, text="Uygula", command=self.apply)
-        self.label.grid(row=0, column=0, sticky="nsew", padx=60, pady=15)
-        self.entry.grid(row=1, column=0, sticky="nsew", padx=60, pady=30)
-        self.button.grid(row=2, column=0, sticky="nsew", padx=60, pady=30)
+        self.label.grid(row=0, column=0, sticky="nsew", padx=80, pady=(20, 0))
+        self.entry.grid(row=1, column=0, sticky="nsew", padx=80, pady=40)
+        self.button.grid(row=2, column=0, sticky="nsew", padx=80, pady=40)
     def apply(self):
         pass
 
@@ -1055,11 +1056,11 @@ class Distros(ui.CTkFrame):
                 "\nSystemd-boot kullandığı için sadece UEFI destekler.")
             self.button8 = ui.CTkButton(distro8, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
             self.text9 = ui.CTkLabel(distro9, text="Hedef kitlesi Windows'tan ve Mac'ten geçen kullanıcılar olan ve kullanım kolaylığı sağlamak isteyen bir dağıtım."+
-                "\n\nGrelinTB geliştiricisi notu: Bir ara ben de kullandım fakat pek tavsiye etmiyorum çünkü Pro sürümü mantığı bence saçma.")
+                "\n\nGrelinTB geliştiricisinin notu: Bir ara ben de kullandım fakat pek tavsiye etmiyorum çünkü Pro sürümü mantığı bence saçma.")
             self.button9 = ui.CTkButton(distro9, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
             self.text10 = ui.CTkLabel(distro10, text="Bu listede GrelinTB'nin desteklemediği tek dağıtımdır kendisi. Birçok kitleyi hedef alır ve kendi araçlarına sahiptir."+
                 "\nTumbleweed (daha güncel olan), Leap (daha stabil olan) olarak ikiye ayrılır."+
-                "\n\nGrelinTB geliştiricisi notu: Çeşitli kaynaklardan okuduğum kadarıyla Tumbleweed kullanmak daha iyiymiş.")
+                "\n\nGrelinTB geliştiricisinin notu: Çeşitli kaynaklardan okuduğum kadarıyla Tumbleweed kullanmak daha iyiymiş.")
             self.button10 = ui.CTkButton(distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True)) 
         self.text1.grid(row=0, column=0, sticky="nsew")
         self.button1.grid(row=1, column=0, sticky="nsew")   
@@ -1211,7 +1212,7 @@ class Root(ui.CTk):
         super().__init__(**kwargs)
         self.title("GrelinTB")
         self.geometry("1200x600")
-        self.resizable(0, 0)
+        self.minsize(1200, 600)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.sidebar_frame = Sidebar(self, corner_radius=0)
@@ -1220,10 +1221,10 @@ class Root(ui.CTk):
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
         if date.today().strftime("%d/%m") == "04/12":
             if os.path.isfile(en):
-                mb.showinfo("Birthday","Today is the birthday of GrelinTB developer MuKonqi (Muhammed S.)!")
+                mb.showinfo("Birthday","Today is the birthday of GrelinTB developer MuKonqi (Muhammed S.)!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
             elif os.path.isfile(tr):
-                mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!")
+                mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nI hope he updated the information on his website on time this time :D")
 
 if __name__ == "__main__":
-    root = Root()
+    root = Root(className=" GrelinTB")
     root.mainloop()
