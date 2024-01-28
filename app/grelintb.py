@@ -1221,9 +1221,9 @@ class Root(ui.CTk):
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
         if date.today().strftime("%d/%m") == "04/12":
             if os.path.isfile(en):
-                mb.showinfo("Birthday","Today is the birthday of GrelinTB developer MuKonqi (Muhammed S.)!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
+                mb.showinfo("Birthday","Today is the birthday of GrelinTB developer MuKonqi (Muhammed S.)!\nI hope he updated the information on his website on time this time :D")
             elif os.path.isfile(tr):
-                mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nI hope he updated the information on his website on time this time :D")
+                mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
 
 if __name__ == "__main__":
     root = Root(className=" GrelinTB")
