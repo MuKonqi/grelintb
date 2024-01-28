@@ -13,4 +13,4 @@
 - Tkinter (package name: `python3-tk` (usually for Debian based) or `python3-tkinter` (usually for others))
 ## Installing
 - You can find installing. :)
-- At the moment there is no guide and no founder.
+- At the moment there is no guide and no installer.
