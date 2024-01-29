@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.6.2 (Alpha)" # pass
+version_current = "v0.2.6.3 (Alpha)" # pass
 # with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
 #     version_current = version_file.readline()
 
@@ -78,6 +78,10 @@ if os.path.isfile(en):
     enter_pkg_text = "Enter package name..."
     source_text = "Source"
     repos_text = "Repositories"
+    searching = "Searching"
+    installing = "Installing"
+    reinstalling = "Reinstalling"
+    uninstalling = "Uninstalling"
 elif os.path.isfile(tr):
     install_text = "Kur"
     reinstall_text = "Yeniden Kur"
@@ -86,7 +90,18 @@ elif os.path.isfile(tr):
     enter_pkg_text = "Paket adı girin..."
     source_text = "Kaynak"
     repos_text = "Depolar"
+    searching = "Aranıyor"
+    installing = "Kuruluyor"
+    reinstalling = "Yeniden Kuruluyor"
+    uninstalling = "Kaldırılıyor"
 
+def running(process: str):
+    if os.path.isfile(en):
+        status.configure(text="Status:\nPackage(s) "+process)
+    elif os.path.isfile(tr):
+        status.configure(text="Durum:\nPaketler "+process)
+def normal():
+    status.configure(text="Durum: Hazır")
 def install_app(appname: str, packagename: str):
     global ask_a
     if os.path.isfile(en):
@@ -94,52 +109,84 @@ def install_app(appname: str, packagename: str):
     elif os.path.isfile(tr):
         ask_a = mb.askyesno("Uyarı",appname+" sisteminizde bulunamadı.\nBiz sisteminize "+appname+" yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
     if ask_a == True:
-        pass
+        running(installing)
+        # pass
+        normal()
     elif ask_a == False:
         if os.path.isfile(en):
             mb.showinfo("Information",appname+" installation and process cancelled.")
         elif os.path.isfile(tr):
             mb.showinfo("Bilgilendirme",appname+" kurulumu ve işlem iptal edildi.")
 
-class AboutWindow(ui.CTkToplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        global version_latest
-        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
-        if version_current != version_latest:
-            self.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.geometry("640x320")
-        self.minsize(640, 320)
-        self.button1 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="GrelinTB\nGreat Tool Box for Linux", command=self.grelintb, font=ui.CTkFont(size=20, weight="bold"))
+class Sidebar(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        global status
+        self.grid_rowconfigure((4, 8), weight=1)
+        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
+        if os.path.isfile(s_true):
+            self.startup_var = ui.StringVar(value="on")
+        elif os.path.isfile(s_false):
+            self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
-            self.title("About")
-            self.button2 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="License: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Developer: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
-            if version_current == version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
-            elif version_current != version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Version: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
-                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Latest Version: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
+            self.button_1 = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_2 = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_3 = ui.CTkButton(self, text="License: GPLv3", command=self.gplv3, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_4 = ui.CTkButton(self, text="Control Updates", command=self.control)
+            self.button_5 = ui.CTkButton(self, text="Reset", command=self.reset)
+            self.button_6 = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
+            self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
+            self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
+            self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
+            status = ui.CTkLabel(self, text="Status: Ready", font=ui.CTkFont(size=12, weight="bold"))
+            self.language_menu.set("English")
+            if os.path.isfile(system):
+                self.appearance_menu.set("System")
+            elif os.path.isfile(light):
+                self.appearance_menu.set("Light")
+            elif os.path.isfile(dark):
+                self.appearance_menu.set("Dark")
         elif os.path.isfile(tr):
-            self.title("Hakkında")
-            self.button2 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Lisans: GNU General Public License, Version 3.0", command=self.gplv3, font=ui.CTkFont(size=16, weight="normal"))
-            self.button3 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Geliştirici: MuKonqi (Muhammed S.)", command=self.mukonqi, font=ui.CTkFont(size=16, weight="normal"))
-            if version_current == version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
-            elif version_current != version_latest:
-                self.button4 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Sürüm: "+version_current, command=self.changelog_current, font=ui.CTkFont(size=16, weight="normal"))
-                self.button5 = ui.CTkButton(self, fg_color="transparent", text_color=("#2f2f2f", "#a9a9a9"), text="Son Sürüm: "+version_latest, command=self.changelog_latest, font=ui.CTkFont(size=16, weight="normal"))
-        self.button1.grid(row=0, column=0, sticky="nsew", padx=20, pady=5)
-        self.button2.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
-        self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=5)
-        self.button4.grid(row=3, column=0, sticky="nsew", padx=20, pady=5)
-        if version_current != version_latest:
-            self.button5.grid(row=4, column=0, sticky="nsew", padx=20, pady=5)
-    def grelintb(self):
-        subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True)
-    def changelog_current(self):
+            self.button_1 = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_2 = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_3 = ui.CTkButton(self, text="Lisans: GPLv3", command=self.gplv3, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.button_4 = ui.CTkButton(self, text="Güncellemeleri\nKontrol Et", command=self.control)
+            self.button_5 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
+            self.button_6 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
+            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
+            self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
+            self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
+            status = ui.CTkLabel(self, text="Durum: Hazır", font=ui.CTkFont(size=12, weight="bold"))
+            self.language_menu.set("Türkçe")
+            if os.path.isfile(system):
+                self.appearance_menu.set("Sistem")
+            elif os.path.isfile(light):
+                self.appearance_menu.set("Açık")
+            elif os.path.isfile(dark):
+                self.appearance_menu.set("Koyu")
+        self.text.grid(row=0, column=0, padx=20, pady=(10, 0))
+        self.button_1.grid(row=1, column=0, padx=10, pady=0)
+        self.button_2.grid(row=2, column=0, padx=10, pady=0)
+        self.button_3.grid(row=3, column=0, padx=10, pady=(0, 10))
+        self.button_4.grid(row=5, column=0, padx=10, pady=10)
+        self.button_5.grid(row=6, column=0, padx=10, pady=10)
+        self.button_6.grid(row=7, column=0, padx=10, pady=10)
+        self.startup.grid(row=9, column=0, padx=10, pady=10)
+        self.appearance_label.grid(row=10, column=0, padx=10, pady=(10, 0))
+        self.appearance_menu.grid(row=11, column=0, padx=10, pady=(0, 10))
+        self.language_label.grid(row=12, column=0, padx=10, pady=(10, 0))
+        self.language_menu.grid(row=13, column=0, padx=10, pady=(0, 20))
+        status.grid(row=14, column=0, padx=10, pady=0)
+    def update(self):
+        pass
+    def reset(self):
+        pass
+    def uninstall(self):
+        pass
+    def changelog(self):
         self.ccw = ui.CTkToplevel()
         self.ccw.geometry("600x600")
         self.ccw.minsize(600, 600)
@@ -155,22 +202,6 @@ class AboutWindow(ui.CTkToplevel):
         #         cc_text = cc_file.read()
         # self.textbox = ui.CTkTextbox(self.ccw, fg_color="transparent")
         # self.textbox.insert("0.0", cc_text)
-        # self.textbox.grid(row=0, column=0, sticky="nsew")
-        # self.textbox.configure(state="disabled")
-    def changelog_latest(self):
-        self.clw = ui.CTkToplevel()
-        self.clw.geometry("600x600")
-        self.clw.minsize(600, 600)
-        self.clw.grid_rowconfigure(0, weight=1)
-        self.clw.grid_columnconfigure(0, weight=1)
-        # if os.path.isfile(en):
-        #     self.clw.title("Changelog For "+version_latest)
-        #     cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        # elif os.path.isfile(tr):
-        #     self.clw.title(version_latest+" için Değişiklik Günlüğü")
-        #     cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        # self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
-        # self.textbox.insert("0.0", cl_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
         # self.textbox.configure(state="disabled")
     def gplv3(self):
@@ -189,73 +220,33 @@ class AboutWindow(ui.CTkToplevel):
         # self.textbox.insert("0.0", license_text)
         # self.textbox.grid(row=0, column=0, sticky="nsew")
         # self.textbox.configure(state="disabled")
-    def mukonqi(self):
-        subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
-
-class Sidebar(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.grid_rowconfigure(5, weight=1)
-        self.text = ui.CTkLabel(self, text="GrelinTB", font=ui.CTkFont(size=20, weight="bold"))
-        self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
-        if os.path.isfile(s_true):
-            self.startup_var = ui.StringVar(value="on")
-        elif os.path.isfile(s_false):
-            self.startup_var = ui.StringVar(value="off")
-        if os.path.isfile(en):
-            self.button_1 = ui.CTkButton(self, text="About", command=self.about)
-            self.button_2 = ui.CTkButton(self, text="Update", command=self.update)
-            self.button_3 = ui.CTkButton(self, text="Reset", command=self.reset)
-            self.button_4 = ui.CTkButton(self, text=uninstall_text, command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
-            self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
-            self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
-            self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
-            self.language_menu.set("English")
-            if os.path.isfile(system):
-                self.appearance_menu.set("System")
-            elif os.path.isfile(light):
-                self.appearance_menu.set("Light")
-            elif os.path.isfile(dark):
-                self.appearance_menu.set("Dark")
-        elif os.path.isfile(tr):
-            self.button_1 = ui.CTkButton(self, text="Hakkında", command=self.about)
-            self.button_2 = ui.CTkButton(self, text="Güncelle", command=self.update)
-            self.button_3 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
-            self.button_4 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
-            self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
-            self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
-            self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
-            self.language_menu.set("Türkçe")
-            if os.path.isfile(system):
-                self.appearance_menu.set("Sistem")
-            elif os.path.isfile(light):
-                self.appearance_menu.set("Açık")
-            elif os.path.isfile(dark):
-                self.appearance_menu.set("Koyu")
-        self.text.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.button_1.grid(row=1, column=0, padx=10, pady=10)
-        self.button_2.grid(row=2, column=0, padx=10, pady=10)
-        self.button_3.grid(row=3, column=0, padx=10, pady=10)
-        self.button_4.grid(row=4, column=0, padx=10, pady=10)
-        self.startup.grid(row=6, column=0, padx=10, pady=10)
-        self.appearance_label.grid(row=7, column=0, padx=10, pady=(10, 0))
-        self.appearance_menu.grid(row=8, column=0, padx=10, pady=(0, 10))
-        self.language_label.grid(row=9, column=0, padx=10, pady=(10, 0))
-        self.language_menu.grid(row=10, column=0, padx=10, pady=(0, 10))
-        self.about_window = None
-    def about(self):
-        if self.about_window is None or not self.about_window.winfo_exists():
-            self.about_window = AboutWindow(self)
+    def control(self):
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        if version_latest != version_current:
+            self.clw = ui.CTkToplevel()
+            self.clw.geometry("600x600")
+            self.clw.minsize(600, 600)
+            self.clw.grid_rowconfigure(1, weight=1)
+            self.clw.grid_columnconfigure(0, weight=1)
+            if os.path.isfile(en):
+                self.clw.title("Changelog For "+version_latest)
+                cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            elif os.path.isfile(tr):
+                self.clw.title(version_latest+" için Değişiklik Günlüğü")
+                self.label = ui.CTkLabel(self.clw, text="Yeni sürüm bulundu: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
+                self.button = ui.CTkButton(self.clw, text=version_current+" Sürümüne Güncelle", command=self.update)
+                cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
+            self.textbox.insert("0.0", cl_text)
+            self.label.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+            self.textbox.grid(row=1, column=0, sticky="nsew", padx=50, pady=10)
+            self.button.grid(row=2, column=0, sticky="nsew", padx=100, pady=10)
+            self.textbox.configure(state="disabled")
         else:
-            self.about_window.focus()
-    def update(self):
-        pass
-    def reset(self):
-        pass
-    def uninstall(self):
-        pass
+            if os.path.isfile(en):
+                mb.showinfo("Information","GrelinTB is up to date.")
+            elif os.path.isfile(en):
+                mb.showinfo("Bilgilendirme","GrelinTB güncel.")
     def startup_option(self):
         if self.startup_var.get() == "on":
             os.system("cd "+config+"startup/ ; rm * ; touch true.txt")
@@ -287,18 +278,18 @@ class Starting(ui.CTkFrame):
             if os.path.isfile(en):
                 self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
                 self.label1 = ui.CTkLabel(self, text="Weather Forecast According To wttr.in\nSystem Information Obtained Using Neofetch", font=ui.CTkFont(size=15, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.label0 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
                 self.label1 = ui.CTkLabel(self, text="wttr.in'e Göre Hava Durumu\nNeofetch Kullanılarak Elde Edilen Sistem Bilgileri", font=ui.CTkFont(size=15, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.label0.grid(row=0, column=0, pady=(0, 10))
             self.label1.grid(row=1, column=0, pady=(0, 10))
             self.textbox1 = ui.CTkTextbox(self, fg_color="transparent", height=25)
             self.textbox1.grid(row=2, column=0, sticky="nsew")
             self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
             self.textbox2.grid(row=3, column=0, sticky="nsew")
-            neofetch = subprocess.Popen('neofetch --stdout', shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            neofetch = subprocess.Popen('neofetch --stdout', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox1.insert("0.0", weather)
             self.textbox1.configure(state="disabled")
             self.textbox2.insert("0.0", neofetch)
@@ -334,7 +325,7 @@ class Notes(ui.CTkFrame):
         self.from_list.grid_columnconfigure(0, weight=1),
         self.any.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.any.grid_columnconfigure(0, weight=1)
-        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list = ui.CTkTextbox(self.from_list)
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
@@ -421,7 +412,7 @@ class Notes(ui.CTkFrame):
             self.delete_successful()
         self.list.configure(state="normal")
         self.list.delete("0.0", 'end')
-        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
     def save_list(self):
@@ -437,7 +428,7 @@ class Notes(ui.CTkFrame):
             self.output = self.file.read()
         self.list.configure(state="normal")
         self.list.delete("0.0", 'end')
-        self.command = subprocess.Popen('ls '+notes, shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if self.output == self.content.get("0.0", 'end'):
@@ -656,28 +647,32 @@ class OtherStore(ui.CTkFrame):
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak") and self.repos_var.get() == "flathub":
             install_app("Flatpak", "flatpak")
     def search_main(self):
+        running(searching)
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
-                cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
                 install_app("Flatpak", "flatpak")
                 if ask_a == False:
                     return
-            cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", cmd)
+        self.textbox.insert("0.0", (out+err))
         self.textbox.configure(state="disabled")
+        normal()
         self.successful()
     def go_search(self):
         t = threading.Thread(target=self.search_main, daemon=False)
         t.start()
     def install_main(self):
+        running(installing)
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
@@ -685,11 +680,19 @@ class OtherStore(ui.CTkFrame):
                 install_app("Flatpak", "flatpak")
                 if ask_a == False:
                     return
-            pass
+            cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()   
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        self.successful()
     def go_install(self):
         t = threading.Thread(target=self.install_main, daemon=False)
         t.start()
     def reinstall_main(self):
+        running(reinstalling)
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
@@ -697,11 +700,19 @@ class OtherStore(ui.CTkFrame):
                 install_app("Flatpak", "flatpak")
                 if ask_a == False:
                     return
-            pass
+            cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y --reinstall', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        self.successful()
     def go_reinstall(self):
         t = threading.Thread(target=self.reinstall_main, daemon=False)
         t.start()
     def uninstall_main(self):
+        running(uninstalling)
         if self.repos_var.get() == "repos":
             pass
         elif self.repos_var.get() == "flathub":
@@ -709,7 +720,14 @@ class OtherStore(ui.CTkFrame):
                 install_app("Flatpak", "flatpak")
                 if ask_a == False:
                     return
-            pass
+            cmd = subprocess.Popen('flatpak uninstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        self.successful()
     def go_uninstall(self):
         t = threading.Thread(target=self.uninstall_main, daemon=False)
         t.start()
@@ -1105,15 +1123,15 @@ class Tools(ui.CTkFrame):
             tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında Bilgiler")
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
-        self.bashrc_frame=Bashrc(tab1)
+        self.bashrc_frame=Bashrc(tab1, fg_color="transparent")
         self.bashrc_frame.grid(row=0, column=0, sticky="nsew")
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
-        self.computername_frame=ComputerName(tab2)
+        self.computername_frame=ComputerName(tab2, fg_color="transparent")
         self.computername_frame.grid(row=0, column=0, sticky="nsew")
         tab3.grid_columnconfigure(0, weight=1)
         tab3.grid_rowconfigure(0, weight=1)
-        self.openfm_frame=OpenFM(tab3)
+        self.openfm_frame=OpenFM(tab3, fg_color="transparent")
         self.openfm_frame.grid(row=0, column=0, sticky="nsew")        
         tab4.grid_columnconfigure(0, weight=1)
         tab4.grid_rowconfigure(0, weight=1)
