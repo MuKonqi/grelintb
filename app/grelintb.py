@@ -99,7 +99,7 @@ def running(process: str):
     if os.path.isfile(en):
         status.configure(text="Status:\nPackage(s) "+process)
     elif os.path.isfile(tr):
-        status.configure(text="Durum:\nPaketler "+process)
+        status.configure(text="Durum:\nPaket(ler) "+process)
 def normal():
     status.configure(text="Durum: Hazır")
 def install_app(appname: str, packagename: str):
@@ -178,8 +178,8 @@ class Sidebar(ui.CTkFrame):
         self.appearance_label.grid(row=10, column=0, padx=10, pady=(10, 0))
         self.appearance_menu.grid(row=11, column=0, padx=10, pady=(0, 10))
         self.language_label.grid(row=12, column=0, padx=10, pady=(10, 0))
-        self.language_menu.grid(row=13, column=0, padx=10, pady=(0, 20))
-        status.grid(row=14, column=0, padx=10, pady=0)
+        self.language_menu.grid(row=13, column=0, padx=10, pady=(0, 10))
+        status.grid(row=14, column=0, padx=10, pady=(0, 10))
     def update(self):
         pass
     def reset(self):
