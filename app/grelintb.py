@@ -245,7 +245,7 @@ class Sidebar(ui.CTkFrame):
         else:
             if os.path.isfile(en):
                 mb.showinfo("Information","GrelinTB is up to date.")
-            elif os.path.isfile(en):
+            elif os.path.isfile(tr):
                 mb.showinfo("Bilgilendirme","GrelinTB güncel.")
     def startup_option(self):
         if self.startup_var.get() == "on":
