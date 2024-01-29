@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=0.x.y.z (Alpha)
+Name=GrelinTB
+Encoding=UTF-8
+Comment=Great tool box.
+Path=/usr/local/bin/grelintb
+Exec=/usr/bin/grelintb
+Icon=/usr/local/bin/grelintb/icon.png
+Terminal=false
+Type=Application
+Categories=System;Utily;Settings;

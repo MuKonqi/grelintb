@@ -15,19 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v0.2.6.3 (Alpha)" # pass
+version_current = "v0.2.6.4 (Alpha)" # pass
 # with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
 #     version_current = version_file.readline()
 
-import customtkinter as ui
-from tkinter import messagebox as mb
-from tkinter import filedialog as fd
+import os
+import locale
+import getpass
 import threading
 import subprocess
-import os
-import getpass
 from datetime import date
-import locale
+from tkinter import messagebox as mb
+from tkinter import filedialog as fd
+try:
+    import customtkinter as ui
+except:
+    subprocess.Popen("pip install customtkinter", shell=True)
+    import customtkinter as ui
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
