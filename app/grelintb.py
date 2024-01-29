@@ -167,7 +167,7 @@ class Sidebar(ui.CTkFrame):
                 self.appearance_menu.set("Açık")
             elif os.path.isfile(dark):
                 self.appearance_menu.set("Koyu")
-        self.text.grid(row=0, column=0, padx=20, pady=(10, 0))
+        self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
         self.button_1.grid(row=1, column=0, padx=10, pady=0)
         self.button_2.grid(row=2, column=0, padx=10, pady=0)
         self.button_3.grid(row=3, column=0, padx=10, pady=(0, 10))
