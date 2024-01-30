@@ -35,7 +35,6 @@ echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's installer.  If not, see <https://www.gnu.org/licenses/>."
 function install {
-    pip install customtkinter
     if ! [ -d /usr/local/ ]; then
         mkdir /usr/local/
     fi

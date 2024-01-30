@@ -1,0 +1,36 @@
+# v1.0.0.0 Sürümü #
+## Özellikler ##
+### Kenar Çubuğu: ###
+- Uygulamanın adını göster, tıklandığında bu GitHub deposunu aç.
+- Sürümü göster, tıklandığında mevcut sürümlerin değişiklik günlüğünü aç.
+- Tıklandığında geliştiricinin adını göster [web sitemi](https://mukonqi.github.io) aç.
+- Güncellemeleri kontrol edin. Yeni sürüm mevcutsa, yeni sürümün değişiklik günlüğünü alın ve yeni sürüme güncelleyin.
+- GrelinTB'yi güncelleyin.
+- GrelinTB'yi sıfırlayın.
+- GrelinTB'yi kaldırın.
+- Başlangıç bilgilerini etkinleştirin/devre dışı bırakın.
+- Görünüm modunu değiştirin.
+- Dil değiştirme.
+- Durum metni.
+### Başlangıç: ###
+- Güzel bir karşılama metni veya hava durumu tahmini ([wttr.in](https://wttr.in) yardımıyla) ve sistem bilgileri ([neofetch](https://github.com/dylanaraps/neofetch) yardımıyla).
+### Notlar: ###
+- Notlar ve belgeler oluşturun, düzenleyin, silin.
+### Mağaza: ###
+- Paket arama, yükleme, yeniden yükleme, kaldırma.
+### Araçlar: ###
+- .bashrc dosyasını yapılandırın.
+- Bilgisayarın adını değiştirin.
+- Kök hakları ile dosya yöneticilerini açın.
+- Bazı dağıtımlar hakkında bilgiler.
+### Betikler: ###
+- Cups yapılandırma sayfasını açın.
+- Wine yapılandırma uygulamasını açın.
+- Grub Özelleştirici'yi açın.
+- Paketleri güncelleyin.
+- Paket önbelleğini temizleyin.
+- Gereksiz paketleri kaldırın.
+### Ayrıca: ###
+- tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
+- Sistem görünümünü otomatik algıla.
+- Belki daha fazlası...

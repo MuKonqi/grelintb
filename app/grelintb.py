@@ -27,7 +27,8 @@ from tkinter import filedialog as fd
 try:
     import customtkinter as ui
 except:
-    subprocess.Popen("pip install customtkinter", shell=True)
+    print("Installing CustomTkinter...")
+    os.system("pip install customtkinter", shell=True)
     import customtkinter as ui
 
 username = getpass.getuser()

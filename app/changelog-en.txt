@@ -1,0 +1,36 @@
+# v1.0.0.0 Release #
+## Features ##
+### Sidebar: ###
+- Show app's name, when clicked open this GitHub repository.
+- Show version, when clicked open current versions's changelog.
+- Show developer's name when clicked open [my website](https://mukonqi.github.io).
+- Control updates. If new version available, get the changelog of the new version and update to the new version.
+- Update GrelinTB.
+- Reset GrelinTB.
+- Uninstall GrelinTB.
+- Enable/disable startup informations.
+- Change appearance mode.
+- Change language.
+- Status text.
+### Starting: ###
+- A nice welcome text or weather forecast (with the help of [wttr.in](https://wttr.in)) and system information (with the help of [neofetch](https://github.com/dylanaraps/neofetch)).
+### Notes: ###
+- Create edit, delete notes and documents.
+### Store: ###
+- Package search, install, reinstall, uninstall.
+### Tools: ###
+- Configure .bashrc file.
+- Change computer's name.
+- Open file managers with root rights.
+- Informations about some distributions.
+### Scripts: ###
+- Open Cups configuration page.
+- Open Wine configuration app.
+- Open Grub Customizer.
+- Update packages.
+- Clear package cache.
+- Remove unnecessary packages.
+### Also: ###
+- Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
+- Auto detect system appearance.
+- Maybe more...
