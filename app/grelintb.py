@@ -255,7 +255,7 @@ class Sidebar(ui.CTkFrame):
         self.textbox.configure(state="disabled")
     def uninstall(self):
         root.destroy()
-        os.system("pkexec ./usr/local/bin/grelintb/uninstall.sh")
+        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         os.system("cd /home/"+username+" ; rm .bashrc*-grelintb.bak")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
@@ -266,7 +266,7 @@ class Sidebar(ui.CTkFrame):
         exit()
     def update(self):
         root.destroy()
-        os.system("pkexec ./usr/local/bin/grelintb/update.sh")
+        os.system("pkexec /usr/local/bin/grelintb/update.sh")
         if os.path.isfile(en):
             mb.showinfo("Successful", "GrelinTB updated.")
         elif os.path.isfile(tr):
