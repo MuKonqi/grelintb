@@ -304,7 +304,7 @@ class Sidebar(ui.CTkFrame):
                 mb.showinfo("Bilgilendirme","GrelinTB güncel.")
     def reset(self):
         root.destroy()
-        os.system("pkexec ./usr/local/bin/grelintb/update.sh")
+        os.system("pkexec /usr/local/bin/grelintb/update.sh")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Successful", "GrelinTB has been reset.")
