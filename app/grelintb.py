@@ -283,11 +283,13 @@ class Sidebar(ui.CTkFrame):
             self.clw.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
                 self.clw.title("Changelog For "+version_latest)
+                self.label = ui.CTkLabel(self.clw, text="New version found: "+version_latest+"\n\nThe changelog for the "+version_latest+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
+                self.button = ui.CTkButton(self.clw, text="Update To\n"+version_latest, command=self.update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.clw.title(version_latest+" için Değişiklik Günlüğü")
-                self.label = ui.CTkLabel(self.clw, text="Yeni sürüm bulundu: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.clw, text=version_current+" Sürümüne Güncelle", command=self.update)
+                self.label = ui.CTkLabel(self.clw, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
+                self.button = ui.CTkButton(self.clw, text=version_latest+" Sürümüne Güncelle", command=self.update) 
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
             self.textbox.insert("0.0", cl_text)
