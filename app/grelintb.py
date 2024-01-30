@@ -25,7 +25,6 @@ if os.getuid() == 0:
     exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
 if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
-
 import sys
 import locale
 import getpass
@@ -40,7 +39,6 @@ except:
     print("Installing CustomTkinter...")
     os.system("pip install customtkinter")
     import customtkinter as ui
-
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
 notes = "/home/"+username+"/Notes/"
@@ -75,7 +73,6 @@ elif os.path.isfile(light):
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
 ui.set_default_color_theme("dark-blue")
-
 if os.path.isfile(en):
     searching = "Searching"
     installing = "Installing"
@@ -92,7 +89,10 @@ def running(process: str):
     elif os.path.isfile(tr):
         status.configure(text="Durum:\nPaket(ler) "+process)
 def normal():
-    status.configure(text="Durum: Hazır")
+    if os.path.isfile(en):
+        status.configure(text="Status: Ready "+process)
+    elif os.path.isfile(tr):
+        status.configure(text="Durum: Hazır"+process)
 def restart_system():
     global ask_r
     if os.path.isfile(en):
