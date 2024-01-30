@@ -90,9 +90,9 @@ def running(process: str):
         status.configure(text="Durum:\nPaket(ler) "+process)
 def normal():
     if os.path.isfile(en):
-        status.configure(text="Status: Ready "+process)
+        status.configure(text="Status: Ready")
     elif os.path.isfile(tr):
-        status.configure(text="Durum: Hazır"+process)
+        status.configure(text="Durum: Hazır")
 def restart_system():
     global ask_r
     if os.path.isfile(en):

@@ -1,3 +1,5 @@
+# v1.0.0.1 and v1.0.0.2 Releases #
+- Quick fixes.
 # v1.0.0.0 Release #
 ## Features ##
 ### Sidebar: ###
