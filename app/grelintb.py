@@ -16,6 +16,16 @@
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+debian = "/etc/debian_version"
+fedora = "/etc/fedora-release"
+solus = "/etc/solus-release"
+arch1 = "/bin/pacman"
+arch2 = "/usr/bin/pacman"
+if os.getuid() == 0:
+    exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
+    exit("The distribution you are using is not supported from GrelinTB. Exiting...")
+
 import sys
 import locale
 import getpass
@@ -41,18 +51,8 @@ light = "/home/"+username+"/.config/grelintb/theme/light.txt"
 dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
-debian = "/etc/debian_version"
-fedora = "/etc/fedora-release"
-solus = "/etc/solus-release"
-arch1 = "/bin/pacman"
-arch2 = "/usr/bin/pacman"
 with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
     version_current = version_file.readline()
-
-if os.getuid() == 0:
-    exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
-    exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")
 if not os.path.isdir(config+"language/"):
