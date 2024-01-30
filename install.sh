@@ -28,13 +28,14 @@ echo -e "\nGrelinTB and it's installer are free software: you can redistribute i
 echo -e "it under the terms of the GNU General Public License as published by"
 echo -e "the Free Software Foundation, either version 3 of the License, or"
 echo -e "(at your option) any later version."
-echo -e "\nGrelinTB is distributed in the hope that it will be useful,"
+echo -e "\nGrelinTB and it's installer are distributed in the hope that they will be useful,"
 echo -e "but WITHOUT ANY WARRANTY; without even the implied warranty of"
 echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
-echo -e "along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>."
+echo -e "along with GrelinTB and it's installer.  If not, see <https://www.gnu.org/licenses/>."
 function install {
+    pip install customtkinter
     if ! [ -d /usr/local/ ]; then
         mkdir /usr/local/
     fi
@@ -52,13 +53,16 @@ function install {
     exit 0
 }
 if [ -f /etc/debian_version ]; then
-    apt install python3 python3-tk python3-pip git curl wget neofetch xdg-utils -y
+    apt install python3 python3-tk python3-pip git curl lolcat neofetch xdg-utils -y
     install
 elif [ -f /etc/fedora-release ]; then
-    dnf install python3 python3-tkinter python3-pip git curl wget neofetch xdg-utils -y
+    dnf install python3 python3-tkinter python3-pip git curl lolcat neofetch xdg-utils -y
+    install
+elif [ -f /etc/solus-release ]; then
+    eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
     install
 elif [ -f /usr/bin/pacman] || [ -f /bin/pacman]; then
-    pacman -S python tk python-pip git curl neofetch wget xdg-utils --noconfirm
+    pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm
     install
 else
     echo 'The distribution you are using is not supported from GrelinTB. Exiting with status 1...'
