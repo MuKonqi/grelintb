@@ -1,3 +1,6 @@
+# v1.0.1.0
+- Eksik mesaj kutularını ekle.
+- Bazı çevirileri düzelt.
 # v1.0.0.1 ve v1.0.0.2 Sürümleri #
 - Hızlı düzeltmeler.
 # v1.0.0.0 Sürümü #

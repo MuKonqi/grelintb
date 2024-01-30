@@ -16,15 +16,18 @@
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
 solus = "/etc/solus-release"
 arch1 = "/bin/pacman"
 arch2 = "/usr/bin/pacman"
+
 if os.getuid() == 0:
     exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
 if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
+
 import sys
 import locale
 import getpass
@@ -33,12 +36,14 @@ import subprocess
 from datetime import date
 from tkinter import messagebox as mb
 from tkinter import filedialog as fd
+
 try:
     import customtkinter as ui
 except:
     print("Installing CustomTkinter...")
     os.system("pip install customtkinter")
     import customtkinter as ui
+
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
 notes = "/home/"+username+"/Notes/"
@@ -49,8 +54,10 @@ light = "/home/"+username+"/.config/grelintb/theme/light.txt"
 dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
+
 with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
     version_current = version_file.readline()
+
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")
 if not os.path.isdir(config+"language/"):
@@ -66,6 +73,7 @@ if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
 if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
     os.system("cd /home/"+username+" ; cp .bashrc .bashrc-first-grelintb.bak")
+
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -73,6 +81,7 @@ elif os.path.isfile(light):
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
 ui.set_default_color_theme("dark-blue")
+
 if os.path.isfile(en):
     searching = "Searching"
     installing = "Installing"
@@ -83,9 +92,10 @@ elif os.path.isfile(tr):
     installing = "Kuruluyor"
     reinstalling = "Yeniden Kuruluyor"
     uninstalling = "Kaldırılıyor"
+
 def running(process: str):
     if os.path.isfile(en):
-        status.configure(text="Status:\nPackage(s) "+process)
+        status.configure(text="Status:\n"+process+" Package(s)")
     elif os.path.isfile(tr):
         status.configure(text="Durum:\nPaket(ler) "+process)
 def normal():
@@ -93,6 +103,7 @@ def normal():
         status.configure(text="Status: Ready")
     elif os.path.isfile(tr):
         status.configure(text="Durum: Hazır")
+
 def restart_system():
     global ask_r
     if os.path.isfile(en):
@@ -101,6 +112,7 @@ def restart_system():
         ask_r = mb.askyesno("Uyarı", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nOnaylıyor musunuz?")
     if ask_r == True:
         os.system("pkexec reboot")
+
 def install_app(appname: str, packagename: str):
     global ask_a
     if os.path.isfile(en):
@@ -123,6 +135,7 @@ def install_app(appname: str, packagename: str):
             mb.showerror("Error", appname+" installation ve process cancelled.")
         elif os.path.isfile(tr):
             mb.showerror("Hata", appname+" kurulumu ve işlem iptal edildi.")
+
 def install_flatpak():
     global ask_f
     if os.path.isfile(en):
@@ -156,6 +169,12 @@ def install_flatpak():
             mb.showerror("Error", "Flatpak package manager installation ve process cancelled.")
         elif os.path.isfile(tr):
             mb.showerror("Hata", "Flatpak paket yöneticisi kurulumu ve işlem iptal edildi.")
+
+def main_successful():
+    if os.path.isfile(en):
+        mb.showinfo("Information","Process completed.")
+    elif os.path.isfile(tr):
+        mb.showinfo("Bilgilendirme","İşlem tamamlandı.")
 
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -578,11 +597,6 @@ class Store(ui.CTkFrame):
         self.button2.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
         self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
         self.button4.grid(row=6, column=0, sticky="nsew", padx=(25, 0))
-    def successful(self):
-        if os.path.isfile(en):
-            mb.showinfo("Information","Process completed.")
-        elif os.path.isfile(tr):
-            mb.showinfo("Bilgilendirme","İşlem tamamlandı.")
     def repos_main(self):
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak") and self.repos_var.get() == "flathub":
             install_flatpak()
@@ -612,7 +626,7 @@ class Store(ui.CTkFrame):
         self.textbox.insert("0.0", (out+err))
         self.textbox.configure(state="disabled")
         normal()
-        self.successful()
+        main_successful()
     def go_search(self):
         t = threading.Thread(target=self.search_main, daemon=False)
         t.start()
@@ -639,7 +653,7 @@ class Store(ui.CTkFrame):
         self.textbox.insert("0.0", (out+err))
         self.textbox.configure(state="disabled")
         normal()
-        self.successful()
+        main_successful()
     def go_install(self):
         t = threading.Thread(target=self.install_main, daemon=False)
         t.start()
@@ -666,7 +680,7 @@ class Store(ui.CTkFrame):
         self.textbox.insert("0.0", (out+err))
         self.textbox.configure(state="disabled")
         normal()
-        self.successful()
+        main_successful()
     def go_reinstall(self):
         t = threading.Thread(target=self.reinstall_main, daemon=False)
         t.start()
@@ -693,7 +707,7 @@ class Store(ui.CTkFrame):
         self.textbox.insert("0.0", (out+err))
         self.textbox.configure(state="disabled")
         normal()
-        self.successful()
+        main_successful()
     def go_uninstall(self):
         t = threading.Thread(target=self.uninstall_main, daemon=False)
         t.start()
@@ -1106,38 +1120,56 @@ class Scripts(ui.CTkFrame):
         t = threading.Thread(target=self.grub_main, daemon=False)
         t.start()
     def update_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nUpdating Package(s)")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nPaket(ler) Güncelleniyor")
         if os.path.isfile(debian):
-            subprocess.Popen("pkexec apt upgrade -y", shell=True)
+            os.system("pkexec apt upgrade -y")
         elif os.path.isfile(fedora):
-            subprocess.Popen("pkexec dnf update -y", shell=True)
+            os.system("pkexec dnf update -y")
         elif os.path.isfile(solus):
-            subprocess.Popen("pkexec eopkg upgrade -y", shell=True)
+            os.system("pkexec eopkg upgrade -y")
         elif os.path.isifle(arch1) or os.path.isfile(arch2):
-            subprocess.Popen("pkexec pacman -Syu --noconfirm", shell=True)
+            os.system("pkexec pacman -Syu --noconfirm")
+        normal()
+        main_successful()
     def go_update(self):
         t = threading.Thread(target=self.update_main, daemon=False)
         t.start()
     def clear_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nClearing Package Cache")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nPaket Önbelleği Temizleniyor")
         if os.path.isfile(debian):
-            subprocess.Popen("pkexec apt-get autoclean -y", shell=True)
+            os.system("pkexec apt-get autoclean -y")
         elif os.path.isfile(fedora):
-            subprocess.Popen("pkexec dnf clean all -y", shell=True)
+            os.system("pkexec dnf clean all -y")
         elif os.path.isfile(solus):
-            subprocess.Popen("pkexec eopkg dc -y", shell=True)
+            os.system("pkexec eopkg dc -y")
         elif os.path.isifle(arch1) or os.path.isfile(arch2):
-            subprocess.Popen("pkexec pacman -Scc --noconfirm", shell=True)
+            os.system("pkexec pacman -Scc --noconfirm")
+        normal()
+        main_successful()
     def go_clear(self):
         t = threading.Thread(target=self.clear_main, daemon=False)
         t.start()
     def remove_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nRemoving Unnecessary Package(s)")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nGereksiz Paketler Kaldırılıyor")
         if os.path.isfile(debian):
-            subprocess.Popen("pkexec apt-get autoremove -y", shell=True)
+            os.system("pkexec apt-get autoremove -y")
         elif os.path.isfile(fedora):
-            subprocess.Popen("pkexec dnf autoremove -y", shell=True)
+            os.system("pkexec dnf autoremove -y")
         elif os.path.isfile(solus):
-            subprocess.Popen("pkexec eopkg rmf -y", shell=True)
+            os.system("pkexec eopkg rmf -y")
         elif os.path.isifle(arch1) or os.path.isfile(arch2):
-            subprocess.Popen("pacman -Qdtq | pkexec pacman -Rs - --noconfirm", shell=True)
+            os.system("pacman -Qdtq | pkexec pacman -Rs - --noconfirm")
+        normal()
+        main_successful()
     def go_remove(self):
         t = threading.Thread(target=self.remove_main, daemon=False)
         t.start()
