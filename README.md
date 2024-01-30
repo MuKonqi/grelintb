@@ -59,7 +59,7 @@
 - pip (package name: usually `pip`)
 - CustomTkinter (after installing pip, run this command: `pip install customtkinter`)
 - Tkinter (package name: `python3-tk` (Debian GNU/Linux based) or `python3-tkinter` (Fedora Linux and Solus based) or `tk` (Arch Linux based))
-## Kurulum
+## Installation
 - Please install wget package.
 - Open terminal.
 - Type this: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install.sh ; chmod +x install.sh ; pkexec ./install.sh```
