@@ -28,7 +28,7 @@ try:
     import customtkinter as ui
 except:
     print("Installing CustomTkinter...")
-    os.system("pip install customtkinter", shell=True)
+    os.system("pip install customtkinter")
     import customtkinter as ui
 
 username = getpass.getuser()
