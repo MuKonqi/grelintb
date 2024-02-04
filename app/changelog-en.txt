@@ -1,41 +1,45 @@
-# v1.0.1.0
+# v1.0.2.0 #
+- Color options have been added: Dark blue, blue, green.
+- Some padding sizes changed in the sidebar.
+- The background of the list of the notes section has been made transparent.
+- Minor improvements to the README file and changelog.
+# v1.0.1.0 #
 - Add missing message boxs.
 - Fix some translations.
 # v1.0.0.1 and v1.0.0.2 Releases #
 - Quick fixes.
-# v1.0.0.0 Release #
-## Features ##
-### Sidebar: ###
+# Features #
+## Sidebar: ##
 - Show app's name, when clicked open this GitHub repository.
 - Show version, when clicked open current versions's changelog.
-- Show developer's name when clicked open [my website](https://mukonqi.github.io).
+- Show developer's name when clicked open my website (https://mukonqi.github.io).
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
-- Update GrelinTB.
 - Reset GrelinTB.
 - Uninstall GrelinTB.
 - Enable/disable startup informations.
+- Change color theme.
 - Change appearance mode.
 - Change language.
 - Status text.
-### Starting: ###
-- A nice welcome text or weather forecast (with the help of [wttr.in](https://wttr.in)) and system information (with the help of [neofetch](https://github.com/dylanaraps/neofetch)).
-### Notes: ###
+## Starting: ##
+- A nice welcome text or weather forecast [with the help of wttr.in(https://wttr.in)] and system information [with the help of neofetch(https://github.com/dylanaraps/neofetch)].
+## Notes: ##
 - Create edit, delete notes and documents.
-### Store: ###
+## Store: ##
 - Package search, install, reinstall, uninstall.
-### Tools: ###
+## Tools: ##
 - Configure .bashrc file.
 - Change computer's name.
 - Open file managers with root rights.
 - Informations about some distributions.
-### Scripts: ###
+## Scripts: ##
 - Open Cups configuration page.
 - Open Wine configuration app.
 - Open Grub Customizer.
 - Update packages.
 - Clear package cache.
 - Remove unnecessary packages.
-### Also: ###
+## Also: ##
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
 - Maybe more...

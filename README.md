@@ -6,17 +6,17 @@
 - Show version, when clicked open current versions's changelog.
 - Show developer's name when clicked open [my website](https://mukonqi.github.io).
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
-- Update GrelinTB.
 - Reset GrelinTB.
 - Uninstall GrelinTB.
 - Enable/disable startup informations.
+- Change color theme.
 - Change appearance mode.
 - Change language.
 - Status text.
 ### Starting:
 - A nice welcome text or weather forecast (with the help of [wttr.in](https://wttr.in)) and system information (with the help of [neofetch](https://github.com/dylanaraps/neofetch)).
 ### Notes:
-- Create edit, delete notes and documents.
+- Create, edit, delete notes and documents.
 ### Store: 
 - Package search, install, reinstall, uninstall.
 ### Tools:
@@ -75,12 +75,12 @@
 - Sürümü göster, tıklandığında mevcut sürümlerin değişiklik günlüğünü aç.
 - Tıklandığında geliştiricinin adını göster [web sitemi](https://mukonqi.github.io) aç.
 - Güncellemeleri kontrol edin. Yeni sürüm mevcutsa, yeni sürümün değişiklik günlüğünü alın ve yeni sürüme güncelleyin.
-- GrelinTB'yi güncelleyin.
 - GrelinTB'yi sıfırlayın.
 - GrelinTB'yi kaldırın.
 - Başlangıç bilgilerini etkinleştirin/devre dışı bırakın.
+- Renk temasını değiştirin.
 - Görünüm modunu değiştirin.
-- Dil değiştirme.
+- Dili değiştirin.
 - Durum metni.
 ### Başlangıç:
 - Güzel bir karşılama metni veya hava durumu tahmini ([wttr.in](https://wttr.in) yardımıyla) ve sistem bilgileri ([neofetch](https://github.com/dylanaraps/neofetch) yardımıyla).

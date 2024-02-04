@@ -1,41 +1,45 @@
+# v1.0.2.0
+- Renk seçenekleri eklendi: Koyu mavi, mavi, yeşil.
+- Kenar çubuğundaki bazı dolgu boyutları değiştirildi.
+- Notlar bölümündeki listenin arka planı şeffaf hale getirildi.
+- README dosyası ve değişiklik günlüğünde ufak iyileştirmeler yapıldı.
 # v1.0.1.0
 - Eksik mesaj kutularını ekle.
 - Bazı çevirileri düzelt.
 # v1.0.0.1 ve v1.0.0.2 Sürümleri #
 - Hızlı düzeltmeler.
-# v1.0.0.0 Sürümü #
-## Özellikler ##
-### Kenar Çubuğu: ###
+# Özellikler #
+## Kenar Çubuğu: ##
 - Uygulamanın adını göster, tıklandığında bu GitHub deposunu aç.
 - Sürümü göster, tıklandığında mevcut sürümlerin değişiklik günlüğünü aç.
-- Tıklandığında geliştiricinin adını göster [web sitemi](https://mukonqi.github.io) aç.
+- Tıklandığında geliştiricinin adını göster web sitemi (https://mukonqi.github.io) aç.
 - Güncellemeleri kontrol edin. Yeni sürüm mevcutsa, yeni sürümün değişiklik günlüğünü alın ve yeni sürüme güncelleyin.
-- GrelinTB'yi güncelleyin.
 - GrelinTB'yi sıfırlayın.
 - GrelinTB'yi kaldırın.
 - Başlangıç bilgilerini etkinleştirin/devre dışı bırakın.
+- Renk temasını değiştirin.
 - Görünüm modunu değiştirin.
 - Dil değiştirme.
 - Durum metni.
-### Başlangıç: ###
-- Güzel bir karşılama metni veya hava durumu tahmini ([wttr.in](https://wttr.in) yardımıyla) ve sistem bilgileri ([neofetch](https://github.com/dylanaraps/neofetch) yardımıyla).
-### Notlar: ###
+## Başlangıç: ##
+- Güzel bir karşılama metni veya hava durumu tahmini [wttr.in (https://wttr.in) yardımıyla] ve sistem bilgileri [neofetch (https://github.com/dylanaraps/neofetch) yardımıyla].
+## Notlar: ##
 - Notlar ve belgeler oluşturun, düzenleyin, silin.
-### Mağaza: ###
+## Mağaza: ##
 - Paket arama, yükleme, yeniden yükleme, kaldırma.
-### Araçlar: ###
+## Araçlar: ##
 - .bashrc dosyasını yapılandırın.
 - Bilgisayarın adını değiştirin.
 - Kök hakları ile dosya yöneticilerini açın.
 - Bazı dağıtımlar hakkında bilgiler.
-### Betikler: ###
+## Betikler: ##
 - Cups yapılandırma sayfasını açın.
 - Wine yapılandırma uygulamasını açın.
 - Grub Özelleştirici'yi açın.
 - Paketleri güncelleyin.
 - Paket önbelleğini temizleyin.
 - Gereksiz paketleri kaldırın.
-### Ayrıca: ###
+## Ayrıca: ##
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.
 - Belki daha fazlası...

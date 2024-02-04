@@ -52,6 +52,9 @@ tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
 system = "/home/"+username+"/.config/grelintb/theme/system.txt"
 light = "/home/"+username+"/.config/grelintb/theme/light.txt"
 dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
+dark_blue = "/home/"+username+"/.config/grelintb/color/dark_blue.txt"
+blue = "/home/"+username+"/.config/grelintb/color/blue.txt"
+green = "/home/"+username+"/.config/grelintb/color/green.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
 
@@ -67,6 +70,8 @@ if not os.path.isdir(config+"language/"):
         os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
 if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
+if not os.path.isdir(config+"color/"):
+    os.system("cd "+config+" ; mkdir color ; cd color ; touch dark-blue.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
 if not os.path.isdir(notes):
@@ -80,7 +85,12 @@ elif os.path.isfile(light):
     ui.set_appearance_mode("Light")
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
-ui.set_default_color_theme("dark-blue")
+if os.path.isfile(dark_blue):
+    ui.set_default_color_theme("dark-blue")
+elif os.path.isfile(blue):
+    ui.set_default_color_theme("blue")
+elif os.path.isfile(green):
+    ui.set_default_color_theme("green")
 
 if os.path.isfile(en):
     searching = "Searching"
@@ -191,10 +201,12 @@ class Sidebar(ui.CTkFrame):
             self.button_1 = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.button_2 = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.button_3 = ui.CTkButton(self, text="License: GPLv3", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_4 = ui.CTkButton(self, text="Control\nUpdates", command=self.control)
+            self.button_4 = ui.CTkButton(self, text="Update", command=self.control)
             self.button_5 = ui.CTkButton(self, text="Reset", command=self.reset)
             self.button_6 = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.color_label = ui.CTkLabel(self, text="Color Theme:", anchor="w")
+            self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green"], command=self.change_color)                
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
@@ -206,14 +218,22 @@ class Sidebar(ui.CTkFrame):
                 self.appearance_menu.set("Light")
             elif os.path.isfile(dark):
                 self.appearance_menu.set("Dark")
+            if os.path.isfile(dark_blue):
+                self.color_menu.set("Dark Blue")
+            elif os.path.isfile(blue):
+                self.color_menu.set("Blue")
+            elif os.path.isfile(green):
+                self.color_menu.set("Green")
         elif os.path.isfile(tr):
             self.button_1 = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.button_2 = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.button_3 = ui.CTkButton(self, text="Lisans: GPLv3", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_4 = ui.CTkButton(self, text="Güncellemeleri\nKontrol Et", command=self.control)
+            self.button_4 = ui.CTkButton(self, text="Güncelle", command=self.control)
             self.button_5 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.button_6 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
+            self.color_label = ui.CTkLabel(self, text="Renk Teması:", anchor="w")
+            self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil"], command=self.change_color)            
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
@@ -225,19 +245,27 @@ class Sidebar(ui.CTkFrame):
                 self.appearance_menu.set("Açık")
             elif os.path.isfile(dark):
                 self.appearance_menu.set("Koyu")
+            if os.path.isfile(dark_blue):
+                self.color_menu.set("Koyu Mavi")
+            elif os.path.isfile(blue):
+                self.color_menu.set("Mavi")
+            elif os.path.isfile(green):
+                self.color_menu.set("Yeşil")
         self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
         self.button_1.grid(row=1, column=0, padx=10, pady=0)
         self.button_2.grid(row=2, column=0, padx=10, pady=0)
         self.button_3.grid(row=3, column=0, padx=10, pady=0)
-        self.button_4.grid(row=5, column=0, padx=10, pady=10)
-        self.button_5.grid(row=6, column=0, padx=10, pady=10)
-        self.button_6.grid(row=7, column=0, padx=10, pady=10)
-        self.startup.grid(row=9, column=0, padx=10, pady=(0, 10))
-        self.appearance_label.grid(row=10, column=0, padx=10, pady=(10, 0))
-        self.appearance_menu.grid(row=11, column=0, padx=10, pady=(0, 10))
-        self.language_label.grid(row=12, column=0, padx=10, pady=(10, 0))
-        self.language_menu.grid(row=13, column=0, padx=10, pady=(0, 10))
-        status.grid(row=14, column=0, padx=10, pady=(0, 10))
+        self.button_4.grid(row=5, column=0, padx=10, pady=5)
+        self.button_5.grid(row=6, column=0, padx=10, pady=5)
+        self.button_6.grid(row=7, column=0, padx=10, pady=5)
+        self.startup.grid(row=9, column=0, padx=10, pady=(0, 5))
+        self.color_label.grid(row=10, column=0, padx=10, pady=(5, 0))
+        self.color_menu.grid(row=11, column=0, padx=10, pady=(0, 5))
+        self.appearance_label.grid(row=12, column=0, padx=10, pady=(5, 0))
+        self.appearance_menu.grid(row=13, column=0, padx=10, pady=(0, 5))
+        self.language_label.grid(row=14, column=0, padx=10, pady=(5, 0))
+        self.language_menu.grid(row=15, column=0, padx=10, pady=(0, 5))
+        status.grid(row=16, column=0, padx=10, pady=(0, 5))
     def changelog(self):
         self.ccw = ui.CTkToplevel()
         self.ccw.geometry("600x600")
@@ -337,10 +365,20 @@ class Sidebar(ui.CTkFrame):
             os.system("cd "+config+"startup/ ; rm * ; touch true.txt")
         elif self.startup_var.get() == "off":
             os.system("cd "+config+"startup/ ; rm * ; touch false.txt")
+    def change_color(self, new_color: str):
+        if new_color == "Dark Blue" or new_color == "Koyu Mavi":
+            os.system("cd "+config+"color ; rm * ; touch dark-blue.txt")
+        elif new_color == "Blue" or new_color == "Mavi":
+            os.system("cd "+config+"color ; rm * ; touch blue.txt")
+        elif new_color == "Green" or new_color == "Yeşil":
+            os.system("cd "+config+"color ; rm * ; touch green.txt")
+        root.destroy()
+        os.system("grelintb")
+        exit()
     def change_appearance(self, new_appearance: str):
         if new_appearance == "System" or new_appearance == "Sistem":
-            os.system("cd "+config+"theme ; rm * ; touch system.txt")
             ui.set_appearance_mode("System")
+            os.system("cd "+config+"theme ; rm * ; touch system.txt")
         elif new_appearance == "Light" or new_appearance == "Açık":
             ui.set_appearance_mode("Light")
             os.system("cd "+config+"theme ; rm * ; touch light.txt")
@@ -413,7 +451,7 @@ class Notes(ui.CTkFrame):
         self.any.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.any.grid_columnconfigure(0, weight=1)
         self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list = ui.CTkTextbox(self.from_list)
+        self.list = ui.CTkTextbox(self.from_list, fg_color="transparent")
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if os.path.isfile(en):
