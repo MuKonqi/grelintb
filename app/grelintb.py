@@ -33,16 +33,26 @@ import locale
 import getpass
 import threading
 import subprocess
-from datetime import date
+import datetime as dt
 from tkinter import messagebox as mb
 from tkinter import filedialog as fd
 
 try:
     import customtkinter as ui
 except:
-    print("Installing CustomTkinter...")
-    os.system("pip install customtkinter")
-    import customtkinter as ui
+    try:
+        try:
+            print("Installing CustomTkinter...")
+            os.system("pip install customtkinter")
+            import customtkinter as ui 
+        except:
+            print("Installing CustomTkinter with --break-system-packages parameter...")
+            os.system("pip install customtkinter --break-system-packages")
+            import customtkinter as ui
+    except Exception as e:
+        print("Error: "+str(e)+". So opening the Issues page and then exiting...")
+        os.system("xdg-open https://github.com/MuKonqi/grelintb/issues")
+        exit(1)
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
@@ -198,12 +208,12 @@ class Sidebar(ui.CTkFrame):
         elif os.path.isfile(s_false):
             self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
-            self.button_1 = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_2 = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_3 = ui.CTkButton(self, text="License: GPLv3", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_4 = ui.CTkButton(self, text="Update", command=self.control)
-            self.button_5 = ui.CTkButton(self, text="Reset", command=self.reset)
-            self.button_6 = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
+            self.version_b = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.update_b = ui.CTkButton(self, text="Update", command=self.check_update)
+            self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
+            self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Color Theme:", anchor="w")
             self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green"], command=self.change_color)                
@@ -225,12 +235,12 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(green):
                 self.color_menu.set("Green")
         elif os.path.isfile(tr):
-            self.button_1 = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_2 = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_3 = ui.CTkButton(self, text="Lisans: GPLv3", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.button_4 = ui.CTkButton(self, text="Güncelle", command=self.control)
-            self.button_5 = ui.CTkButton(self, text="Sıfırla", command=self.reset)
-            self.button_6 = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
+            self.version_b = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.update_b = ui.CTkButton(self, text="Güncelle", command=self.check_update)
+            self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
+            self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Renk Teması:", anchor="w")
             self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil"], command=self.change_color)            
@@ -252,12 +262,12 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(green):
                 self.color_menu.set("Yeşil")
         self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
-        self.button_1.grid(row=1, column=0, padx=10, pady=0)
-        self.button_2.grid(row=2, column=0, padx=10, pady=0)
-        self.button_3.grid(row=3, column=0, padx=10, pady=0)
-        self.button_4.grid(row=5, column=0, padx=10, pady=5)
-        self.button_5.grid(row=6, column=0, padx=10, pady=5)
-        self.button_6.grid(row=7, column=0, padx=10, pady=5)
+        self.version_b.grid(row=1, column=0, padx=10, pady=0)
+        self.mukonqi_b.grid(row=2, column=0, padx=10, pady=0)
+        self.license_and_credits_b.grid(row=3, column=0, padx=10, pady=0)
+        self.update_b.grid(row=5, column=0, padx=10, pady=5)
+        self.reset_b.grid(row=6, column=0, padx=10, pady=5)
+        self.uninstall_b.grid(row=7, column=0, padx=10, pady=5)
         self.startup.grid(row=9, column=0, padx=10, pady=(0, 5))
         self.color_label.grid(row=10, column=0, padx=10, pady=(5, 0))
         self.color_menu.grid(row=11, column=0, padx=10, pady=(0, 5))
@@ -267,39 +277,54 @@ class Sidebar(ui.CTkFrame):
         self.language_menu.grid(row=15, column=0, padx=10, pady=(0, 5))
         status.grid(row=16, column=0, padx=10, pady=(0, 5))
     def changelog(self):
-        self.ccw = ui.CTkToplevel()
-        self.ccw.geometry("600x600")
-        self.ccw.minsize(600, 600)
-        self.ccw.grid_rowconfigure(0, weight=1)
-        self.ccw.grid_columnconfigure(0, weight=1)
+        self.window = ui.CTkToplevel()
+        self.window.geometry("600x600")
+        self.window.minsize(600, 600)
+        self.window.grid_rowconfigure(1, weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.ccw.title("Changelog For "+version_current)
+            self.window.title("Changelog For "+version_current)
+            self.label = ui.CTkLabel(self.window, text="Current version: "+version_current+"\nThe changelog for the "+version_current+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
             with open("/usr/local/bin/grelintb/changelog-en.txt", "r") as cc_file:
                 cc_text = cc_file.read()
         elif os.path.isfile(tr):
-            self.ccw.title(version_current+" için Değişiklik Günlüğü")
+            self.window.title(version_current+" için Değişiklik Günlüğü")
+            self.label = ui.CTkLabel(self.window, text="Şuanki sürüm: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
             with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
                 cc_text = cc_file.read()
-        self.textbox = ui.CTkTextbox(self.ccw, fg_color="transparent")
+        self.textbox = ui.CTkTextbox(self.window)
         self.textbox.insert("0.0", cc_text)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
         self.textbox.configure(state="disabled")
-    def license(self):
-        self.lw = ui.CTkToplevel()
-        self.lw.geometry("600x600")
-        self.lw.minsize(600, 600)
-        self.lw.grid_rowconfigure(0, weight=1)
-        self.lw.grid_columnconfigure(0, weight=1)
+        self.label.grid(row=0, column=0, sticky="nsew", pady=10)
+        self.textbox.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+    def license_and_credits(self):
+        self.window = ui.CTkToplevel()
+        self.window.geometry("600x600")
+        self.window.minsize(600, 600)
+        self.window.grid_rowconfigure((1), weight=1)
+        self.window.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.lw.title("GPLv3 License")
+            self.window.title("License And Credits")
+            self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
+            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credits")
         elif os.path.isfile(tr):
-            self.lw.title("GPlv3 Lisansı")
+            self.window.title("Lisans Ve Krediler")
+            self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
+            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Krediler")
+        self.button1 = ui.CTkButton(self.window, text="Neofetch", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
+        self.button2 = ui.CTkButton(self.window, text="Lolcat", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+        self.button3 = ui.CTkButton(self.window, text="wttr.in", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
-        self.textbox = ui.CTkTextbox(self.lw, fg_color="transparent")
+        self.textbox = ui.CTkTextbox(self.window)
         self.textbox.insert("0.0", license_text)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
         self.textbox.configure(state="disabled")
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=10)
+        self.textbox.grid(row=1, column=0, sticky="nsew", padx=20)
+        self.label2.grid(row=2, column=0, sticky="nsew", pady=10)
+        self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=5)
+        self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
+        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def uninstall(self):
         root.destroy()
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
@@ -320,25 +345,25 @@ class Sidebar(ui.CTkFrame):
             mb.showinfo("Başarılı", "GrelinTB güncellendi.")
         os.system("grelintb")
         exit()
-    def control(self):
+    def check_update(self):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
-            self.clw = ui.CTkToplevel()
-            self.clw.geometry("600x600")
-            self.clw.minsize(600, 600)
-            self.clw.grid_rowconfigure(1, weight=1)
-            self.clw.grid_columnconfigure(0, weight=1)
+            self.window = ui.CTkToplevel()
+            self.window.geometry("600x600")
+            self.window.minsize(600, 600)
+            self.window.grid_rowconfigure(1, weight=1)
+            self.window.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
-                self.clw.title("Changelog For "+version_latest)
-                self.label = ui.CTkLabel(self.clw, text="New version found: "+version_latest+"\n\nThe changelog for the "+version_latest+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.clw, text="Update To\n"+version_latest, command=self.update)
+                self.window.title("Changelog For "+version_latest)
+                self.label = ui.CTkLabel(self.window, text="New version found: "+version_latest+"\n\nThe changelog for the "+version_latest+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
+                self.button = ui.CTkButton(self.window, text="Update To\n"+version_latest, command=self.update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
-                self.clw.title(version_latest+" için Değişiklik Günlüğü")
-                self.label = ui.CTkLabel(self.clw, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.clw, text=version_latest+" Sürümüne Güncelle", command=self.update) 
+                self.window.title(version_latest+" için Değişiklik Günlüğü")
+                self.label = ui.CTkLabel(self.window, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
+                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=self.update) 
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.textbox = ui.CTkTextbox(self.clw, fg_color="transparent")
+            self.textbox = ui.CTkTextbox(self.window)
             self.textbox.insert("0.0", cl_text)
             self.label.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
             self.textbox.grid(row=1, column=0, sticky="nsew", padx=50, pady=10)
@@ -402,22 +427,22 @@ class Starting(ui.CTkFrame):
             self.grid_columnconfigure(0, weight=1)
             if os.path.isfile(en):
                 self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="Weather Forecast According To wttr.in\nSystem Information Obtained Using Neofetch", font=ui.CTkFont(size=15, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                self.label1 = ui.CTkLabel(self, text="Weather Forecast\nSystem Information", font=ui.CTkFont(size=15, weight="normal"))
+                self.weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.label0 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="wttr.in'e Göre Hava Durumu\nNeofetch Kullanılarak Elde Edilen Sistem Bilgileri", font=ui.CTkFont(size=15, weight="normal"))
-                weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                self.label1 = ui.CTkLabel(self, text="Hava Durumu\nSistem Bilgileri", font=ui.CTkFont(size=15, weight="normal"))
+                self.weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.label0.grid(row=0, column=0, pady=(0, 10))
             self.label1.grid(row=1, column=0, pady=(0, 10))
             self.textbox1 = ui.CTkTextbox(self, fg_color="transparent", height=25)
             self.textbox1.grid(row=2, column=0, sticky="nsew")
             self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
             self.textbox2.grid(row=3, column=0, sticky="nsew")
-            neofetch = subprocess.Popen('neofetch --stdout', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.textbox1.insert("0.0", weather)
+            self.system = subprocess.Popen('neofetch --stdout', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+            self.textbox1.insert("0.0", self.weather)
             self.textbox1.configure(state="disabled")
-            self.textbox2.insert("0.0", neofetch)
+            self.textbox2.insert("0.0", self.system)
             self.textbox2.configure(state="disabled")
         elif os.path.isfile(s_false):
             self.grid_rowconfigure(0, weight=1)
@@ -759,11 +784,11 @@ class Bashrc(ui.CTkFrame):
         if os.path.isfile(en):
             self.label1 = ui.CTkLabel(self, text="Without Colors")
             self.button1 = ui.CTkButton(self, text="Add My Username", command=self.username1)
-            self.button2 = ui.CTkButton(self, text="Add System Info Help Of Neofetch", command=self.systeminfo1)
+            self.button2 = ui.CTkButton(self, text="Add System Info", command=self.systeminfo1)
             self.button3 = ui.CTkButton(self, text="Add Memory Consumption", command=self.memory1)
-            self.label2 = ui.CTkLabel(self, text="With Colors (Help Of Lolcat)")
+            self.label2 = ui.CTkLabel(self, text="With Colors")
             self.button4 = ui.CTkButton(self, text="Add My Username ", command=self.username2)
-            self.button5 = ui.CTkButton(self, text="Add System Info Help Of Neofetch", command=self.systeminfo2)
+            self.button5 = ui.CTkButton(self, text="Add System Info", command=self.systeminfo2)
             self.button6 = ui.CTkButton(self, text="Add Memory Consumption", command=self.memory2)
             self.label3 = ui.CTkLabel(self, text="Undo Options")
             self.button7 = ui.CTkButton(self, text="Undo Last Change", command=self.undo1)
@@ -772,11 +797,11 @@ class Bashrc(ui.CTkFrame):
         elif os.path.isfile(tr):
             self.label1 = ui.CTkLabel(self, text="Renkler Olmadan")
             self.button1 = ui.CTkButton(self, text="Kullanıcı Adımı Ekle", command=self.username1)
-            self.button2 = ui.CTkButton(self, text="Sistem Bilgisini Neofetch Yardımıyla Ekle", command=self.systeminfo1)
+            self.button2 = ui.CTkButton(self, text="Sistem Bilgisini", command=self.systeminfo1)
             self.button3 = ui.CTkButton(self, text="RAM Tüketimini Ekle", command=self.memory1)
-            self.label2 = ui.CTkLabel(self, text="Renklerle (Lolcat Yardımıyla)")
+            self.label2 = ui.CTkLabel(self, text="Renklerle")
             self.button4 = ui.CTkButton(self, text="Kullanıcı Adımı Ekle", command=self.username2)
-            self.button5 = ui.CTkButton(self, text="Sistem Bilgisini Neofetch Yardımıyla Ekle", command=self.systeminfo2)
+            self.button5 = ui.CTkButton(self, text="Sistem Bilgisini Ekle", command=self.systeminfo2)
             self.button6 = ui.CTkButton(self, text="RAM Tüketimini Ekle", command=self.memory2)
             self.label3 = ui.CTkLabel(self, text="Geri Alma Seçenekleri")
             self.button7 = ui.CTkButton(self, text="Son Değişikliği Geri Al", command=self.undo1)
@@ -1224,11 +1249,13 @@ class Root(ui.CTk):
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
         self.tabview = ui.CTkTabview(self, corner_radius=50)
         self.tabview.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
-        if date.today().strftime("%d/%m") == "04/12":
+        if dt.date.today().strftime("%d/%m") == "04/12":
             if os.path.isfile(en):
                 mb.showinfo("Birthday","Today is the birthday of GrelinTB developer MuKonqi (Muhammed S.)!\nI hope he updated the information on his website on time this time :D")
             elif os.path.isfile(tr):
                 mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
+        if dt.datetime.now().weekday() == 0:
+            Sidebar.check_update(self)
         if os.path.isfile(en):
             tab_starting = self.tabview.add("Starting")
             tab_notes = self.tabview.add("Notes")

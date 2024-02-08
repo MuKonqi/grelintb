@@ -5,6 +5,7 @@
 - Show app's name, when clicked open this GitHub repository.
 - Show version, when clicked open current versions's changelog.
 - Show developer's name when clicked open [my website](https://mukonqi.github.io).
+- A button for license and credits.
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
 - Reset GrelinTB.
 - Uninstall GrelinTB.
@@ -34,6 +35,7 @@
 ### Also:
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
+- Check GrelinTB updates every Monday.
 - Maybe more...
 ## MetterXP vs GrelinTB
 - GrelinTB's UI is better.
@@ -67,6 +69,10 @@
 - Copyright (C) 2024 MuKonqi (Muhammed S.)
 ## License
 - GNU General Public License, Version 3.0
+## Credits
+- [Neofetch](https://github.com/dylanaraps/neofetch)
+- [Lolcat](https://github.com/busyloop/lolcat)
+- [wttr.in](https://github.com/chubin/wttr.in)
 # Turkish
 - [Click on this sentence to view the rest of this documentation in English.](#english)
 ## Özellikler
@@ -74,6 +80,7 @@
 - Uygulamanın adını göster, tıklandığında bu GitHub deposunu aç.
 - Sürümü göster, tıklandığında mevcut sürümlerin değişiklik günlüğünü aç.
 - Tıklandığında geliştiricinin adını göster [web sitemi](https://mukonqi.github.io) aç.
+- Lisans ve krediler için bir buton.
 - Güncellemeleri kontrol edin. Yeni sürüm mevcutsa, yeni sürümün değişiklik günlüğünü alın ve yeni sürüme güncelleyin.
 - GrelinTB'yi sıfırlayın.
 - GrelinTB'yi kaldırın.
@@ -103,6 +110,7 @@
 ### Ayrıca:
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.
+- Her pazartesi GrelinTB güncellemelerini kontrol et.
 - Belki daha fazlası...
 ## MetterXP vs GrelinTB
 - GrelinTB'nin kullanıcı arayüzü daha iyi.
@@ -136,3 +144,7 @@
 - Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)
 ## Lisans
 - GNU Genel Kamu Lisansı, Sürüm 3.0
+## Krediler
+- [Neofetch](https://github.com/dylanaraps/neofetch)
+- [Lolcat](https://github.com/busyloop/lolcat)
+- [wttr.in](https://github.com/chubin/wttr.in)

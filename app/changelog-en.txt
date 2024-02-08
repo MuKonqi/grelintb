@@ -1,3 +1,11 @@
+# v1.0.3.0 #
+- Added automatic update check for Monday every week.
+- Improved CustomTkinter installation methods.
+- Changed the text of the 4th button in the sidebar.
+- Removed "with the help of" and "using" and replaced them with the credits section of the license.
+- Removed transparency of text boxes in some places.
+- Changed the name of some variables and functions.
+- README.md has been updated.
 # v1.0.2.0 #
 - Color options have been added: Dark blue, blue, green.
 - Some padding sizes changed in the sidebar.
@@ -13,6 +21,7 @@
 - Show app's name, when clicked open this GitHub repository.
 - Show version, when clicked open current versions's changelog.
 - Show developer's name when clicked open my website (https://mukonqi.github.io).
+- A button for license and credits.
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
 - Reset GrelinTB.
 - Uninstall GrelinTB.
@@ -42,4 +51,5 @@
 ## Also: ##
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
+- Check GrelinTB updates every Monday.
 - Maybe more...
