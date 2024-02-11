@@ -102,17 +102,6 @@ elif os.path.isfile(blue):
 elif os.path.isfile(green):
     ui.set_default_color_theme("green")
 
-if os.path.isfile(en):
-    searching = "Searching"
-    installing = "Installing"
-    reinstalling = "Reinstalling"
-    uninstalling = "Uninstalling"
-elif os.path.isfile(tr):
-    searching = "Aranıyor"
-    installing = "Kuruluyor"
-    reinstalling = "Yeniden Kuruluyor"
-    uninstalling = "Kaldırılıyor"
-
 def running(process: str):
     if os.path.isfile(en):
         status.configure(text="Status:\n"+process+" Package(s)")
@@ -155,7 +144,6 @@ def install_app(appname: str, packagename: str):
             mb.showerror("Error", appname+" installation ve process cancelled.")
         elif os.path.isfile(tr):
             mb.showerror("Hata", appname+" kurulumu ve işlem iptal edildi.")
-
 def install_flatpak():
     global ask_f
     if os.path.isfile(en):
@@ -480,24 +468,24 @@ class Notes(ui.CTkFrame):
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if os.path.isfile(en):
-            self.label1 = ui.CTkLabel(self.from_list, text="- You can enter the note name yourself.\n- Do not enter to take new notes.\nIf you have taken notes, they are listed below:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Note the instruction at the top.")
+            self.label1 = ui.CTkLabel(self.from_list, text="If you have taken notes, they are listed below:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Please enter note name.")
             self.button11 = ui.CTkButton(self.from_list, text="Open", command=self.open_list)
             self.button12 = ui.CTkButton(self.from_list, text="Delete", command=self.delete_list)
             self.button13 = ui.CTkButton(self.from_list, text="Save", command=self.save_list)
             self.label2 = ui.CTkLabel(self.any, text="- You can enter the note name yourself.\n- Do not enter it to select it with the file dialog.")
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Note the instruction at the top.")
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Act according to the instructions above.")
             self.button21 = ui.CTkButton(self.any, text="Open", command=self.open_any)
             self.button22 = ui.CTkButton(self.any, text="Delete", command=self.delete_any)
             self.button23 = ui.CTkButton(self.any, text="Save", command=self.save_any)
         elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self.from_list, text="- Kendiniz not adı girebilirsiniz.\n- Yeni not almak için girmeyin.\nNotlar aldıysanız aşağıda listelenmiştir:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Üstteki yönergeye dikkat edin.")
+            self.label1 = ui.CTkLabel(self.from_list, text="Notlar aldıysanız aşağıda listelenmiştir:")
+            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Lütfen not adı girin.")
             self.button11 = ui.CTkButton(self.from_list, text="Aç", command=self.open_list)
             self.button12 = ui.CTkButton(self.from_list, text="Sil", command=self.delete_list)
             self.button13 = ui.CTkButton(self.from_list, text="Kaydet", command=self.save_list)
             self.label2 = ui.CTkLabel(self.any, text="- Kendiniz not adı girebilirsiniz.\n- Dosya diyoloğu ile seçmek için girmeyin.")
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Üstteki yönergöye dikkat edin.")
+            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Üstteki yönergeye göre davranın.")
             self.button21 = ui.CTkButton(self.any, text="Aç", command=self.open_any)
             self.button22 = ui.CTkButton(self.any, text="Sil", command=self.delete_any)
             self.button23 = ui.CTkButton(self.any, text="Kaydet", command=self.save_any)

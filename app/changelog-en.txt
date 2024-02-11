@@ -1,3 +1,5 @@
+# v1.0.3.1 #
+- Some fixes and minor improvements.
 # v1.0.3.0 #
 - Added automatic update check for Monday every week.
 - Improved CustomTkinter installation methods.

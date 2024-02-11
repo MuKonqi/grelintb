@@ -1,3 +1,5 @@
+# v1.0.3.1 #
+- Bazı düzeltmeler ve küçük iyileştirmeler.
 # v1.0.3.0 #
 - Her hafta pazartesi için otomatik güncelleme kontrolü eklendi.
 - CustomTkinter kurma yöntemleri iyileştirildi.
@@ -5,7 +7,7 @@
 - "Yardımıyla", "kullanılarak" ifadeleri kaldırılıp yerine lisans kısmına krediler bölümü eklendi.
 - Bazı yerlerde metin kutularının şeffaflığı kaldırıldı.
 - Bazı değişkenlerin ve fonksiyonların adı değiştirildi.
-- READMe.md güncellendi.
+- README.md güncellendi.
 # v1.0.2.0 #
 - Renk seçenekleri eklendi: Koyu mavi, mavi, yeşil.
 - Kenar çubuğundaki bazı dolgu boyutları değiştirildi.
