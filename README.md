@@ -21,10 +21,11 @@
 ### Store: 
 - Package search, install, reinstall, uninstall.
 ### Tools:
-- Configure .bashrc file.
-- Change computer's name.
+- Configure .bashrc.
+- Change the name of the computer.
 - Open file managers with root rights.
-- Informations about some distributions.
+- About some distributions.
+- Calculator.
 ### Scripts:
 - Open Cups configuration page.
 - Open Wine configuration app.
@@ -96,10 +97,11 @@
 ### Mağaza: 
 - Paket arama, yükleme, yeniden yükleme, kaldırma.
 ### Araçlar:
-- .bashrc dosyasını yapılandırın.
+- .bashrc'yi yapılandırın.
 - Bilgisayarın adını değiştirin.
 - Kök hakları ile dosya yöneticilerini açın.
-- Bazı dağıtımlar hakkında bilgiler.
+- Bazı dağıtımlar hakkında.
+- Hesap makinesi.
 ### Betikler:
 - Cups yapılandırma sayfasını açın.
 - Wine yapılandırma uygulamasını açın.

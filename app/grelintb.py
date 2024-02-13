@@ -41,18 +41,18 @@ try:
     import customtkinter as ui
 except:
     try:
+        print("Installing CustomTkinter...")
+        os.system("pip install customtkinter")
+        import customtkinter as ui 
+    except:
         try:
-            print("Installing CustomTkinter...")
-            os.system("pip install customtkinter")
-            import customtkinter as ui 
-        except:
             print("Installing CustomTkinter with --break-system-packages parameter...")
             os.system("pip install customtkinter --break-system-packages")
             import customtkinter as ui
-    except Exception as e:
-        print("Error: "+str(e)+". So opening the Issues page and then exiting...")
-        os.system("xdg-open https://github.com/MuKonqi/grelintb/issues")
-        exit(1)
+        except Exception as e:
+            print("Error: "+str(e)+". So opening the Issues page and then exiting...")
+            os.system("xdg-open https://github.com/MuKonqi/grelintb/issues")
+            exit(1)
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
@@ -121,6 +121,16 @@ def restart_system():
         ask_r = mb.askyesno("Uyarı", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nOnaylıyor musunuz?")
     if ask_r == True:
         os.system("pkexec reboot")
+
+def update():
+    root.destroy()
+    os.system("pkexec /usr/local/bin/grelintb/update.sh")
+    if os.path.isfile(en):
+        mb.showinfo("Successful", "GrelinTB updated.")
+    elif os.path.isfile(tr):
+        mb.showinfo("Başarılı", "GrelinTB güncellendi.")
+    os.system("grelintb")
+    exit()
 
 def install_app(appname: str, packagename: str):
     global ask_a
@@ -199,7 +209,7 @@ class Sidebar(ui.CTkFrame):
             self.version_b = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.update_b = ui.CTkButton(self, text="Update", command=self.check_update)
+            self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
@@ -226,7 +236,7 @@ class Sidebar(ui.CTkFrame):
             self.version_b = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.update_b = ui.CTkButton(self, text="Güncelle", command=self.check_update)
+            self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
@@ -324,16 +334,7 @@ class Sidebar(ui.CTkFrame):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
         exit()
-    def update(self):
-        root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
-        if os.path.isfile(en):
-            mb.showinfo("Successful", "GrelinTB updated.")
-        elif os.path.isfile(tr):
-            mb.showinfo("Başarılı", "GrelinTB güncellendi.")
-        os.system("grelintb")
-        exit()
-    def check_update(self):
+    def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
             self.window = ui.CTkToplevel()
@@ -344,12 +345,12 @@ class Sidebar(ui.CTkFrame):
             if os.path.isfile(en):
                 self.window.title("Changelog For "+version_latest)
                 self.label = ui.CTkLabel(self.window, text="New version found: "+version_latest+"\n\nThe changelog for the "+version_latest+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.window, text="Update To\n"+version_latest, command=self.update)
+                self.button = ui.CTkButton(self.window, text="Update To\n"+version_latest, command=update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.window.title(version_latest+" için Değişiklik Günlüğü")
                 self.label = ui.CTkLabel(self.window, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=self.update) 
+                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=update) 
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox = ui.CTkTextbox(self.window)
             self.textbox.insert("0.0", cl_text)
@@ -357,7 +358,7 @@ class Sidebar(ui.CTkFrame):
             self.textbox.grid(row=1, column=0, sticky="nsew", padx=50, pady=10)
             self.button.grid(row=2, column=0, sticky="nsew", padx=100, pady=10)
             self.textbox.configure(state="disabled")
-        else:
+        elif string != "starting":
             if os.path.isfile(en):
                 mb.showinfo("Information","GrelinTB is up to date.")
             elif os.path.isfile(tr):
@@ -1087,7 +1088,74 @@ class Distros(ui.CTkFrame):
         self.text9.grid(row=0, column=0, sticky="nsew")
         self.button9.grid(row=1, column=0, sticky="nsew")   
         self.text10.grid(row=0, column=0, sticky="nsew")
-        self.button10.grid(row=1, column=0, sticky="nsew")        
+        self.button10.grid(row=1, column=0, sticky="nsew")
+
+class Calculator(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure((1, 2, 3, 4), weight=1)
+        self.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        if os.path.isfile(en):
+            self.histroy_label = ui.CTkLabel(self, height=15, font=ui.CTkFont(size=13, weight="bold"), text="Previous Calculations")
+            self.history_button = ui.CTkButton(self, text="Delete History", command=self.delete_history)
+            self.button11 = ui.CTkButton(self, text="Clear", command=lambda:self.entry.delete(0, "end")).grid(row=3, column=3, sticky="nsew", pady=10, padx=10)
+        elif os.path.isfile(tr):
+            self.history_label = ui.CTkLabel(self, height=15, font=ui.CTkFont(size=13, weight="bold"), text="Önceki Hesaplamalar")
+            self.history_button = ui.CTkButton(self, text="Geçmişi Temizle", command=self.delete_history)
+            self.button11 = ui.CTkButton(self, text="Temizle", command=lambda:self.entry.delete(0, "end")).grid(row=3, column=3, sticky="nsew", pady=10, padx=10)
+        self.entry = ui.CTkEntry(self)
+        self.history_text = ui.CTkTextbox(self, fg_color="transparent")
+        if os.path.isfile("/home/"+username+"/.calc-history-grelintb.txt"):
+            with open("/home/"+username+"/.calc-history-grelintb.txt", "r") as self.file:
+                self.output = self.file.read()
+            self.history_text.insert("0.0", self.output)
+        self.history_text.configure(state="disabled")
+        self.entry.grid(row=0, column=0, columnspan=4, sticky="nsew", pady=10, padx=10)
+        self.button1 = ui.CTkButton(self, text="0", command=lambda:self.entry.insert("end", "0")).grid(row=1, column=0, sticky="nsew", pady=10, padx=10)
+        self.button2 = ui.CTkButton(self, text="1", command=lambda:self.entry.insert("end", "1")).grid(row=1, column=1, sticky="nsew", pady=10, padx=10)
+        self.button3 = ui.CTkButton(self, text="2", command=lambda:self.entry.insert("end", "2")).grid(row=1, column=2, sticky="nsew", pady=10, padx=10)
+        self.button4 = ui.CTkButton(self, text="3", command=lambda:self.entry.insert("end", "3")).grid(row=1, column=3, sticky="nsew", pady=10, padx=10)
+        self.button5 = ui.CTkButton(self, text="4", command=lambda:self.entry.insert("end", "4")).grid(row=2, column=0, sticky="nsew", pady=10, padx=10)
+        self.button6 = ui.CTkButton(self, text="5", command=lambda:self.entry.insert("end", "5")).grid(row=2, column=1, sticky="nsew", pady=10, padx=10)
+        self.button7 = ui.CTkButton(self, text="6", command=lambda:self.entry.insert("end", "6")).grid(row=2, column=2, sticky="nsew", pady=10, padx=10)
+        self.button8 = ui.CTkButton(self, text="7", command=lambda:self.entry.insert("end", "7")).grid(row=2, column=3, sticky="nsew", pady=10, padx=10)
+        self.button9 = ui.CTkButton(self, text="8", command=lambda:self.entry.insert("end", "8")).grid(row=3, column=0, sticky="nsew", pady=10, padx=10)
+        self.button10 = ui.CTkButton(self, text="9", command=lambda:self.entry.insert("end", "9")).grid(row=3, column=1, sticky="nsew", pady=10, padx=10)
+        self.button11 = ui.CTkButton(self, text="=", command=self.calc).grid(row=3, column=2, sticky="nsew", pady=10, padx=10)
+        self.button13 = ui.CTkButton(self, text="+", command=lambda:self.entry.insert("end", "+")).grid(row=4, column=0, sticky="nsew", pady=10, padx=10)
+        self.button14 = ui.CTkButton(self, text="-", command=lambda:self.entry.insert("end", "-")).grid(row=4, column=1, sticky="nsew", pady=10, padx=10)
+        self.button15 = ui.CTkButton(self, text="*", command=lambda:self.entry.insert("end", "*")).grid(row=4, column=2, sticky="nsew", pady=10, padx=10)
+        self.button16 = ui.CTkButton(self, text="/", command=lambda:self.entry.insert("end", "/")).grid(row=4, column=3, sticky="nsew", pady=10, padx=10)
+        self.history_label.grid(row=0, column=4, sticky="nsew", pady=10, padx=10)
+        self.history_text.grid(row=1, column=4, rowspan=3, sticky="nsew", pady=10, padx=10)
+        self.history_button.grid(row=4, column=4, sticky="nsew", pady=10, padx=10)
+    def insert(self, number: str):
+        self.entry.insert("0.0", number)
+    def calc(self):
+        try:
+            self.process = str(self.entry.get())
+            self.result = str(eval(self.entry.get()))
+            self.entry.delete(0, "end")
+            self.entry.insert(0, self.result)
+            with open("/home/"+username+"/.calc-history-grelintb.txt", "a+") as self.file:
+                self.file.write(self.process+"="+self.result+"\n")
+            with open("/home/"+username+"/.calc-history-grelintb.txt", "r") as self.file:
+                self.output = self.file.read()
+            self.history_text.configure(state="normal")
+            self.history_text.delete("0.0", "end")
+            self.history_text.insert("0.0", self.output)
+            self.history_text.configure(state="disabled")
+        except Exception as e:
+            if os.path.isfile(en):
+                mb.showerror("Error", "Possible syntax error: "+str(e)+"\nPlease try again.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata", "Muhtemel sözdizimi hatası: "+str(e)+"\nLütfen tekrar deneyin.")
+    def delete_history(self):
+        subprocess.Popen("rm /home/"+username+"/.calc-history-grelintb.txt", shell=True)
+        self.history_text.configure(state="normal")
+        self.history_text.delete("0.0", "end")
+        self.history_text.configure(state="disabled")
 
 class Tools(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1097,15 +1165,17 @@ class Tools(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            tab1 = self.tabview.add("Configure .bashrc File")
+            tab1 = self.tabview.add("Configure .bashrc")
             tab2 = self.tabview.add("Change Computer's Name")
             tab3 = self.tabview.add("Open File Managers With Root Rights")
-            tab4 = self.tabview.add("Informations About Some Distributions")
+            tab4 = self.tabview.add("About Some Distributions")
+            tab5 = self.tabview.add("Calculator")
         elif os.path.isfile(tr):
-            tab1 = self.tabview.add(".bashrc Dosyasını Yapılandır")
+            tab1 = self.tabview.add(".bashrc'yi Yapılandır")
             tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
             tab3 = self.tabview.add("Dosya Yöneticilerini Kök Haklarıyla Aç")
-            tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında Bilgiler")
+            tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında")
+            tab5 = self.tabview.add("Hesap Makinesi")
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
         self.bashrc_frame=Bashrc(tab1, fg_color="transparent")
@@ -1121,6 +1191,10 @@ class Tools(ui.CTkFrame):
         tab4.grid_columnconfigure(0, weight=1)
         tab4.grid_rowconfigure(0, weight=1)
         self.distros_frame=Distros(tab4)
+        self.distros_frame.grid(row=0, column=0, sticky="nsew")
+        tab5.grid_columnconfigure(0, weight=1)
+        tab5.grid_rowconfigure(0, weight=1)
+        self.distros_frame=Calculator(tab5)
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
 
 
@@ -1243,7 +1317,7 @@ class Root(ui.CTk):
             elif os.path.isfile(tr):
                 mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
         if dt.datetime.now().weekday() == 0:
-            Sidebar.check_update(self)
+            Sidebar.check_update(self, "starting")
         if os.path.isfile(en):
             tab_starting = self.tabview.add("Starting")
             tab_notes = self.tabview.add("Notes")
