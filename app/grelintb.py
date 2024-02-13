@@ -1097,7 +1097,7 @@ class Calculator(ui.CTkFrame):
         self.grid_rowconfigure((1, 2, 3, 4), weight=1)
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
         if os.path.isfile(en):
-            self.histroy_label = ui.CTkLabel(self, height=15, font=ui.CTkFont(size=13, weight="bold"), text="Previous Calculations")
+            self.history_label = ui.CTkLabel(self, height=15, font=ui.CTkFont(size=13, weight="bold"), text="Previous Calculations")
             self.history_button = ui.CTkButton(self, text="Delete History", command=self.delete_history)
             self.button11 = ui.CTkButton(self, text="Clear", command=lambda:self.entry.delete(0, "end")).grid(row=3, column=3, sticky="nsew", pady=10, padx=10)
         elif os.path.isfile(tr):
