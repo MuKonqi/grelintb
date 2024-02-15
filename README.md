@@ -4,7 +4,7 @@
 ### Sidebar:
 - Show app's name, when clicked open this GitHub repository.
 - Show version, when clicked open current versions's changelog.
-- Show developer's name when clicked open [my website](https://mukonqi.github.io).
+- Show developer's name when clicked open developer's website.
 - A button for license and credits.
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
 - Reset GrelinTB.
@@ -15,13 +15,13 @@
 - Change language.
 - Status text.
 ### Starting:
-- A nice welcome text or weather forecast (with the help of [wttr.in](https://wttr.in)) and system information (with the help of [neofetch](https://github.com/dylanaraps/neofetch)).
+- A nice welcome text or weather forecast and system information.
 ### Notes:
 - Create, edit, delete notes and documents.
 ### Store: 
 - Package search, install, reinstall, uninstall.
 ### Tools:
-- Configure .bashrc.
+- Configure Bash.
 - Change the name of the computer.
 - Open file managers with root rights.
 - About some distributions.
@@ -37,6 +37,7 @@
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
 - Check GrelinTB updates every Monday.
+- Restricted management for GrelinTB from the terminal.
 - Maybe more...
 ## MetterXP vs GrelinTB
 - GrelinTB's UI is better.
@@ -80,7 +81,7 @@
 ### Kenar Çubuğu:
 - Uygulamanın adını göster, tıklandığında bu GitHub deposunu aç.
 - Sürümü göster, tıklandığında mevcut sürümlerin değişiklik günlüğünü aç.
-- Tıklandığında geliştiricinin adını göster [web sitemi](https://mukonqi.github.io) aç.
+- Tıklandığında geliştiricinin adını göster geliştiricinin internet sitesini aç.
 - Lisans ve krediler için bir buton.
 - Güncellemeleri kontrol edin. Yeni sürüm mevcutsa, yeni sürümün değişiklik günlüğünü alın ve yeni sürüme güncelleyin.
 - GrelinTB'yi sıfırlayın.
@@ -91,13 +92,13 @@
 - Dili değiştirin.
 - Durum metni.
 ### Başlangıç:
-- Güzel bir karşılama metni veya hava durumu tahmini ([wttr.in](https://wttr.in) yardımıyla) ve sistem bilgileri ([neofetch](https://github.com/dylanaraps/neofetch) yardımıyla).
+- Güzel bir karşılama metni veya hava durumu tahmini ve sistem bilgileri.
 ### Notlar:
 - Notlar ve belgeler oluşturun, düzenleyin, silin.
 ### Mağaza: 
 - Paket arama, yükleme, yeniden yükleme, kaldırma.
 ### Araçlar:
-- .bashrc'yi yapılandırın.
+- Bash'ı yapılandırın.
 - Bilgisayarın adını değiştirin.
 - Kök hakları ile dosya yöneticilerini açın.
 - Bazı dağıtımlar hakkında.
@@ -113,6 +114,7 @@
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.
 - Her pazartesi GrelinTB güncellemelerini kontrol et.
+- Terminalden GrelinTB için kısıtlı yönetim.
 - Belki daha fazlası...
 ## MetterXP vs GrelinTB
 - GrelinTB'nin kullanıcı arayüzü daha iyi.

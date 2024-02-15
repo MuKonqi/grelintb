@@ -1,31 +1,13 @@
-# v1.1.0.0 #
-- New feature added to Tools: Calculator
+# v1.1.1.0 #
 - General bug fixes and minor improvements.
-# v1.0.3.1 #
-- Some fixes and minor improvements.
-# v1.0.3.0 #
-- Added automatic update check for Monday every week.
-- Improved CustomTkinter installation methods.
-- Changed the text of the 4th button in the sidebar.
-- Removed "with the help of" and "using" and replaced them with the credits section of the license.
-- Removed transparency of text boxes in some places.
-- Changed the name of some variables and functions.
-- README.md has been updated.
-# v1.0.2.0 #
-- Color options have been added: Dark blue, blue, green.
-- Some padding sizes changed in the sidebar.
-- The background of the list of the notes section has been made transparent.
-- Minor improvements to the README file and changelog.
-# v1.0.1.0 #
-- Add missing message boxs.
-- Fix some translations.
-# v1.0.0.1 and v1.0.0.2 Releases #
-- Quick fixes.
+- Configure .bashrc became Configure Bash and direct file editing was added.
+- Updated changelogs and README.md.
+- Added restricted administration for GrelinTB from terminal.
 # Features #
 ## Sidebar: ##
 - Show app's name, when clicked open this GitHub repository.
 - Show version, when clicked open current versions's changelog.
-- Show developer's name when clicked open my website (https://mukonqi.github.io).
+- Show developer's name when clicked open developer's website.
 - A button for license and credits.
 - Control updates. If new version available, get the changelog of the new version and update to the new version.
 - Reset GrelinTB.
@@ -36,16 +18,17 @@
 - Change language.
 - Status text.
 ## Starting: ##
-- A nice welcome text or weather forecast [with the help of wttr.in(https://wttr.in)] and system information [with the help of neofetch(https://github.com/dylanaraps/neofetch)].
+- A nice welcome text or weather forecast and system information.
 ## Notes: ##
 - Create edit, delete notes and documents.
 ## Store: ##
 - Package search, install, reinstall, uninstall.
 ## Tools: ##
-- Configure .bashrc file.
+- Configure Bash.
 - Change computer's name.
 - Open file managers with root rights.
 - Informations about some distributions.
+- Calculator.
 ## Scripts: ##
 - Open Cups configuration page.
 - Open Wine configuration app.
@@ -57,4 +40,5 @@
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
 - Check GrelinTB updates every Monday.
+- Restricted management for GrelinTB from the terminal.
 - Maybe more...

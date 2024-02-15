@@ -23,12 +23,19 @@ solus = "/etc/solus-release"
 arch1 = "/bin/pacman"
 arch2 = "/usr/bin/pacman"
 
-if os.getuid() == 0:
-    exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
 if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 
 import sys
+
+if "pcrename" in sys.argv[1:]:
+    with open("/etc/hostname", "w") as pcname:
+        pcname.write(str(sys.argv[2]))
+    exit()
+
+if os.getuid() == 0:
+    exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
+
 import locale
 import getpass
 import threading
@@ -43,7 +50,7 @@ except:
     try:
         print("Installing CustomTkinter...")
         os.system("pip install customtkinter")
-        import customtkinter as ui 
+        import customtkinter as ui
     except:
         try:
             print("Installing CustomTkinter with --break-system-packages parameter...")
@@ -116,9 +123,9 @@ def normal():
 def restart_system():
     global ask_r
     if os.path.isfile(en):
-        ask_r = mb.askyesno("Warning", "Your system needs to be restarted for the changes to be completed.\nDo you approve it?")
+        ask_r = mb.askyesno("Warning", "Your system needs to be restarted for the changes to be completed.\nDo you want to reboot immediately?")
     elif os.path.isfile(tr):
-        ask_r = mb.askyesno("Uyarı", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nOnaylıyor musunuz?")
+        ask_r = mb.askyesno("Uyarı", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nHemen yeniden başlatmak ister misiniz?")
     if ask_r == True:
         os.system("pkexec reboot")
 
@@ -214,7 +221,7 @@ class Sidebar(ui.CTkFrame):
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Color Theme:", anchor="w")
-            self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green"], command=self.change_color)                
+            self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
@@ -241,7 +248,7 @@ class Sidebar(ui.CTkFrame):
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Renk Teması:", anchor="w")
-            self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil"], command=self.change_color)            
+            self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
@@ -323,17 +330,6 @@ class Sidebar(ui.CTkFrame):
         self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=5)
         self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
         self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=(5, 10))
-    def uninstall(self):
-        root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
-        os.system("cd /home/"+username+" ; rm .bashrc*-grelintb.bak")
-        if os.path.isfile(en):
-            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            mb.showinfo("See you!","GrelinTB uninstalled from your system.")
-        elif os.path.isfile(tr):
-            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
-        exit()
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -350,7 +346,7 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(tr):
                 self.window.title(version_latest+" için Değişiklik Günlüğü")
                 self.label = ui.CTkLabel(self.window, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=update) 
+                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox = ui.CTkTextbox(self.window)
             self.textbox.insert("0.0", cl_text)
@@ -373,6 +369,17 @@ class Sidebar(ui.CTkFrame):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Başarılı", "GrelinTB sıfırlandı.")
         os.system("grelintb")
+        exit()
+    def uninstall(self):
+        root.destroy()
+        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
+        os.system("cd /home/"+username+" ; rm .*-grelintb*")
+        if os.path.isfile(en):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            mb.showinfo("See you!","GrelinTB uninstalled from your system.")
+        elif os.path.isfile(tr):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
         exit()
     def startup_option(self):
         if self.startup_var.get() == "on":
@@ -699,7 +706,7 @@ class Store(ui.CTkFrame):
                 if ask_f == False:
                     return
             cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()   
+        (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -764,12 +771,11 @@ class Store(ui.CTkFrame):
         t = threading.Thread(target=self.uninstall_main, daemon=False)
         t.start()
 
-class Bashrc(ui.CTkFrame):
+class BashButtons(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure((0, 1, 2, 3), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
-        os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session-grelintb.bak")
         if os.path.isfile(en):
             self.label1 = ui.CTkLabel(self, text="Without Colors")
             self.button1 = ui.CTkButton(self, text="Add My Username", command=self.username1)
@@ -853,6 +859,59 @@ class Bashrc(ui.CTkFrame):
         os.system("cp /home/"+username+"/.bashrc-first-grelintb.bak /home/"+username+"/.bashrc")
         self.successful()
 
+class BashFile(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        with open("/home/"+username+"/.bashrc", "r") as self.bashrc:
+            self.content = self.bashrc.read()
+        self.textbox.insert("0.0", self.content)
+        self.textbox.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+        if os.path.isfile(en):
+            self.button = ui.CTkButton(self, text="Save", command=self.save)
+        elif os.path.isfile(tr):
+            self.button = ui.CTkButton(self, text="Kaydet", command=self.save)
+        self.button.grid(row=1, column=0, sticky="nsew", pady=(10, 0))
+    def save(self):
+        os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
+        with open("/home/"+username+"/.bashrc", "w+") as self.file:
+            self.file.write(self.textbox.get("0.0", 'end'))
+        with open("/home/"+username+"/.bashrc") as self.file:
+            self.output = self.file.read()
+        if self.output == self.textbox.get("0.0", 'end'):
+            if os.path.isfile(en):
+                mb.showinfo("Information","The configuration saved.")
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Yapılandırma kaydedildi.")
+        else:
+            if os.path.isfile(en):
+                mb.showerror("Error","The configuration could not be saved.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Yapılandırma kaydedilemedi.")
+
+class Bash(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, fg_color="transparent")
+        self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+        os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session-grelintb.bak")
+        if os.path.isfile(en):
+            self.buttons_tab = self.tabview.add("Options")
+            self.file_tab = self.tabview.add("File")
+        elif os.path.isfile(tr):
+            self.buttons_tab = self.tabview.add("Seçenekler")
+            self.file_tab = self.tabview.add("Dosya")
+        self.buttons_tab.grid_columnconfigure(0, weight=1)
+        self.buttons_tab.grid_rowconfigure(0, weight=1)
+        self.file_tab.grid_columnconfigure(0, weight=1)
+        self.file_tab.grid_rowconfigure(0, weight=1)
+        self.buttons_frame = BashButtons(self.buttons_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        self.file_frame = BashFile(self.file_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+
 class ComputerName(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -873,6 +932,7 @@ class ComputerName(ui.CTkFrame):
         self.button.grid(row=2, column=0, sticky="nsew", padx=80, pady=40)
     def apply(self):
         subprocess.Popen("pkexec grelintb pcrename "+self.entry.get(), shell=True)
+        restart_system()
 
 class OpenFM(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1033,7 +1093,7 @@ class Distros(ui.CTkFrame):
             self.text1 = ui.CTkLabel(distro1, text="MX Linux, antiX ve MX Linux toplulukları arasında bir işbirliği girişimidir."+
                 "\nZarif ve verimli masaüstlerini yüksek kararlılık ve sağlam performansla birleştirmek için tasarlanmış bir işletim sistemi ailesidir."+
                 "\nMX'in grafiksel araçları ve antiX'in araçları kullanımı kolaylaştırır.")
-            self.button1 = ui.CTkButton(distro1, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))  
+            self.button1 = ui.CTkButton(distro1, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
             self.text2 = ui.CTkLabel(distro2, text="Linux Mint masaüstü ve dizüstü bilgisayarlar için bir işletim sistemidir."+
                 "\nKutudan çıktığı gibi' çalışmak üzere tasarlanmıştır ve çoğu insanın ihtiyaç duyduğu uygulamalarla tam donanımlı olarak gelir."+
                 "\n\nGrelinTB geliştiricisinin notu: İlk kez Linux kullanacaklar için Linux Mint'i şiddetle tavsiye ederim. Kullanımı gerçekten çok kolay.")
@@ -1068,25 +1128,25 @@ class Distros(ui.CTkFrame):
             self.text10 = ui.CTkLabel(distro10, text="Bu listede GrelinTB'nin desteklemediği tek dağıtımdır kendisi. Birçok kitleyi hedef alır ve kendi araçlarına sahiptir."+
                 "\nTumbleweed (daha güncel olan), Leap (daha stabil olan) olarak ikiye ayrılır."+
                 "\n\nGrelinTB geliştiricisinin notu: Çeşitli kaynaklardan okuduğum kadarıyla Tumbleweed kullanmak daha iyiymiş.")
-            self.button10 = ui.CTkButton(distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True)) 
+            self.button10 = ui.CTkButton(distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
         self.text1.grid(row=0, column=0, sticky="nsew")
-        self.button1.grid(row=1, column=0, sticky="nsew")   
+        self.button1.grid(row=1, column=0, sticky="nsew")
         self.text2.grid(row=0, column=0, sticky="nsew")
-        self.button2.grid(row=1, column=0, sticky="nsew")   
+        self.button2.grid(row=1, column=0, sticky="nsew")
         self.text3.grid(row=0, column=0, sticky="nsew")
-        self.button3.grid(row=1, column=0, sticky="nsew")   
+        self.button3.grid(row=1, column=0, sticky="nsew")
         self.text4.grid(row=0, column=0, sticky="nsew")
-        self.button4.grid(row=1, column=0, sticky="nsew")   
+        self.button4.grid(row=1, column=0, sticky="nsew")
         self.text5.grid(row=0, column=0, sticky="nsew")
-        self.button5.grid(row=1, column=0, sticky="nsew")   
+        self.button5.grid(row=1, column=0, sticky="nsew")
         self.text6.grid(row=0, column=0, sticky="nsew")
-        self.button6.grid(row=1, column=0, sticky="nsew")   
+        self.button6.grid(row=1, column=0, sticky="nsew")
         self.text7.grid(row=0, column=0, sticky="nsew")
-        self.button7.grid(row=1, column=0, sticky="nsew")   
+        self.button7.grid(row=1, column=0, sticky="nsew")
         self.text8.grid(row=0, column=0, sticky="nsew")
-        self.button8.grid(row=1, column=0, sticky="nsew")     
+        self.button8.grid(row=1, column=0, sticky="nsew")
         self.text9.grid(row=0, column=0, sticky="nsew")
-        self.button9.grid(row=1, column=0, sticky="nsew")   
+        self.button9.grid(row=1, column=0, sticky="nsew")
         self.text10.grid(row=0, column=0, sticky="nsew")
         self.button10.grid(row=1, column=0, sticky="nsew")
 
@@ -1130,8 +1190,6 @@ class Calculator(ui.CTkFrame):
         self.history_label.grid(row=0, column=4, sticky="nsew", pady=10, padx=10)
         self.history_text.grid(row=1, column=4, rowspan=3, sticky="nsew", pady=10, padx=10)
         self.history_button.grid(row=4, column=4, sticky="nsew", pady=10, padx=10)
-    def insert(self, number: str):
-        self.entry.insert("0.0", number)
     def calc(self):
         try:
             self.process = str(self.entry.get())
@@ -1165,20 +1223,20 @@ class Tools(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            tab1 = self.tabview.add("Configure .bashrc")
+            tab1 = self.tabview.add("Configure Bash")
             tab2 = self.tabview.add("Change Computer's Name")
             tab3 = self.tabview.add("Open File Managers With Root Rights")
             tab4 = self.tabview.add("About Some Distributions")
             tab5 = self.tabview.add("Calculator")
         elif os.path.isfile(tr):
-            tab1 = self.tabview.add(".bashrc'yi Yapılandır")
+            tab1 = self.tabview.add("Bash'ı Yapılandır")
             tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
             tab3 = self.tabview.add("Dosya Yöneticilerini Kök Haklarıyla Aç")
             tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında")
             tab5 = self.tabview.add("Hesap Makinesi")
         tab1.grid_columnconfigure(0, weight=1)
         tab1.grid_rowconfigure(0, weight=1)
-        self.bashrc_frame=Bashrc(tab1, fg_color="transparent")
+        self.bashrc_frame=Bash(tab1, fg_color="transparent")
         self.bashrc_frame.grid(row=0, column=0, sticky="nsew")
         tab2.grid_columnconfigure(0, weight=1)
         tab2.grid_rowconfigure(0, weight=1)
@@ -1187,7 +1245,7 @@ class Tools(ui.CTkFrame):
         tab3.grid_columnconfigure(0, weight=1)
         tab3.grid_rowconfigure(0, weight=1)
         self.openfm_frame=OpenFM(tab3, fg_color="transparent")
-        self.openfm_frame.grid(row=0, column=0, sticky="nsew")        
+        self.openfm_frame.grid(row=0, column=0, sticky="nsew")
         tab4.grid_columnconfigure(0, weight=1)
         tab4.grid_rowconfigure(0, weight=1)
         self.distros_frame=Distros(tab4)
@@ -1351,9 +1409,53 @@ class Root(ui.CTk):
         self.scripts_frame=Scripts(tab_scripts)
         self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
-if "pcrename" in sys.argv[1:]:
-    with open("/etc/hostname", "w") as pcname:
-        pcname.write(str(sys.argv[2]))
-elif __name__ == "__main__":
-    root = Root(className="grelintb")
-    root.mainloop()
+if __name__ == "__main__":
+    if "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
+        if os.path.isfile(en):
+            with open("/usr/local/bin/grelintb/changelog-en.txt", "r") as cc_file:
+                cc_text = cc_file.read()
+            exit("     Current version's ("+version_current+") changelog is below:\n"+cc_text)
+        elif os.path.isfile(tr):
+            with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
+                cc_text = cc_file.read()
+            exit("     Şuanki sürümün ("+version_current+") değişiklik günlüğü aşağıdadır:\n"+cc_text)
+    elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
+        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        if os.path.isfile(en):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            exit("GrelinTB has been reset.")
+        elif os.path.isfile(tr):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            exit("GrelinTB sıfırlandı.")
+    elif "update" in sys.argv[1:] or "güncelle" in sys.argv[1:]:
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        if version_latest != version_current:
+            if os.path.isfile(en):
+                cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                question = input("      New version's ("+version_latest+") changelog is below:\n"+cl_text+"\n\nDo you want update to "+version_latest+" version? [y/n]: ")
+            elif os.path.isfile(tr):
+                cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                question = input("      Yeni sürümün ("+version_latest+") değişiklik günlüğü aşağıdadır:\n"+cl_text+"\n\n"+version_latest+" sürümüne güncellemek ister misiniz? [e/h]: ")
+            if question.lower() == "y" or question.lower() == "e":
+                os.system("pkexec /usr/local/bin/grelintb/update.sh")
+                if os.path.isfile(en):
+                    exit("GrelinTB updated.")
+                elif os.path.isfile(tr):
+                    exit("GrelinTB güncellendi.")
+        else:
+            if os.path.isfile(en):
+                exit("GrelinTB is up to date.")
+            elif os.path.isfile(tr):
+                exit("GrelinTB güncel.")
+    elif "uninstall" in sys.argv[1:] or "kaldır" in sys.argv[1:]:
+        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
+        os.system("cd /home/"+username+" ; rm .*-grelintb*")
+        if os.path.isfile(en):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            exit("See you! GrelinTB uninstalled from your system.")
+        elif os.path.isfile(tr):
+            os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
+            exit("Görüşürüz! GrelinTB sisteminizden kaldırıldı.")
+    else:
+        root = Root(className="grelintb")
+        root.mainloop()
