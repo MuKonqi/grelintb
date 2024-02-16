@@ -43,7 +43,7 @@
 ## Installation
 - Please install wget package.
 - Open terminal.
-- Type this: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh; rm install-grelintb.sh```
+- Type this: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
 ## Dependencies
 - A distribution based on Debian GNU/Linux (apt) or Fedora Linux (dnf) or Solus (eopkg) or Arch Linux (pacman)
 - Minimum screen resolution of 1200x600 for best efficiency
@@ -120,7 +120,7 @@
 ## Kurulum
 - Lütfen wget paketini yükleyin.
 - Terminali açın.
-- Bunu yazın: ``wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh``
+- Bunu yazın: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
 ## Bağımlılıklar
 - Debian GNU/Linux (apt) veya Fedora Linux (dnf) veya Solus (eopkg) veya Arch Linux (pacman) tabanlı bir dağıtım
 - En iyi verim için minimum 1200x600 ekran çözünürlüğü

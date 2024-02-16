@@ -1,3 +1,5 @@
+# v1.1.1.2 #
+- Ufak bir hata düzeltmesi.
 # v1.1.1.1 #
 - Krediler bölümünde kredilerin amaçları eklendi.
 - Değişiklik günlükleri ve README.md güncellendi.
