@@ -1,8 +1,17 @@
+# v1.1.1.1 #
+- Krediler bölümünde kredilerin amaçları eklendi.
+- Değişiklik günlükleri ve README.md güncellendi.
+- Terminalden GrelinTB için kısıtlı yönetim çok daha işlevsel hale getirilip yardım sayfası eklendi (komut: grelintb yardım).
 # v1.1.1.0 #
 - Genel hata düzeltmeleri ve küçük iyileştirmeler.
 - .bashrc Yapılandırın, Bash'ı Yapılandırın oldu ve doğrudan dosya düzenleme eklendi.
 - Değişiklik günlükleri ve README.md güncellendi.
 - Terminalden GrelinTB için kısıtlı yönetim eklendi.
+# v1.1.0.1 #
+- Ufak bir hata düzeltmesi.
+# v1.1.0.0 #
+- Araçlar kısmına yeni özellik eklendi: Hesap Makinesi
+- Genel hata düzeltmeleri ve küçük iyileştirmeler.
 # Özellikler #
 ## Kenar Çubuğu: ##
 - Uygulamanın adını göster, tıklandığında bu GitHub deposunu aç.
@@ -40,5 +49,5 @@
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.
 - Her pazartesi GrelinTB güncellemelerini kontrol et.
-- Terminalden GrelinTB için kıısıtlı yönetim.
+- Terminal için bazı parametreler. Not: Tüm parametreler için yardım sayfası: `grelintb yardım`
 - Belki daha fazlası...

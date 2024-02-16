@@ -294,7 +294,7 @@ class Sidebar(ui.CTkFrame):
                 cc_text = cc_file.read()
         elif os.path.isfile(tr):
             self.window.title(version_current+" için Değişiklik Günlüğü")
-            self.label = ui.CTkLabel(self.window, text="Şuanki sürüm: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
+            self.label = ui.CTkLabel(self.window, text="Şimdiki sürüm: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
             with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
                 cc_text = cc_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -312,13 +312,16 @@ class Sidebar(ui.CTkFrame):
             self.window.title("License And Credits")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credits")
+            self.button1 = ui.CTkButton(self.window, text="Neofetch (for system information)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
+            self.button2 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="wttr.in (for weather forecast)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))        
         elif os.path.isfile(tr):
             self.window.title("Lisans Ve Krediler")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Krediler")
-        self.button1 = ui.CTkButton(self.window, text="Neofetch", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
-        self.button2 = ui.CTkButton(self.window, text="Lolcat", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-        self.button3 = ui.CTkButton(self.window, text="wttr.in", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
+            self.button1 = ui.CTkButton(self.window, text="Neofetch (sistem bilgileri için)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
+            self.button2 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -1410,15 +1413,58 @@ class Root(ui.CTk):
         self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
-    if "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
+    if "help" in sys.argv[1:] or "yardım" in sys.argv[1:]:
+        if os.path.isfile(en):
+            print("This is GrelinTB's help page.\nGrelinTB is great toolbox for some Linux distros.")
+            print("Current version: "+version_current)
+            print("Developer:       MuKonqi")
+            print("License:         GPLv3-or-later")
+            print("Credits:         Neofetch (for system information), Lolcat (for colorful commands in terminal), wttr.in (for weather forecast)")
+            print("List of all parameters for GrelinTB:")
+            print("  help:          Show this page")
+            print("  grelintb:      Open website of GrelinTB's GitHub repository")
+            print("  version:       Show changelog of "+version_current)
+            print("  developer:     Open website of GrelinTB developer")
+            print("  license:       Show license text of GPLv3")
+            print("  reset:         Reset GrelinTB")
+            print("  update:        Update GrelinTB")
+            print("  uninstall:     Uninstall GrelinTB")  
+            exit("                 Start GrelinTB normally (default)")
+        elif os.path.isfile(tr):
+            print("Bu GrelinTB'nin yardım sayfasıdır.\nGrelinTB bazı Linux dağıtımları için harika bir araç kutusudur.")
+            print("Şimdiki sürüm:   "+version_current)
+            print("Geliştirici:     MuKonqi")
+            print("Lisans:          GPLv3-or-later")
+            print("Krediler:        Neofetch (sistem bilgisi için), Lolcat (terminalde renkli komutlar için), wttr.in (hava durumu için)")            
+            print("GrelinTB için tüm parametrelerin listesi:")
+            print("  yardım:        Bu sayfayı göster")
+            print("  grelintb:      GrelinTB'nin GitHub deposunu aç")
+            print("  sürüm:         "+version_current+" sürümünün değişik günlüğünü göster")
+            print("  geliştirici:   GrelinTB geliştiricisinin internet sitesini aç")
+            print("  lisans:        GPLv3 lisansının metnini göster")
+            print("  sıfırla:       GrelinTB'yı sıfırla")
+            print("  güncelle:      GrelinTB'yı güncelle")
+            print("  kaldır:        GrelinTB'yı kaldır")
+            exit("                 GrelinTB'yi normal olarak aç (varsayılan)")
+    elif "grelintb" in sys.argv[1:]:
+        subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True)
+        exit()
+    elif "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
         if os.path.isfile(en):
             with open("/usr/local/bin/grelintb/changelog-en.txt", "r") as cc_file:
                 cc_text = cc_file.read()
-            exit("     Current version's ("+version_current+") changelog is below:\n"+cc_text)
+            exit("  Current version's ("+version_current+") changelog is below:\n"+cc_text)
         elif os.path.isfile(tr):
             with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
                 cc_text = cc_file.read()
-            exit("     Şuanki sürümün ("+version_current+") değişiklik günlüğü aşağıdadır:\n"+cc_text)
+            exit("  Şimdiki sürümün ("+version_current+") değişiklik günlüğü aşağıdadır:\n"+cc_text)
+    elif "developer" in sys.argv[1:] or "geliştirici" in sys.argv[1:]:
+        subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
+        exit()
+    elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
+        with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
+            l_text = l_file.read()
+        exit(l_text)
     elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/update.sh")
         if os.path.isfile(en):
@@ -1432,10 +1478,10 @@ if __name__ == "__main__":
         if version_latest != version_current:
             if os.path.isfile(en):
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-                question = input("      New version's ("+version_latest+") changelog is below:\n"+cl_text+"\n\nDo you want update to "+version_latest+" version? [y/n]: ")
+                question = input("  New version's ("+version_latest+") changelog is below:\n"+cl_text+"\n\nDo you want update to "+version_latest+" version? [y/n]: ")
             elif os.path.isfile(tr):
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-                question = input("      Yeni sürümün ("+version_latest+") değişiklik günlüğü aşağıdadır:\n"+cl_text+"\n\n"+version_latest+" sürümüne güncellemek ister misiniz? [e/h]: ")
+                question = input("  Yeni sürümün ("+version_latest+") değişiklik günlüğü aşağıdadır:\n"+cl_text+"\n\n"+version_latest+" sürümüne güncellemek ister misiniz? [e/h]: ")
             if question.lower() == "y" or question.lower() == "e":
                 os.system("pkexec /usr/local/bin/grelintb/update.sh")
                 if os.path.isfile(en):

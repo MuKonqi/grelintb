@@ -1,8 +1,17 @@
+# v1.1.1.1 #
+- Added the purpose of credits in the credits section.
+- Updated changelogs and README.md.
+- Made the restricted administration for GrelinTB from the terminal much more functional and added a help page (command: grelintb help).
 # v1.1.1.0 #
 - General bug fixes and minor improvements.
 - Configure .bashrc became Configure Bash and direct file editing was added.
 - Updated changelogs and README.md.
 - Added restricted administration for GrelinTB from terminal.
+# v1.1.0.1 #
+- A small bug fix.
+# v1.1.0.0 #
+- New feature added to Tools: Calculator
+- General bug fixes and minor improvements.
 # Features #
 ## Sidebar: ##
 - Show app's name, when clicked open this GitHub repository.
@@ -40,5 +49,5 @@
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
 - Check GrelinTB updates every Monday.
-- Restricted management for GrelinTB from the terminal.
+- Some parameters for terminal. Note: Help page for all parameters: `grelintb help`
 - Maybe more...

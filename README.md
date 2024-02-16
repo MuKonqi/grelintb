@@ -1,4 +1,5 @@
-# English
+# GrelinTB
+## Great toolbox for some Linux distros.
 - [Bu dökümantasyonun devamını Türkçe dilinde görüntelemek için bu cümleye tıklayın.](#turkish)
 ## Features
 ### Sidebar:
@@ -37,19 +38,12 @@
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
 - Check GrelinTB updates every Monday.
-- Restricted management for GrelinTB from the terminal.
+- Some parameters for terminal. Note: Help page for all parameters: `grelintb help`
 - Maybe more...
-## MetterXP vs GrelinTB
-- GrelinTB's UI is better.
-- GrelinTB is much simpler to use.
-- GrelinTB's codes are really more optimize because coded from scratch with classes.
-- GrelinTB doesn't have theme system but it has appearance system.
-- GrelinTB does't provide options for DE/WM and default applications (Firefox etc.).
-- GrelinTB can detect system theme and tr_TR locale.
-- GrelinTB supports Arch Linux based distributions.
-- GrelinTB's window's size isn't fixed, it can flow any value greater than 1200x600.
-- MetterXP has a lot of bugs.
-- So as the developer of both projects (by the way MetterXP based on BetterXP, BetterXP based on Terminalden kurtulun), I think GrelinTB is better. DE/WM is usually installed several times, not always DE/WM is installed, if needed it can be easily looked up on the internet. Also the default applications are already installed in most distributions.
+## Installation
+- Please install wget package.
+- Open terminal.
+- Type this: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh; rm install-grelintb.sh```
 ## Dependencies
 - A distribution based on Debian GNU/Linux (apt) or Fedora Linux (dnf) or Solus (eopkg) or Arch Linux (pacman)
 - Minimum screen resolution of 1200x600 for best efficiency
@@ -63,19 +57,26 @@
 - pip (package name: usually `pip`)
 - CustomTkinter (after installing pip, run this command: `pip install customtkinter`)
 - Tkinter (package name: `python3-tk` (Debian GNU/Linux based) or `python3-tkinter` (Fedora Linux and Solus based) or `tk` (Arch Linux based))
-## Installation
-- Please install wget package.
-- Open terminal.
-- Type this: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install.sh ; chmod +x install.sh ; pkexec ./install.sh```
-## Copyright Notification
+## Why was GrelinTB made?
+### Pros
++ GrelinTB's UI good and simpler. MetterXP has very bad UI and it buggy.
++ GrelinTB's codes are really more optimize because OOB. MetterXP doesn't have OOB, it has bloat file-moduling system.
++ GrelinTB doesn't have theme system but it has appearance system.
++ GrelinTB can detect system theme and tr_TR locale.
++ GrelinTB supports Arch Linux based distributions.
++ GrelinTB's window's size isn't fixed, it can flow any value greater than 1200x600.
+### Cons
+- GrelinTB doesn't provide options for DE/WM and default applications (Firefox etc.). So as the developer of both projects (by the way MetterXP based on BetterXP, BetterXP based on Terminalden kurtulun), I think GrelinTB is better. DE/WM is usually installed several times, not always DE/WM is installed, if needed it can be easily looked up on the internet. Also the default applications are already installed in most distributions.
+### Result
++ GrelinTB is coded from scratch with OOB. But MetterXP is based on BetterXP. BetterXP is based on Terminalden kurtulun (not my project). So MetterXP is based on a long process and there are many remnants.
+## Copyright Notification, License, Credits
 - Copyright (C) 2024 MuKonqi (Muhammed S.)
-## License
-- GNU General Public License, Version 3.0
-## Credits
-- [Neofetch](https://github.com/dylanaraps/neofetch)
-- [Lolcat](https://github.com/busyloop/lolcat)
-- [wttr.in](https://github.com/chubin/wttr.in)
-# Turkish
+- GNU General Public License, Version 3.0 or later
+- [Neofetch](https://github.com/dylanaraps/neofetch) (for system information)
+- [Lolcat](https://github.com/busyloop/lolcat) (for colorful commands in terminal)
+- [wttr.in](https://github.com/chubin/wttr.in) (for weather forecast)
+# GrelinTB
+## Bazı Linux dağıtımları için harika bir araç kutusu.
 - [Click on this sentence to view the rest of this documentation in English.](#english)
 ## Özellikler
 ### Kenar Çubuğu:
@@ -114,19 +115,12 @@
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.
 - Her pazartesi GrelinTB güncellemelerini kontrol et.
-- Terminalden GrelinTB için kısıtlı yönetim.
+- Terminal için bazı parametreler. Not: Tüm parametreler için yardım sayfası: `grelintb yardım`
 - Belki daha fazlası...
-## MetterXP vs GrelinTB
-- GrelinTB'nin kullanıcı arayüzü daha iyi.
-- GrelinTB'nin kullanımı çok daha basit.
-- GrelinTB'nin kodları gerçekten daha optimize çünkü sınıflarla sıfırdan kodlanmış.
-- GrelinTB'de tema sistemi yok ama görünüm sistemi var.
-- GrelinTB, DE/WM ve varsayılan uygulamalar (Firefox vb.) için seçenekler sunmaz.
-- GrelinTB sistem temasını ve tr_TR yerel ayarını algılayabilir.
-- GrelinTB Arch Linux tabanlı dağıtımları destekler.
-- GrelinTB'nin pencere boyutu sabit değildir, 1200x600'den daha büyük herhangi bir değeri akıtabilir.
-- MetterXP'nin birçok hatası var.
-- Her iki projenin de geliştiricisi olarak (bu arada MetterXP BetterXP'ye, BetterXP Terminalden kurtulun'a dayanıyor), GrelinTB'nin daha iyi olduğunu düşünüyorum. DE/WM genellikle birkaç kez kurulur, her zaman DE/WM kurulmaz, gerekirse internetten kolayca bakılabilir. Ayrıca varsayılan uygulamalar çoğu dağıtımda zaten yüklüdür.
+## Kurulum
+- Lütfen wget paketini yükleyin.
+- Terminali açın.
+- Bunu yazın: ``wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh``
 ## Bağımlılıklar
 - Debian GNU/Linux (apt) veya Fedora Linux (dnf) veya Solus (eopkg) veya Arch Linux (pacman) tabanlı bir dağıtım
 - En iyi verim için minimum 1200x600 ekran çözünürlüğü
@@ -140,15 +134,21 @@
 - pip (paket adı: genellikle `pip`)
 - CustomTkinter (pip yükledikten sonra şu komutu çalıştırın: `pip install customtkinter`)
 - Tkinter (paket adı: `python3-tk` (Debian GNU/Linux tabanlı) veya `python3-tkinter` (Fedora Linux ve Solus tabanlı) veya `tk` (Arch Linux tabanlı))
-## Kurulum
-- Lütfen wget paketini yükleyin.
-- Terminali açın.
-- Bunu yazın: ``wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install.sh ; chmod +x install.sh ; pkexec ./install.sh``
-## Telif Hakkı Bildirimi
+## Neden GrelinTB yapıldı?
+### Artılar
++ GrelinTB'nin kullanıcı arayüzü iyi ve daha basit. MetterXP çok kötü bir kullanıcı arayüzüne sahip ve hatalı.
++ GrelinTB'nin kodları gerçekten daha optimize çünkü OOB. MetterXP'de OOB yok, bloat dosya modülleme sistemi var.
++ GrelinTB'nin tema sistemi yok ama görünüm sistemi var.
++ GrelinTB sistem temasını ve tr_TR yerel ayarını algılayabilir.
++ GrelinTB Arch Linux tabanlı dağıtımları destekler.
++ GrelinTB'nin pencere boyutu sabit değildir, 1200x600'den daha büyük herhangi bir değeri akıtabilir.
+### Eksiler
+- GrelinTB, DE/WM ve varsayılan uygulamalar (Firefox vb.) için seçenekler sunmuyor. Her iki projenin de geliştiricisi olarak (bu arada MetterXP BetterXP'ye, BetterXP Terminalden kurtulun'a dayanıyor) GrelinTB'nin daha iyi olduğunu düşünüyorum. DE/WM genellikle birkaç kez kurulur, her zaman DE/WM kurulmaz, gerekirse internetten kolayca bakılabilir. Ayrıca varsayılan uygulamalar çoğu dağıtımda zaten yüklüdür.
+### Sonuç
++ GrelinTB sıfırdan OOB ile kodlanmıştır. Fakat MetterXP, BetterXP tabanlı. BetterXP ise Terminalden kurtulun tabanlı (benim projem değil). Yani MetterXP'ın temeli uzun bir sürece dayanır ve kalıntıları çoktur.
+## Telif Hakkı Bildirimi, Lisans, Krediler
 - Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)
-## Lisans
-- GNU Genel Kamu Lisansı, Sürüm 3.0
-## Krediler
-- [Neofetch](https://github.com/dylanaraps/neofetch)
-- [Lolcat](https://github.com/busyloop/lolcat)
-- [wttr.in](https://github.com/chubin/wttr.in)
+- GNU General Public License, Version 3.0 veya sonrası
+- [Neofetch](https://github.com/dylanaraps/neofetch) (sistem bilgisi için)
+- [Lolcat](https://github.com/busyloop/lolcat) (terminalde renkli komutlar için)
+- [wttr.in](https://github.com/chubin/wttr.in) (hava durumun için)
