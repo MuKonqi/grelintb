@@ -1,3 +1,6 @@
+# v1.1.2.0 #
+- Ufak iyileştirmeler yapıldı.
+- Betikler bölümüne yeni seçenekler eklendi.
 # v1.1.1.2 #
 - Ufak bir hata düzeltmesi.
 # v1.1.1.1 #
@@ -47,6 +50,9 @@
 - Paketleri güncelleyin.
 - Paket önbelleğini temizleyin.
 - Gereksiz paketleri kaldırın.
+- Flatpak paketlerini güncelleyin.
+- Gereksiz Flatpak paketlerini kaldırın.
+- Sadece Debian GNU/Linux tabanı için: Paket hatalarını çözün.
 ## Ayrıca: ##
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.

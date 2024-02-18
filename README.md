@@ -34,6 +34,9 @@
 - Update packages.
 - Clear package cache.
 - Remove unnecessary packages.
+- Update Flatpak packages.
+- Remove unnecessary Flatpak packages.
+- Only for Debian GNU/Linux base: Resolve package errors.
 ### Also:
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
@@ -111,6 +114,9 @@
 - Paketleri güncelleyin.
 - Paket önbelleğini temizleyin.
 - Gereksiz paketleri kaldırın.
+- Flatpak paketlerini güncelleyin.
+- Gereksiz Flatpak paketlerini kaldırın.
+- Sadece Debian GNU/Linux tabanı için: Paket hatalarını çözün.
 ### Ayrıca:
 - tr_TR yerel ayarını otomatik algıla. Eğer yerel ayar tr_TR ise, GrelinTB'nin dilini Türkçe olarak ayarlayın. Değilse GrelinTB'nin dilini İngilizce olarak ayarlayın.
 - Sistem görünümünü otomatik algıla.

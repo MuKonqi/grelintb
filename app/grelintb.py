@@ -28,12 +28,16 @@ if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isf
 
 import sys
 
-if "pcrename" in sys.argv[1:]:
-    with open("/etc/hostname", "w") as pcname:
-        pcname.write(str(sys.argv[2]))
+if "root" in sys.argv[1:]:
+    if os.getuid() == 0:
+        exit("Root rights are required for this feature.")
+    if "pcrename" in sys.argv[2:]:
+        with open("/etc/hostname", "w") as pcname:
+            pcname.write(str(sys.argv[3]))
+    elif "fix" in sys.argv[2:]:
+        os.system("apt-get install -f -y ; dpkg --configure -a")
     exit()
-
-if os.getuid() == 0:
+elif os.getuid() == 0:
     exit("GrelinTB already asks you for root rights when the need arises. Exiting...")
 
 import locale
@@ -934,7 +938,7 @@ class ComputerName(ui.CTkFrame):
         self.entry.grid(row=1, column=0, sticky="nsew", padx=80, pady=40)
         self.button.grid(row=2, column=0, sticky="nsew", padx=80, pady=40)
     def apply(self):
-        subprocess.Popen("pkexec grelintb pcrename "+self.entry.get(), shell=True)
+        subprocess.Popen("pkexec grelintb root pcrename "+self.entry.get(), shell=True)
         restart_system()
 
 class OpenFM(ui.CTkFrame):
@@ -1262,28 +1266,40 @@ class Tools(ui.CTkFrame):
 class Scripts(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
         self.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self, command=self.cups, text="Open Cups Configuration Page")
-            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Open Wine Configuration App")
-            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Open Grub Customizer")
+            self.button1 = ui.CTkButton(self, command=self.cups, text="Open Configure Cups Page")
+            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Open Configure Wine App")
+            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Open Grub Customizer App")
             self.button4 = ui.CTkButton(self, command=self.go_update, text="Update Packages")
             self.button5 = ui.CTkButton(self, command=self.go_clear, text="Clear Package Cache")
             self.button6 = ui.CTkButton(self, command=self.go_remove, text="Remove Unnecessary Packages")
+            self.button7 = ui.CTkButton(self, command=self.go_f_update, text="Update Flatpak Packages")
+            self.button8 = ui.CTkButton(self, command=self.go_f_remove, text="Remove Unnecessary Flatpak Packages")
+            if os.path.isfile(debian):
+                self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1)
+                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Fix Package Errors").grid(row=8, column=0, sticky="nsew", padx=50)
         elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self, command=self.cups, text="Cups Yapılandırma Sayfasını Aç")
-            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine Yapılandırma Uygulamasını Aç")
+            self.button1 = ui.CTkButton(self, command=self.cups, text="Cups'ı Yapılandırma Sayfasını Aç")
+            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine'ı Yapılandırma Uygulamasını Aç")
             self.button3 = ui.CTkButton(self, command=self.go_grub, text="Grub Customizer Uygulamasını Aç")
             self.button4 = ui.CTkButton(self, command=self.go_update, text="Paketleri Güncelle")
             self.button5 = ui.CTkButton(self, command=self.go_clear, text="Paket Önbelleğini Temizle")
             self.button6 = ui.CTkButton(self, command=self.go_remove, text="Gereksiz Paketleri Kaldır")
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 25), padx=50)
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 25), padx=50)
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 25), padx=50)
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 25), padx=50)
-        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 25), padx=50)
-        self.button6.grid(row=5, column=0, sticky="nsew", padx=50)
+            self.button7 = ui.CTkButton(self, command=self.go_f_update, text="Flatpak Paketlerini Güncelle")
+            self.button8 = ui.CTkButton(self, command=self.go_f_remove, text="Gereksiz Flatpak Paketlerini Kaldır")
+            if os.path.isfile(debian):
+                self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1)
+                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Paket Hatalarını Düzelt").grid(row=8, column=0, sticky="nsew", pady=(15, 0), padx=30)
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button7.grid(row=6, column=0, sticky="nsew", pady=(0, 15), padx=30)
+        self.button8.grid(row=7, column=0, sticky="nsew", padx=30)
         if not os.path.isfile("/usr/bin/winecfg") and not os.path.isfile("/bin/winecfg"):
             if os.path.isfile(en):
                 self.button2.configure(text="Open Wine Configuration App\nError: Wine Not Installed", state="disabled")
@@ -1359,6 +1375,47 @@ class Scripts(ui.CTkFrame):
     def go_remove(self):
         t = threading.Thread(target=self.remove_main, daemon=False)
         t.start()
+    def f_update_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nUpdating Package(s)")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nPaket(ler) Güncelleniyor")
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+            install_flatpak()
+            if ask_f == False:
+                return
+        os.system("flatpak update -y")
+        normal()
+        main_successful()
+    def go_f_update(self):
+        t = threading.Thread(target=self.f_update_main, daemon=False)
+        t.start()
+    def f_remove_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nRemoving Unnecessary Package(s)")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nGereksiz Paketler Kaldırılıyor")
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+            install_flatpak()
+            if ask_f == False:
+                return
+        os.system("flatpak uninstall --unused -y")
+        normal()
+        main_successful()
+    def go_f_remove(self):
+        t = threading.Thread(target=self.f_remove_main, daemon=False)
+        t.start()
+    def fix_main(self):
+        if os.path.isfile(en):
+            status.configure(text="Status:\nFixing Package Errors")
+        elif os.path.isfile(tr):
+            status.configure(text="Durum:\nPaket Hataları Çözülüyor")
+        os.system("pkexec grelintb root fix")
+        normal()
+        main_successful()
+    def go_fix(self):
+        t = threading.Thread(target=self.fix_main, daemon=False)
+        t.start()        
 
 class Root(ui.CTk):
     def __init__(self, **kwargs):

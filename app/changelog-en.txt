@@ -1,3 +1,6 @@
+# v1.1.2.0 #
+- Minor improvements have been made.
+- New options have been added to the Scripts section.
 # v1.1.1.2 #
 - A small bug fix.
 # v1.1.1.1 #
@@ -47,6 +50,9 @@
 - Update packages.
 - Clear package cache.
 - Remove unnecessary packages.
+- Update Flatpak packages.
+- Remove unnecessary Flatpak packages.
+- Only for Debian GNU/Linux base: Resolve package errors.
 ## Also: ##
 - Auto detect tr_TR locale. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - Auto detect system appearance.
