@@ -113,6 +113,17 @@ elif os.path.isfile(blue):
 elif os.path.isfile(green):
     ui.set_default_color_theme("green")
 
+if os.path.isfile(en):
+    searching = "Searching"
+    installing = "Installing"
+    reinstalling = "Reinstalling"
+    uninstalling = "Uninstalling"
+elif os.path.isfile(tr):
+    searching = "Aranıyor"
+    installing = "Kuruluyor"
+    reinstalling = "Yeniden Kuruluyor"
+    uninstalling = "Kaldırılıyor"
+
 def running(process: str):
     if os.path.isfile(en):
         status.configure(text="Status:\n"+process+" Package(s)")
@@ -626,7 +637,97 @@ class Notes(ui.CTkFrame):
         else:
             self.save_error()
 
-class Store(ui.CTkFrame):
+class AppStore(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((2, 3, 4), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        if os.path.isfile(en):
+            self.text = ui.CTkLabel(self.frame, text="Application")
+            self.button1 = ui.CTkButton(self.frame, text="Install", command=self.go_install)
+            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=self.go_reinstall)
+            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=self.go_uninstall)
+        elif os.path.isfile(tr):
+            self.text = ui.CTkLabel(self.frame, text="Uygulama")
+            self.button1 = ui.CTkButton(self.frame, text="Kur", command=self.go_install)
+            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=self.go_reinstall)
+            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=self.go_uninstall)
+        self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt","gamemode", "Lolcat", "Neofetch", "Fastfetch"])
+        self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
+        self.app.grid(row=1, column=0, sticky="nsew", pady=(5, 10), padx=(25, 0))
+        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
+        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
+        self.button3.grid(row=4, column=0, sticky="nsew", padx=(25, 0))
+    def install_main(self):
+        running(installing)
+        if os.path.isfile(debian):
+            cmd = subprocess.Popen('pkexec apt install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(fedora):
+            cmd = subprocess.Popen('pkexec dnf install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(solus):
+            cmd = subprocess.Popen('pkexec eopkg install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        main_successful()
+    def go_install(self):
+        t = threading.Thread(target=self.install_main, daemon=False)
+        t.start()
+    def reinstall_main(self):
+        running(reinstalling)
+        if os.path.isfile(debian):
+            cmd = subprocess.Popen('pkexec apt install --reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(fedora):
+            cmd = subprocess.Popen('pkexec dnf reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(solus):
+            cmd = subprocess.Popen('pkexec eopkg reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        main_successful()
+    def go_reinstall(self):
+        t = threading.Thread(target=self.reinstall_main, daemon=False)
+        t.start()
+    def uninstall_main(self):
+        running(uninstalling)
+        if os.path.isfile(debian):
+            cmd = subprocess.Popen('pkexec apt remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(fedora):
+            cmd = subprocess.Popen('pkexec dnf remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(solus):
+            cmd = subprocess.Popen('pkexec eopkg remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            cmd = subprocess.Popen('pkexec pacman -Rs '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        main_successful()
+    def go_uninstall(self):
+        t = threading.Thread(target=self.uninstall_main, daemon=False)
+        t.start()
+
+class OtherStore(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.configure(fg_color="transparent")
@@ -777,6 +878,28 @@ class Store(ui.CTkFrame):
     def go_uninstall(self):
         t = threading.Thread(target=self.uninstall_main, daemon=False)
         t.start()
+
+class Store(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, corner_radius=25)
+        self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+        if os.path.isfile(en):
+            self.tab1 = self.tabview.add("General Apps")
+            self.tab2 = self.tabview.add("Other Apps")
+        elif os.path.isfile(tr):
+            self.tab1 = self.tabview.add("Genel Uygulamalar")
+            self.tab2 = self.tabview.add("Diğer Uygulamalar")
+        self.tab1.grid_columnconfigure(0, weight=1)
+        self.tab1.grid_rowconfigure(0, weight=1)
+        self.appstore_frame=AppStore(self.tab1)
+        self.appstore_frame.grid(row=0, column=0, sticky="nsew")
+        self.tab2.grid_columnconfigure(0, weight=1)
+        self.tab2.grid_rowconfigure(0, weight=1)
+        self.otherstore_frame=OtherStore(self.tab2)
+        self.otherstore_frame.grid(row=0, column=0, sticky="nsew")
 
 class BashButtons(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1026,116 +1149,116 @@ class Distros(ui.CTkFrame):
         self.label.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         self.tabview = ui.CTkTabview(self)
         self.tabview.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
-        distro1 = self.tabview.add("MX Linux")
-        distro2 = self.tabview.add("Linux Mint")
-        distro3 = self.tabview.add("Endeavour OS")
-        distro4 = self.tabview.add("Debian GNU/Linux")
-        distro5 = self.tabview.add("Manjaro")
-        distro6 = self.tabview.add("Ubuntu")
-        distro7 = self.tabview.add("Fedora Linux")
-        distro8 = self.tabview.add("Pop!_OS by System76")
-        distro9 = self.tabview.add("Zorin OS")
-        distro10 = self.tabview.add("OpenSUSE")
-        distro1.grid_columnconfigure(0, weight=1)
-        distro1.grid_rowconfigure(0, weight=1)
-        distro2.grid_columnconfigure(0, weight=1)
-        distro2.grid_rowconfigure(0, weight=1)
-        distro3.grid_columnconfigure(0, weight=1)
-        distro3.grid_rowconfigure(0, weight=1)
-        distro4.grid_columnconfigure(0, weight=1)
-        distro4.grid_rowconfigure(0, weight=1)
-        distro5.grid_columnconfigure(0, weight=1)
-        distro5.grid_rowconfigure(0, weight=1)
-        distro6.grid_columnconfigure(0, weight=1)
-        distro6.grid_rowconfigure(0, weight=1)
-        distro7.grid_columnconfigure(0, weight=1)
-        distro7.grid_rowconfigure(0, weight=1)
-        distro8.grid_columnconfigure(0, weight=1)
-        distro8.grid_rowconfigure(0, weight=1)
-        distro9.grid_columnconfigure(0, weight=1)
-        distro9.grid_rowconfigure(0, weight=1)
-        distro10.grid_columnconfigure(0, weight=1)
-        distro10.grid_rowconfigure(0, weight=1)
+        self.distro1 = self.tabview.add("MX Linux")
+        self.distro2 = self.tabview.add("Linux Mint")
+        self.distro3 = self.tabview.add("Endeavour OS")
+        self.distro4 = self.tabview.add("Debian GNU/Linux")
+        self.distro5 = self.tabview.add("Manjaro")
+        self.distro6 = self.tabview.add("Ubuntu")
+        self.distro7 = self.tabview.add("Fedora Linux")
+        self.distro8 = self.tabview.add("Pop!_OS by System76")
+        self.distro9 = self.tabview.add("Zorin OS")
+        self.distro10 = self.tabview.add("OpenSUSE")
+        self.distro1.grid_columnconfigure(0, weight=1)
+        self.distro1.grid_rowconfigure(0, weight=1)
+        self.distro2.grid_columnconfigure(0, weight=1)
+        self.distro2.grid_rowconfigure(0, weight=1)
+        self.distro3.grid_columnconfigure(0, weight=1)
+        self.distro3.grid_rowconfigure(0, weight=1)
+        self.distro4.grid_columnconfigure(0, weight=1)
+        self.distro4.grid_rowconfigure(0, weight=1)
+        self.distro5.grid_columnconfigure(0, weight=1)
+        self.distro5.grid_rowconfigure(0, weight=1)
+        self.distro6.grid_columnconfigure(0, weight=1)
+        self.distro6.grid_rowconfigure(0, weight=1)
+        self.distro7.grid_columnconfigure(0, weight=1)
+        self.distro7.grid_rowconfigure(0, weight=1)
+        self.distro8.grid_columnconfigure(0, weight=1)
+        self.distro8.grid_rowconfigure(0, weight=1)
+        self.distro9.grid_columnconfigure(0, weight=1)
+        self.distro9.grid_rowconfigure(0, weight=1)
+        self.distro10.grid_columnconfigure(0, weight=1)
+        self.distro10.grid_rowconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.text1 = ui.CTkLabel(distro1, text="MX Linux is a cooperative venture between the antiX and MX Linux communities."+
+            self.text1 = ui.CTkLabel(self.distro1, text="MX Linux is a cooperative venture between the antiX and MX Linux communities."+
                 "\nIt is a family of operating systems that are designed to combine elegant and efficient desktops with high stability and solid performance."+
                 "\nMX's graphical tools and tools from antiX make it easy to use.")
-            self.button1 = ui.CTkButton(distro1, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
-            self.text2 = ui.CTkLabel(distro2, text="Linux Mint is an operating system for desktop and laptop computers."+
+            self.button1 = ui.CTkButton(self.distro1, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
+            self.text2 = ui.CTkLabel(self.distro2, text="Linux Mint is an operating system for desktop and laptop computers."+
                 "\nIt is designed to work 'out of the box' and comes fully equipped with the apps most people need."+
                 "\n\nNote from GrelinTB developer: I highly recommend Linux Mint for first time Linux users. It is really easy to use.")
-            self.button2 = ui.CTkButton(distro2, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
-            self.text3 = ui.CTkLabel(distro3, text="EndeavourOS is an Arch-based distro that provides an Arch experience"+
+            self.button2 = ui.CTkButton(self.distro2, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
+            self.text3 = ui.CTkLabel(self.distro3, text="EndeavourOS is an Arch-based self.distro that provides an Arch experience"+
                 "\nwithout the hassle of installing it manually for both x86_64 and ARM systems."+
                 "\nAfter installation, you’re provided with good environment and guide.")
-            self.button3 = ui.CTkButton(distro3, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
-            self.text4 = ui.CTkLabel(distro4, text="Debian GNU/Linux, although very old, is still supported."+
+            self.button3 = ui.CTkButton(self.distro3, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
+            self.text4 = ui.CTkLabel(self.distro4, text="Debian GNU/Linux, although very old, is still supported."+
                 "\nToday, a considerable number of distributions are based on it."+
                 "\nDebian GNU/Linux offers a very stable experience, but can lag a bit behind if Testing etc. versions are not used.")
-            self.button4 = ui.CTkButton(distro4, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
-            self.text5 = ui.CTkLabel(distro5, text="Manjaro is a distribution based on Arch Linux. It is aimed at the end user."+
+            self.button4 = ui.CTkButton(self.distro4, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
+            self.text5 = ui.CTkLabel(self.distro5, text="Manjaro is a distribution based on Arch Linux. It is aimed at the end user."+
                 "\n\nNote from GrelinTB developer: If you are going to use an Arch Linux base, I suggest you look for other alternatives.")
-            self.button5 = ui.CTkButton(distro5, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
-            self.text6 = ui.CTkLabel(distro6, text="Ubuntu is aimed at many user groups. There are many flavors of Ubuntu."+
+            self.button5 = ui.CTkButton(self.distro5, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
+            self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu is aimed at many user groups. There are many flavors of Ubuntu."+
                 "\n\nNote from GrelinTB developer: Ubuntu comes by default with open telemetry that can be turned off."+
                 "\nAlso forces you to use Snap, which is not very good.")
-            self.button6 = ui.CTkButton(distro6, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
-            self.text7 = ui.CTkLabel(distro7, text="Fedora Linux is sponsered by Red Hat. Packages come to Fedora Linux before they come to RHEL."+
+            self.button6 = ui.CTkButton(self.distro6, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
+            self.text7 = ui.CTkLabel(self.distro7, text="Fedora Linux is sponsered by Red Hat. Packages come to Fedora Linux before they come to RHEL."+
                 "\nFedora Linux has many versions for different desktop environments."+
                 "\n\nNote from GrelinTB developer: Fedora Linux is really suitable for users who want stability, simplicity, and up to date."+
                 "\nFedora Linux is one of the distributions I recommend.")
-            self.button7 = ui.CTkButton(distro7, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
-            self.text8 = ui.CTkLabel(distro8, text="Pop!_OS is an operating system for those who use their computer as a tool to discover and create."+
+            self.button7 = ui.CTkButton(self.distro7, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
+            self.text8 = ui.CTkLabel(self.distro8, text="Pop!_OS is an operating system for those who use their computer as a tool to discover and create."+
                 "\nIt offers a separate download option for Nvidia users."+
                 "\nIt only supports UEFI because it uses systemd-boot.")
-            self.button8 = ui.CTkButton(distro8, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
-            self.text9 = ui.CTkLabel(distro9, text="It is a distribution targeted at users migrating from Windows and Mac and wants to provide ease of use."+
+            self.button8 = ui.CTkButton(self.distro8, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
+            self.text9 = ui.CTkLabel(self.distro9, text="It is a distribution targeted at users migrating from Windows and Mac and wants to provide ease of use."+
                 "\n\nGrelinTB developer note: I used it for a while, but I don't recommend it because I think the logic of the Pro version is ridiculous.")
-            self.button9 = ui.CTkButton(distro9, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
-            self.text10 = ui.CTkLabel(distro10, text="It is the only distribution on this list that GrelinTB does not support. It targets many audiences and has its own tools."+
+            self.button9 = ui.CTkButton(self.distro9, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
+            self.text10 = ui.CTkLabel(self.distro10, text="It is the only distribution on this list that GrelinTB does not support. It targets many audiences and has its own tools."+
                 "\nIt is divided into Tumbleweed (more up-to-date), Leap (more stable)."+
                 "\n\nNote from GrelinTB developer: I read from various sources that it is better to use Tumbleweed.")
-            self.button10 = ui.CTkButton(distro10, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
+            self.button10 = ui.CTkButton(self.distro10, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
         elif os.path.isfile(tr):
-            self.text1 = ui.CTkLabel(distro1, text="MX Linux, antiX ve MX Linux toplulukları arasında bir işbirliği girişimidir."+
+            self.text1 = ui.CTkLabel(self.distro1, text="MX Linux, antiX ve MX Linux toplulukları arasında bir işbirliği girişimidir."+
                 "\nZarif ve verimli masaüstlerini yüksek kararlılık ve sağlam performansla birleştirmek için tasarlanmış bir işletim sistemi ailesidir."+
                 "\nMX'in grafiksel araçları ve antiX'in araçları kullanımı kolaylaştırır.")
-            self.button1 = ui.CTkButton(distro1, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
-            self.text2 = ui.CTkLabel(distro2, text="Linux Mint masaüstü ve dizüstü bilgisayarlar için bir işletim sistemidir."+
+            self.button1 = ui.CTkButton(self.distro1, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
+            self.text2 = ui.CTkLabel(self.distro2, text="Linux Mint masaüstü ve dizüstü bilgisayarlar için bir işletim sistemidir."+
                 "\nKutudan çıktığı gibi' çalışmak üzere tasarlanmıştır ve çoğu insanın ihtiyaç duyduğu uygulamalarla tam donanımlı olarak gelir."+
                 "\n\nGrelinTB geliştiricisinin notu: İlk kez Linux kullanacaklar için Linux Mint'i şiddetle tavsiye ederim. Kullanımı gerçekten çok kolay.")
-            self.button2 = ui.CTkButton(distro2, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
-            self.text3 = ui.CTkLabel(distro3, text="EndeavourOS, hem x86_64 hem de ARM sistemleri için manuel olarak yükleme zahmetine girmeden"+
+            self.button2 = ui.CTkButton(self.distro2, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
+            self.text3 = ui.CTkLabel(self.distro3, text="EndeavourOS, hem x86_64 hem de ARM sistemleri için manuel olarak yükleme zahmetine girmeden"+
                 "\nArch deneyimi sağlayan Arch tabanlı bir dağıtımdır."+
                 "\nKurulumdan sonra, size iyi bir ortam ve rehber sağlanır.")
-            self.button3 = ui.CTkButton(distro3, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
-            self.text4 = ui.CTkLabel(distro4, text="Debian GNU/Linux, çok eski olmasına rağmen halen desteklenmektedir."+
+            self.button3 = ui.CTkButton(self.distro3, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
+            self.text4 = ui.CTkLabel(self.distro4, text="Debian GNU/Linux, çok eski olmasına rağmen halen desteklenmektedir."+
                 "\nBugün azımsanmayacak kadar dağıtım, onu taban alır."+
                 "\nDebian GNU/Linux oldukça stabil bir deneyim sunar fakat Testing vs. sürümler kullanılmazsa biraz geriden gelebilir.")
-            self.button4 = ui.CTkButton(distro4, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
-            self.text5 = ui.CTkLabel(distro5, text="Manjaro, Arch Linux tabanlı bir dağıtımdır. Son kullanıcıyı hedef alır."+
+            self.button4 = ui.CTkButton(self.distro4, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
+            self.text5 = ui.CTkLabel(self.distro5, text="Manjaro, Arch Linux tabanlı bir dağıtımdır. Son kullanıcıyı hedef alır."+
                 "\n\nGrelinTB geliştiricisinin notu: İlla ki Arch Linux tabanı kullanacaksanız başka alternatiflere yönelmenizi öneririm.")
-            self.button5 = ui.CTkButton(distro5, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
-            self.text6 = ui.CTkLabel(distro6, text="Ubuntu birçok kullanıcı kitlesini hedeflemektedir. Birçok Ubuntu çeşidi vardır."+
+            self.button5 = ui.CTkButton(self.distro5, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
+            self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu birçok kullanıcı kitlesini hedeflemektedir. Birçok Ubuntu çeşidi vardır."+
                 "\n\nGrelinTB geliştiricisinin notu: Ubuntu varsayılan olarak kapatılması mümkün olan açık telemetrilerle gelir."+
                 "\nAyrıca sizi çok iyi olmayan Snap kullanmaya zorlar.")
-            self.button6 = ui.CTkButton(distro6, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
-            self.text7 = ui.CTkLabel(distro7, text="Fedora Linux Red Hat tarafından desteklenmektedir. Paketler RHEL'e gelmeden önce Fedora Linux'a gelir."+
+            self.button6 = ui.CTkButton(self.distro6, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
+            self.text7 = ui.CTkLabel(self.distro7, text="Fedora Linux Red Hat tarafından desteklenmektedir. Paketler RHEL'e gelmeden önce Fedora Linux'a gelir."+
                 "\nFedora Linux'un farklı masaüstü ortamları için birçok sürümü vardır."+
                 "\n\nGrelinTB geliştiricisinin notu: Fedora Linux gerçekten hem stabillik hem kolaylık hem de güncellik isteyen kullanıcılar için uygun."+
                 "\nFedora Linux, önerdiğim dağıtımlardan bir tanesi.")
-            self.button7 = ui.CTkButton(distro7, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
-            self.text8 = ui.CTkLabel(distro8, text="Pop!_OS, bilgisayarlarını keşfetmek ve yaratmak için bir araç olarak kullananlar için bir işletim sistemidir."+
+            self.button7 = ui.CTkButton(self.distro7, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
+            self.text8 = ui.CTkLabel(self.distro8, text="Pop!_OS, bilgisayarlarını keşfetmek ve yaratmak için bir araç olarak kullananlar için bir işletim sistemidir."+
                 "\nNvidia kullanıcıları için ayrı bir indirme seçeneği sunar."+
                 "\nSystemd-boot kullandığı için sadece UEFI destekler.")
-            self.button8 = ui.CTkButton(distro8, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
-            self.text9 = ui.CTkLabel(distro9, text="Hedef kitlesi Windows'tan ve Mac'ten geçen kullanıcılar olan ve kullanım kolaylığı sağlamak isteyen bir dağıtım."+
+            self.button8 = ui.CTkButton(self.distro8, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
+            self.text9 = ui.CTkLabel(self.distro9, text="Hedef kitlesi Windows'tan ve Mac'ten geçen kullanıcılar olan ve kullanım kolaylığı sağlamak isteyen bir dağıtım."+
                 "\n\nGrelinTB geliştiricisinin notu: Bir ara ben de kullandım fakat pek tavsiye etmiyorum çünkü Pro sürümü mantığı bence saçma.")
-            self.button9 = ui.CTkButton(distro9, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
-            self.text10 = ui.CTkLabel(distro10, text="Bu listede GrelinTB'nin desteklemediği tek dağıtımdır kendisi. Birçok kitleyi hedef alır ve kendi araçlarına sahiptir."+
+            self.button9 = ui.CTkButton(self.distro9, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
+            self.text10 = ui.CTkLabel(self.distro10, text="Bu listede GrelinTB'nin desteklemediği tek dağıtımdır kendisi. Birçok kitleyi hedef alır ve kendi araçlarına sahiptir."+
                 "\nTumbleweed (daha güncel olan), Leap (daha stabil olan) olarak ikiye ayrılır."+
                 "\n\nGrelinTB geliştiricisinin notu: Çeşitli kaynaklardan okuduğum kadarıyla Tumbleweed kullanmak daha iyiymiş.")
-            self.button10 = ui.CTkButton(distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
+            self.button10 = ui.CTkButton(self.distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
         self.text1.grid(row=0, column=0, sticky="nsew")
         self.button1.grid(row=1, column=0, sticky="nsew")
         self.text2.grid(row=0, column=0, sticky="nsew")
@@ -1230,36 +1353,36 @@ class Tools(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            tab1 = self.tabview.add("Configure Bash")
-            tab2 = self.tabview.add("Change Computer's Name")
-            tab3 = self.tabview.add("Open File Managers With Root Rights")
-            tab4 = self.tabview.add("About Some Distributions")
-            tab5 = self.tabview.add("Calculator")
+            self.tab1 = self.tabview.add("Configure Bash")
+            self.tab2 = self.tabview.add("Change Computer's Name")
+            self.tab3 = self.tabview.add("Open File Managers With Root Rights")
+            self.tab4 = self.tabview.add("About Some Distributions")
+            self.tab5 = self.tabview.add("Calculator")
         elif os.path.isfile(tr):
-            tab1 = self.tabview.add("Bash'ı Yapılandır")
-            tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
-            tab3 = self.tabview.add("Dosya Yöneticilerini Kök Haklarıyla Aç")
-            tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında")
-            tab5 = self.tabview.add("Hesap Makinesi")
-        tab1.grid_columnconfigure(0, weight=1)
-        tab1.grid_rowconfigure(0, weight=1)
-        self.bashrc_frame=Bash(tab1, fg_color="transparent")
+            self.tab1 = self.tabview.add("Bash'ı Yapılandır")
+            self.tab2 = self.tabview.add("Bilgisayarın Adını Değiştir")
+            self.tab3 = self.tabview.add("Dosya Yöneticilerini Kök Haklarıyla Aç")
+            self.tab4 = self.tabview.add("Bazı Dağıtımlar Hakkında")
+            self.tab5 = self.tabview.add("Hesap Makinesi")
+        self.tab1.grid_columnconfigure(0, weight=1)
+        self.tab1.grid_rowconfigure(0, weight=1)
+        self.bashrc_frame=Bash(self.tab1, fg_color="transparent")
         self.bashrc_frame.grid(row=0, column=0, sticky="nsew")
-        tab2.grid_columnconfigure(0, weight=1)
-        tab2.grid_rowconfigure(0, weight=1)
-        self.computername_frame=ComputerName(tab2, fg_color="transparent")
+        self.tab2.grid_columnconfigure(0, weight=1)
+        self.tab2.grid_rowconfigure(0, weight=1)
+        self.computername_frame=ComputerName(self.tab2, fg_color="transparent")
         self.computername_frame.grid(row=0, column=0, sticky="nsew")
-        tab3.grid_columnconfigure(0, weight=1)
-        tab3.grid_rowconfigure(0, weight=1)
-        self.openfm_frame=OpenFM(tab3, fg_color="transparent")
+        self.tab3.grid_columnconfigure(0, weight=1)
+        self.tab3.grid_rowconfigure(0, weight=1)
+        self.openfm_frame=OpenFM(self.tab3, fg_color="transparent")
         self.openfm_frame.grid(row=0, column=0, sticky="nsew")
-        tab4.grid_columnconfigure(0, weight=1)
-        tab4.grid_rowconfigure(0, weight=1)
-        self.distros_frame=Distros(tab4)
+        self.tab4.grid_columnconfigure(0, weight=1)
+        self.tab4.grid_rowconfigure(0, weight=1)
+        self.distros_frame=Distros(self.tab4)
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
-        tab5.grid_columnconfigure(0, weight=1)
-        tab5.grid_rowconfigure(0, weight=1)
-        self.distros_frame=Calculator(tab5)
+        self.tab5.grid_columnconfigure(0, weight=1)
+        self.tab5.grid_rowconfigure(0, weight=1)
+        self.distros_frame=Calculator(self.tab5)
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
 
 
@@ -1437,36 +1560,36 @@ class Root(ui.CTk):
         if dt.datetime.now().weekday() == 0:
             Sidebar.check_update(self, "starting")
         if os.path.isfile(en):
-            tab_starting = self.tabview.add("Starting")
-            tab_notes = self.tabview.add("Notes")
-            tab_store = self.tabview.add("Store")
-            tab_tools = self.tabview.add("Tools")
-            tab_scripts = self.tabview.add("Scripts")
+            self.tab_starting = self.tabview.add("Starting")
+            self.tab_notes = self.tabview.add("Notes")
+            self.tab_store = self.tabview.add("Store")
+            self.tab_tools = self.tabview.add("Tools")
+            self.tab_scripts = self.tabview.add("Scripts")
         elif os.path.isfile(tr):
-            tab_starting = self.tabview.add("Başlangıç")
-            tab_notes = self.tabview.add("Notlar")
-            tab_store = self.tabview.add("Mağaza")
-            tab_tools = self.tabview.add("Araçlar")
-            tab_scripts = self.tabview.add("Betikler")
-        tab_starting.grid_columnconfigure(0, weight=1)
-        tab_starting.grid_rowconfigure(0, weight=1)
-        self.starting_frame=Starting(tab_starting)
+            self.tab_starting = self.tabview.add("Başlangıç")
+            self.tab_notes = self.tabview.add("Notlar")
+            self.tab_store = self.tabview.add("Mağaza")
+            self.tab_tools = self.tabview.add("Araçlar")
+            self.tab_scripts = self.tabview.add("Betikler")
+        self.tab_starting.grid_columnconfigure(0, weight=1)
+        self.tab_starting.grid_rowconfigure(0, weight=1)
+        self.starting_frame=Starting(self.tab_starting)
         self.starting_frame.grid(row=0, column=0, sticky="nsew")
-        tab_notes.grid_columnconfigure(0, weight=1)
-        tab_notes.grid_rowconfigure(0, weight=1)
-        self.notes_frame=Notes(tab_notes)
+        self.tab_notes.grid_columnconfigure(0, weight=1)
+        self.tab_notes.grid_rowconfigure(0, weight=1)
+        self.notes_frame=Notes(self.tab_notes)
         self.notes_frame.grid(row=0, column=0, sticky="nsew")
-        tab_store.grid_columnconfigure(0, weight=1)
-        tab_store.grid_rowconfigure(0, weight=1)
-        self.store_frame=Store(tab_store)
+        self.tab_store.grid_columnconfigure(0, weight=1)
+        self.tab_store.grid_rowconfigure(0, weight=1)
+        self.store_frame=Store(self.tab_store)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
-        tab_tools.grid_columnconfigure(0, weight=1)
-        tab_tools.grid_rowconfigure(0, weight=1)
-        self.tools_frame=Tools(tab_tools)
+        self.tab_tools.grid_columnconfigure(0, weight=1)
+        self.tab_tools.grid_rowconfigure(0, weight=1)
+        self.tools_frame=Tools(self.tab_tools)
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
-        tab_scripts.grid_columnconfigure(0, weight=1)
-        tab_scripts.grid_rowconfigure(0, weight=1)
-        self.scripts_frame=Scripts(tab_scripts)
+        self.tab_scripts.grid_columnconfigure(0, weight=1)
+        self.tab_scripts.grid_rowconfigure(0, weight=1)
+        self.scripts_frame=Scripts(self.tab_scripts)
         self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
