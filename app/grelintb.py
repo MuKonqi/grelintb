@@ -660,7 +660,14 @@ class AppStore(ui.CTkFrame):
             self.button1 = ui.CTkButton(self.frame, text="Kur", command=self.go_install)
             self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=self.go_reinstall)
             self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=self.go_uninstall)
-        self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt","gamemode", "Lolcat", "Neofetch", "Fastfetch"])
+        if os.path.isfile(debian):
+            self.app = ui.CTkOptionMenu(self.frame, values=["Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"])
+        if os.path.isfile(fedora):
+            self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"])
+        if os.path.isfile(solus):
+            self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"])
+        if os.path.isfile(arch1) or os.path.isfile(arch2):
+            self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"])
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.app.grid(row=1, column=0, sticky="nsew", pady=(5, 10), padx=(25, 0))
         self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))

@@ -1,7 +1,9 @@
+# v1.2.0.1 #
+- Uygulama listesini düzenle.
 # v1.2.0.0 #
 - Genel hata düzeltmeleri ve iyileştirmeler.
 - Mağaza kısmı ikiye bölündü:
- - Genel Uygulamalar: 25'li listeden seçileni alıp küçük harfe çevir ve istenilen işlemi yap.
+ - Genel Uygulamalar: Uygulama listesinden seçileni alıp küçük harfe çevir ve istenilen işlemi yap.
  - Diğer Uygulamalar (hali hazırda olan)
 # v1.1.2.0 #
 - Ufak iyileştirmeler yapıldı.
@@ -41,7 +43,7 @@
 ## Notlar: ##
 - Notlar ve belgeler oluşturun, düzenleyin, silin.
 ## Mağaza: ##
-- Genel: 25 uygulama için arama, yükleme, yeniden yükleme ve kaldırma.
+- Genel: Bazı uygulamalar için arama, yükleme, yeniden yükleme ve kaldırma.
 - Diğer: Herhangi bir paketi arayın, yükleyin, yeniden yükleyin ve kaldırın.
 ## Araçlar: ##
 - Bash'ı yapılandırın.

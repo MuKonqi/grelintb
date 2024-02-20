@@ -1,7 +1,9 @@
-# v1.2.0.0
+# v1.2.0.1 #
+- Edit app list.
+# v1.2.0.0 #
 - General bug fixes and improvements.
 - Store section split in two:
- - General Apps: Take the selected one from the list of 25, convert it to lowercase and perform the desired action.
+ - General Apps: Take the selected app from the app list, change it to lowercase and do the desired action.
  - Other Apps (already available)
 # v1.1.2.0 #
 - Minor improvements have been made.
@@ -41,7 +43,7 @@
 ## Notes: ##
 - Create edit, delete notes and documents.
 ## Store: ##
-- General: Search, install, reinstall and uninstall for 25 applications.
+- General: Search, install, reinstall and uninstall for some applications.
 - Other: Search, install, reinstall and uninstall any package.
 ## Tools: ##
 - Configure Bash.

@@ -20,7 +20,7 @@
 ### Notes:
 - Create, edit, delete notes and documents.
 ### Store: 
-- General: Search, install, reinstall and uninstall for 25 applications.
+- General: Search, install, reinstall and uninstall for some applications.
 - Other: Search, install, reinstall and uninstall any package.
 ### Tools:
 - Configure Bash.
@@ -101,7 +101,7 @@
 ### Notlar:
 - Notlar ve belgeler oluşturun, düzenleyin, silin.
 ### Mağaza: 
-- Genel: 25 uygulama için arama, yükleme, yeniden yükleme ve kaldırma.
+- Genel: Bazı uygulamalar için arama, yükleme, yeniden yükleme ve kaldırma.
 - Diğer: Herhangi bir paketi arayın, yükleyin, yeniden yükleyin ve kaldırın.
 ### Araçlar:
 - Bash'ı yapılandırın.
