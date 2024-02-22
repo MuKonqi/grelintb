@@ -163,13 +163,13 @@ def install_app(appname: str, packagename: str):
     if ask_a == True:
         running(installing)
         if os.path.isfile(debian):
-            cmd = os.system('pkexec apt install '+packagename+" -y")
+            cmd = os.system('pkexec apt install '+packagename+' -y')
         elif os.path.isfile(fedora):
-            cmd = os.system('pkexec dnf install '+packagename+" -y")
+            cmd = os.system('pkexec dnf install '+packagename+' -y')
         elif os.path.isfile(solus):
-            cmd = os.system('pkexec eopkg install '+packagename+" -y")
+            cmd = os.system('pkexec eopkg install '+packagename+' -y')
         elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = os.system('pkexec pacman -S '+packagename+" --noconfirm")
+            cmd = os.system('pkexec pacman -S '+packagename+'--noconfirm')
         normal()
     elif ask_a == False:
         if os.path.isfile(en):
@@ -221,7 +221,7 @@ class Sidebar(ui.CTkFrame):
         super().__init__(master, **kwargs)
         global status
         self.grid_rowconfigure((4, 8), weight=1)
-        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb/wiki", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
         if os.path.isfile(s_true):
             self.startup_var = ui.StringVar(value="on")
@@ -676,13 +676,13 @@ class AppStore(ui.CTkFrame):
     def install_main(self):
         running(installing)
         if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec apt install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec dnf install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg install '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec eopkg install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -696,13 +696,13 @@ class AppStore(ui.CTkFrame):
     def reinstall_main(self):
         running(reinstalling)
         if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt install --reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec apt install --reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec dnf reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg reinstall '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec eopkg reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -716,13 +716,13 @@ class AppStore(ui.CTkFrame):
     def uninstall_main(self):
         running(uninstalling)
         if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec dnf remove '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg remove '+self.app.get().lower()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec eopkg remove --purge'+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -Rs '+self.app.get().lower()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            cmd = subprocess.Popen('pkexec pacman -Rns '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -808,13 +808,13 @@ class OtherStore(ui.CTkFrame):
         running(installing)
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt install '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec apt install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf install '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec dnf install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
                 install_flatpak()
@@ -835,13 +835,13 @@ class OtherStore(ui.CTkFrame):
         running(reinstalling)
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt install --reinstall '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec apt install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf reinstall '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec dnf reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
                 install_flatpak()
@@ -862,13 +862,13 @@ class OtherStore(ui.CTkFrame):
         running(uninstalling)
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt remove '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg remove '+self.entry.get()+" -y", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec eopkg remove --purge'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -Rs '+self.entry.get()+" --noconfirm", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                cmd = subprocess.Popen('pkexec pacman -Rns '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
                 install_flatpak()
@@ -886,6 +886,164 @@ class OtherStore(ui.CTkFrame):
         t = threading.Thread(target=self.uninstall_main, daemon=False)
         t.start()
 
+class DEWMStore(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((2, 3, 4), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        if os.path.isfile(en):
+            self.text = ui.CTkLabel(self.frame, text="Desktop Environment\nWindow Manager")
+            self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
+            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
+            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
+        elif os.path.isfile(tr):
+            self.text = ui.CTkLabel(self.frame, text="Masaüstü Ortamı\nPencere Yöneticisi")
+            self.button1 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
+            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
+            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
+        if os.path.isfile(debian):
+            self.dewm = ui.CTkOptionMenu(self.frame, values=["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"])
+        elif os.path.isfile(fedora):
+            self.dewm = ui.CTkOptionMenu(self.frame, values=["Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "KDE", "Deepin", "GNOME", "Openbox", "Fluxbox", "Blackbox", "i3", "bspwm"])
+        elif os.path.isfile(solus):
+            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"])
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"])
+        self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
+        self.dewm.grid(row=1, column=0, sticky="nsew", pady=(5, 10), padx=(25, 0))
+        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
+        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
+        self.button3.grid(row=4, column=0, sticky="nsew", padx=(25, 0))
+    def do_main(self, operation: str):
+        if operation == "install":
+            running(installing)
+        elif operation == "reinstall":
+            running(reinstalling)
+        elif operation == "uninstall":
+            running(uninstalling)
+        if os.path.isfile(debian):
+            if self.dewm.get().lower() != "mate":
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec apt install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec apt install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif self.dewm.get().lower() == "mate":
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec apt install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec apt install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec apt autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(fedora):
+            if self.dewm.get().lower() not in ["kde", "budgie", "deepin", "gnome", "openbox", "fluxbox", "blackbox", "bspwm"]:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf install @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf remove @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif self.dewm.get().lower() not in ["openbox", "fluxbox", "blackbox", "bspwm"]:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf install @'+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall @'+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf remove @'+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif self.dewm.get().lower() not in ["kde", "budgie", "deepin", "gnome"]:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf install '+self.dewm.get().lower()+' -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall '+self.dewm.get().lower()+' -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec bash -c "dnf remove '+self.dewm.get().lower()+' -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)                
+        elif os.path.isfile(solus):
+            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec eopkg install -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec eopkg install --reinstall -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec eopkg remove --purge -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            else:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec eopkg install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec eopkg remove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+            if operation == "install":
+                cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec pacman -Rns '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        normal()
+        main_successful()
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+        t.start()
+
+class systemdStore(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((1, 2, 3, 4, 5), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        if os.path.isfile(en):
+            self.entry = ui.CTkEntry(self.frame, placeholder_text="Please enter service name.")
+            self.button1 = ui.CTkButton(self.frame, text="Status", command=lambda:self.go_main("status"))
+            self.button2 = ui.CTkButton(self.frame, text="Enable", command=lambda:self.go_main("enable"))
+            self.button3 = ui.CTkButton(self.frame, text="Disable", command=lambda:self.go_main("disable"))
+            self.button4 = ui.CTkButton(self.frame, text="Start", command=lambda:self.go_main("start"))
+            self.button5 = ui.CTkButton(self.frame, text="Stop", command=lambda:self.go_main("stop"))
+        elif os.path.isfile(tr):
+            self.entry = ui.CTkEntry(self.frame, placeholder_text="Lütfen servis adını girin.")
+            self.button1 = ui.CTkButton(self.frame, text="Durum", command=lambda:self.go_main("status"))
+            self.button2 = ui.CTkButton(self.frame, text="Aktifleştir", command=lambda:self.go_main("enable"))
+            self.button3 = ui.CTkButton(self.frame, text="Devre Dışı Bırak", command=lambda:self.go_main("disable"))
+            self.button4 = ui.CTkButton(self.frame, text="Başlat", command=lambda:self.go_main("start"))
+            self.button5 = ui.CTkButton(self.frame, text="Durdur", command=lambda:self.go_main("stop"))
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=5, padx=(25, 0))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(25, 0))
+        self.button5.grid(row=5, column=0, sticky="nsew", padx=(25, 0))
+    def do_main(self, operation: str):
+        cmd = subprocess.Popen('pkexec bash -c "SYSTEMD_COLORS=0 systemctl '+operation+' '+self.entry.get()+'"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        main_successful()
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+        t.start()
+
 class Store(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -896,9 +1054,13 @@ class Store(ui.CTkFrame):
         if os.path.isfile(en):
             self.tab1 = self.tabview.add("General Apps")
             self.tab2 = self.tabview.add("Other Apps")
+            self.tab3 = self.tabview.add("Desktop Environments\nWindow Managers")
+            self.tab4 = self.tabview.add("systemd Services")
         elif os.path.isfile(tr):
             self.tab1 = self.tabview.add("Genel Uygulamalar")
             self.tab2 = self.tabview.add("Diğer Uygulamalar")
+            self.tab3 = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
+            self.tab4 = self.tabview.add("systemd Servisleri")
         self.tab1.grid_columnconfigure(0, weight=1)
         self.tab1.grid_rowconfigure(0, weight=1)
         self.appstore_frame=AppStore(self.tab1)
@@ -907,6 +1069,15 @@ class Store(ui.CTkFrame):
         self.tab2.grid_rowconfigure(0, weight=1)
         self.otherstore_frame=OtherStore(self.tab2)
         self.otherstore_frame.grid(row=0, column=0, sticky="nsew")
+        self.tab3.grid_columnconfigure(0, weight=1)
+        self.tab3.grid_rowconfigure(0, weight=1)
+        self.dewmstore_frame=DEWMStore(self.tab3)
+        self.dewmstore_frame.grid(row=0, column=0, sticky="nsew")
+        self.tab4.grid_columnconfigure(0, weight=1)
+        self.tab4.grid_rowconfigure(0, weight=1)
+        self.systemdstore_frame=systemdStore(self.tab4)
+        self.systemdstore_frame.grid(row=0, column=0, sticky="nsew")
+
 
 class BashButtons(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1499,7 +1670,7 @@ class Scripts(ui.CTkFrame):
         elif os.path.isfile(solus):
             os.system("pkexec eopkg rmf -y")
         elif os.path.isifle(arch1) or os.path.isfile(arch2):
-            os.system("pacman -Qdtq | pkexec pacman -Rs - --noconfirm")
+            os.system("pacman -Qdtq | pkexec pacman -Rns - --noconfirm")
         normal()
         main_successful()
     def go_remove(self):
