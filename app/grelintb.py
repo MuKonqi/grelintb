@@ -169,7 +169,7 @@ def install_app(appname: str, packagename: str):
         elif os.path.isfile(solus):
             cmd = os.system('pkexec eopkg install '+packagename+' -y')
         elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = os.system('pkexec pacman -S '+packagename+'--noconfirm')
+            cmd = os.system('pkexec pacman -S '+packagename+' --noconfirm')
         normal()
     elif ask_a == False:
         if os.path.isfile(en):
