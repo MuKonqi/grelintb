@@ -362,7 +362,7 @@ class Sidebar(ui.CTkFrame):
         elif os.path.isfile(tr):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Başarılı", "GrelinTB sıfırlandı.")
-        os.system("grelintb")
+        os.system("./grelintb-portable.py")
         exit()
     def uninstall(self):
         root.destroy()
@@ -370,10 +370,10 @@ class Sidebar(ui.CTkFrame):
         os.system("cd /home/"+username+" ; rm .*-grelintb*")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            mb.showinfo("See you!","GrelinTB uninstalled from your system.")
+            mb.showinfo("See you!","GrelinTB uninstalled.")
         elif os.path.isfile(tr):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
+            mb.showinfo("Görüşürüz!","GrelinTB kaldırıldı.")
         exit()
     def startup_option(self):
         if self.startup_var.get() == "on":
@@ -1854,10 +1854,10 @@ if __name__ == "__main__":
         os.system("cd /home/"+username+" ; rm .*-grelintb*")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            exit("See you! GrelinTB uninstalled from your system.")
+            exit("See you! GrelinTB uninstalled.")
         elif os.path.isfile(tr):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            exit("Görüşürüz! GrelinTB sisteminizden kaldırıldı.")
+            exit("Görüşürüz! GrelinTB kaldırıldı.")
     else:
         root = Root(className="grelintb")
         root.mainloop()
