@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
-    version_current = version_file.readline()
+version_current = "v1.3.1.0"
 
 import os
 
@@ -65,6 +64,7 @@ except:
             exit("Error: "+str(e))
 
 username = getpass.getuser()
+pathname = os.path.abspath(__file__)
 config = "/home/"+username+"/.config/grelintb/"
 notes = "/home/"+username+"/Notes/"
 en = "/home/"+username+"/.config/grelintb/language/en.txt"
@@ -91,6 +91,8 @@ if not os.path.isdir(config+"color/"):
     os.system("cd "+config+" ; mkdir color ; cd color ; touch dark-blue.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
+if not os.path.isfile(config+"LICENSE.txt"):
+    os.system("cd "+config+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/LICENSE.txt")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
 if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
@@ -207,14 +209,13 @@ class Sidebar(ui.CTkFrame):
         super().__init__(master, **kwargs)
         global status
         self.grid_rowconfigure((4, 8), weight=1)
-        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb/wiki", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.text = ui.CTkButton(self, text="GrelinTB (Portable)\n"+version_current, command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb/wiki", shell=True), font=ui.CTkFont(size=16, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
         if os.path.isfile(s_true):
             self.startup_var = ui.StringVar(value="on")
         elif os.path.isfile(s_false):
             self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
-            self.version_b = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
@@ -241,7 +242,6 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(green):
                 self.color_menu.set("Green")
         elif os.path.isfile(tr):
-            self.version_b = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
@@ -268,7 +268,6 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(green):
                 self.color_menu.set("Yeşil")
         self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
-        self.version_b.grid(row=1, column=0, padx=10, pady=0)
         self.mukonqi_b.grid(row=2, column=0, padx=10, pady=0)
         self.license_and_credits_b.grid(row=3, column=0, padx=10, pady=0)
         self.update_b.grid(row=5, column=0, padx=10, pady=5)
@@ -282,27 +281,6 @@ class Sidebar(ui.CTkFrame):
         self.language_label.grid(row=14, column=0, padx=10, pady=(5, 0))
         self.language_menu.grid(row=15, column=0, padx=10, pady=(0, 5))
         status.grid(row=16, column=0, padx=10, pady=(0, 5))
-    def changelog(self):
-        self.window = ui.CTkToplevel()
-        self.window.geometry("600x600")
-        self.window.minsize(600, 600)
-        self.window.grid_rowconfigure(1, weight=1)
-        self.window.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.window.title("Changelog For "+version_current)
-            self.label = ui.CTkLabel(self.window, text="Current version: "+version_current+"\nThe changelog for the "+version_current+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
-            with open("/usr/local/bin/grelintb/changelog-en.txt", "r") as cc_file:
-                cc_text = cc_file.read()
-        elif os.path.isfile(tr):
-            self.window.title(version_current+" için Değişiklik Günlüğü")
-            self.label = ui.CTkLabel(self.window, text="Şimdiki sürüm: "+version_current+"\n\n"+version_current+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-            with open("/usr/local/bin/grelintb/changelog-tr.txt", "r") as cc_file:
-                cc_text = cc_file.read()
-        self.textbox = ui.CTkTextbox(self.window)
-        self.textbox.insert("0.0", cc_text)
-        self.textbox.configure(state="disabled")
-        self.label.grid(row=0, column=0, sticky="nsew", pady=10)
-        self.textbox.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
     def license_and_credits(self):
         self.window = ui.CTkToplevel()
         self.window.geometry("600x600")
@@ -325,7 +303,7 @@ class Sidebar(ui.CTkFrame):
             self.button2 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
             self.button3 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
             self.button4 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
-        with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
+        with open(config+"LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
         self.textbox.insert("0.0", license_text)
@@ -339,12 +317,12 @@ class Sidebar(ui.CTkFrame):
         self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def update(self):
         root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
         if os.path.isfile(en):
             mb.showinfo("Successful", "GrelinTB updated.")
         elif os.path.isfile(tr):
             mb.showinfo("Başarılı", "GrelinTB güncellendi.")
-        os.system("grelintb")
+        os.system("./grelintb-portable.py")
         exit()
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
@@ -377,7 +355,7 @@ class Sidebar(ui.CTkFrame):
                 mb.showinfo("Bilgilendirme","GrelinTB güncel.")
     def reset(self):
         root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Successful", "GrelinTB has been reset.")
@@ -388,7 +366,7 @@ class Sidebar(ui.CTkFrame):
         exit()
     def uninstall(self):
         root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
+        os.system("rm "+pathname)
         os.system("cd /home/"+username+" ; rm .*-grelintb*")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
@@ -1261,7 +1239,7 @@ class ComputerName(ui.CTkFrame):
         self.entry.grid(row=1, column=0, sticky="nsew", padx=80, pady=40)
         self.button.grid(row=2, column=0, sticky="nsew", padx=80, pady=40)
     def apply(self):
-        subprocess.Popen("pkexec grelintb root pcrename "+self.entry.get(), shell=True)
+        subprocess.Popen("pkexec "+pathname+" root pcrename "+self.entry.get(), shell=True)
         restart_system()
 
 class OpenFM(ui.CTkFrame):
@@ -1743,11 +1721,9 @@ class Scripts(ui.CTkFrame):
 class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.title("GrelinTB")
+        self.title("GrelinTB (Portable)")
         self.geometry("1200x600")
         self.minsize(1200, 600)
-        self.icon = pi(file = '/usr/local/bin/grelintb/icon.png')
-        self.wm_iconphoto(True, self.icon)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.sidebar_frame = Sidebar(self, corner_radius=0)
@@ -1805,7 +1781,6 @@ if __name__ == "__main__":
             print("List of all parameters for GrelinTB:")
             print("  help:          Show this page")
             print("  grelintb:      Open website of GrelinTB's GitHub repository")
-            print("  version:       Show changelog of "+version_current)
             print("  developer:     Open website of GrelinTB developer")
             print("  license:       Show license text of GPLv3")
             print("  reset:         Reset GrelinTB")
@@ -1821,7 +1796,6 @@ if __name__ == "__main__":
             print("GrelinTB için tüm parametrelerin listesi:")
             print("  yardım:        Bu sayfayı göster")
             print("  grelintb:      GrelinTB'nin GitHub deposunu aç")
-            print("  sürüm:         "+version_current+" sürümünün değişik günlüğünü göster")
             print("  geliştirici:   GrelinTB geliştiricisinin internet sitesini aç")
             print("  lisans:        GPLv3 lisansının metnini göster")
             print("  sıfırla:       GrelinTB'yı sıfırla")
@@ -1844,11 +1818,11 @@ if __name__ == "__main__":
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
         exit()
     elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
-        with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
+        with open(config+"LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
         exit(l_text)
     elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             exit("GrelinTB has been reset.")
@@ -1865,7 +1839,7 @@ if __name__ == "__main__":
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
                 question = input("  Yeni sürümün ("+version_latest+") değişiklik günlüğü aşağıdadır:\n"+cl_text+"\n\n"+version_latest+" sürümüne güncellemek ister misiniz? [e/h]: ")
             if question.lower() == "y" or question.lower() == "e":
-                os.system("pkexec /usr/local/bin/grelintb/update.sh")
+                os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
                 if os.path.isfile(en):
                     exit("GrelinTB updated.")
                 elif os.path.isfile(tr):
@@ -1876,7 +1850,7 @@ if __name__ == "__main__":
             elif os.path.isfile(tr):
                 exit("GrelinTB güncel.")
     elif "uninstall" in sys.argv[1:] or "kaldır" in sys.argv[1:]:
-        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
+        os.system("rm "+pathname)
         os.system("cd /home/"+username+" ; rm .*-grelintb*")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")

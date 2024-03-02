@@ -1,4 +1,5 @@
 - General improvements have been made.
 - Updated README.md.
-- Added wiki.
-- Added a section for desktop environments/window managers and systemd services in the Store section.
+- Added BENİOKU.md.
+- Added portable version.
+- Added icon.

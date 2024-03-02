@@ -1,4 +1,5 @@
 - Genel iyileştirmeler yapıldı.
 - README.md güncellendi.
-- Viki eklendi.
-- Mağaza bölümüne masaüstü ortamları/pencere yöneticileri ve systemd servisleri için bölüm eklendi.
+- BENİOKU.md eklendi.
+- Taşınabilir sürüm eklendi.
+- İkon eklendi.
