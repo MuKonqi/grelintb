@@ -70,11 +70,11 @@ except:
     try:
         print("Installing CustomTkinter...")
         os.system("pip install customtkinter")
+        import customtkinter as ui
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install customtkinter --break-system-packages")
-    os.system("grelintb")
-    exit()
+        os.system("pip install customtkinter --break-system-packages ; grelintb")
+        exit()
 
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")

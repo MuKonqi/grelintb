@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v1.3.1.1"
+version_current = "v1.3.1.2"
 
 import os
 
@@ -70,11 +70,11 @@ except:
     try:
         print("Installing CustomTkinter...")
         os.system("pip install customtkinter")
+        import customtkinter as ui
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install customtkinter --break-system-packages")
-    os.system(pathname)
-    exit()
+        os.system("pip install customtkinter --break-system-packages ; grelintb")
+        exit()
 
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")
