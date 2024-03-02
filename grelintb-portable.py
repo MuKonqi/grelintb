@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-version_current = "v1.3.1.0"
+version_current = "v1.3.1.1"
 
 import os
 
@@ -49,20 +49,6 @@ from tkinter import messagebox as mb
 from tkinter import filedialog as fd
 from tkinter import PhotoImage as pi
 
-try:
-    import customtkinter as ui
-except:
-    try:
-        print("Installing CustomTkinter...")
-        os.system("pip install customtkinter")
-        import customtkinter as ui
-    except Exception:
-        print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install customtkinter --break-system-packages")
-        import customtkinter as ui
-    except:
-            exit("Error: "+str(e))
-
 username = getpass.getuser()
 pathname = os.path.abspath(__file__)
 config = "/home/"+username+"/.config/grelintb/"
@@ -77,6 +63,18 @@ blue = "/home/"+username+"/.config/grelintb/color/blue.txt"
 green = "/home/"+username+"/.config/grelintb/color/green.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
+
+try:
+    import customtkinter as ui
+except:
+    try:
+        print("Installing CustomTkinter...")
+        os.system("pip install customtkinter")
+    except:
+        print("Installing CustomTkinter with --break-system-packages parameter...")
+        os.system("pip install customtkinter --break-system-packages")
+    os.system(pathname)
+    exit()
 
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")
