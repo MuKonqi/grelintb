@@ -1600,7 +1600,7 @@ class Scripts(ui.CTkFrame):
             self.button8 = ui.CTkButton(self, command=self.go_f_remove, text="Remove Unnecessary Flatpak Packages")
             if os.path.isfile(debian):
                 self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1)
-                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Fix Package Errors").grid(row=8, column=0, sticky="nsew", padx=50)
+                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Fix Package Errors").grid(row=8, column=0, sticky="nsew", pady=(15, 0), padx=30)
         elif os.path.isfile(tr):
             self.button1 = ui.CTkButton(self, command=self.cups, text="Cups'ı Yapılandırma Sayfasını Aç")
             self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine'ı Yapılandırma Uygulamasını Aç")
