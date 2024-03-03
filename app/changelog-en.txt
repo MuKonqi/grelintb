@@ -1,5 +1,7 @@
-- General improvements have been made.
-- Updated README.md.
-- Added BENİOKU.md.
-- Added portable version.
-- Added icon.
+- Added random option for color theme.
+- Added features for installing Pip with Tkinter to "grelintb.py" and "grelintb-portable.py" files.
+- Changed the detection method for Arch Linux.
+- Improved the methods of the "General Applications" and "Other Applications" sections.
+- Added feature to "update.sh" script to install if Git is missing.
+- Fixed minor typos.
+- Added icon for portable version.

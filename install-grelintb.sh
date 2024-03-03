@@ -60,7 +60,7 @@ elif [ -f /etc/fedora-release ]; then
 elif [ -f /etc/solus-release ]; then
     eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
     install
-elif [ -f /usr/bin/pacman] || [ -f /bin/pacman]; then
+elif [ -f /etc/arch-release ]; then
     pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm
     install
 else

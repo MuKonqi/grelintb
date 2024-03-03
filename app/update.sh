@@ -29,6 +29,19 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's updater.  If not, see <https://www.gnu.org/licenses/>."
+function install_git {
+    if [ -f /etc/debian_version ]; then
+        apt install git -y
+    elif [ -f /etc/fedora-release ]; then
+        dnf install git -y
+    elif [ -f /etc/solus-release ]; then
+        eopkg install git -y
+    elif [ -f /etc/arch-release ]; then
+        pacman -S git --noconfirm
+    }
+if [[ ! -f /bin/git/ ]] && [[ ! -f /usr/bin/git/ ]]; then
+    install_git
+fi
 rm /usr/bin/grelintb
 rm /usr/share/applications/grelintb.desktop
 rm -rf /usr/local/bin/grelintb/

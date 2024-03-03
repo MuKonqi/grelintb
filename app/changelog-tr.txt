@@ -1,5 +1,7 @@
-- Genel iyileştirmeler yapıldı.
-- README.md güncellendi.
-- BENİOKU.md eklendi.
-- Taşınabilir sürüm eklendi.
-- İkon eklendi.
+- Renk teması için rastgele seçeneği eklendi.
+- Tkinter ile Pip'in kurulmasını sağlayan özellikler "grelintb.py" ile "grelintb-portable.py" dosyalarına eklendi.
+- Arch Linux için tespit yöntemi değiştirildi.
+- "Genel Uygulamalar" ve "Diğer Uygulamalar" bölümlerinin methodlarında iyileştirmeler yapıldı.
+- "update.sh" betiğine Git yoksa kurma özelliği eklendi.
+- Ufak yazım hataları düzeltildi.
+- Taşınabilir sürüm için ikon eklendi.

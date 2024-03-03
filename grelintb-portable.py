@@ -20,10 +20,10 @@ import os
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
 solus = "/etc/solus-release"
-arch1 = "/bin/pacman"
-arch2 = "/usr/bin/pacman"
+arch = "/etc/arch-release"
+pathname = os.path.abspath(__file__)
 
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch1) and not os.path.isfile(arch2):
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 
 import sys
@@ -40,15 +40,47 @@ elif os.getuid() == 0:
 
 import locale
 import getpass
+import random
 import threading
 import subprocess
 import datetime as dt
-from tkinter import messagebox as mb
-from tkinter import filedialog as fd
-from tkinter import PhotoImage as pi
+try:
+    from tkinter import messagebox as mb
+    from tkinter import filedialog as fd
+    from tkinter import PhotoImage as pi
+except:
+    print("Installing Tkinter...")
+    if os.path.isfile(debian):
+        os.system("pkexec apt install python3-tk -y")
+    elif os.path.isfile(fedora):
+        os.system("pkexec dnf install python3-tkinter -y")
+    elif os.path.isfile(solus):
+        os.system("pkexec eopkg install python3-tkinter -y")
+    elif os.path.isfile(arch):
+        os.system("pkexec pacman -S tk --noconfirm")
+if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
+    print("Installing Pip...")
+    if os.path.isfile(debian):
+        os.system("pkexec apt install python3-pip -y")
+    elif os.path.isfile(fedora):
+        os.system("pkexec dnf install python3-pip -y")
+    elif os.path.isfile(solus):
+        os.system("pkexec eopkg install pip -y")
+    elif os.path.isfile(arch):
+        os.system("pkexec pacman -S python-pip --noconfirm")
+try:
+    import customtkinter as ui
+except:
+    try:
+        print("Installing CustomTkinter...")
+        os.system("pip install customtkinter")
+        import customtkinter as ui
+    except:
+        print("Installing CustomTkinter with --break-system-packages parameter...")
+        os.system("pip install customtkinter --break-system-packages ; chmod +x "+pathname+" ; "+pathname)
+        exit()
 
 username = getpass.getuser()
-pathname = os.path.abspath(__file__)
 config = "/home/"+username+"/.config/grelintb/"
 notes = "/home/"+username+"/Notes/"
 en = "/home/"+username+"/.config/grelintb/language/en.txt"
@@ -59,20 +91,9 @@ dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
 dark_blue = "/home/"+username+"/.config/grelintb/color/dark_blue.txt"
 blue = "/home/"+username+"/.config/grelintb/color/blue.txt"
 green = "/home/"+username+"/.config/grelintb/color/green.txt"
+random_file = "/home/"+username+"/.config/grelintb/color/random.txt"
 s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
 s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
-
-try:
-    import customtkinter as ui
-except:
-    try:
-        print("Installing CustomTkinter...")
-        os.system("pip install customtkinter")
-        import customtkinter as ui
-    except:
-        print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install customtkinter --break-system-packages ; "+pathname)
-        exit()
 
 if not os.path.isdir(config):
     os.system("cd /home/"+username+"/.config ; mkdir grelintb")
@@ -87,8 +108,12 @@ if not os.path.isdir(config+"color/"):
     os.system("cd "+config+" ; mkdir color ; cd color ; touch dark-blue.txt")
 if not os.path.isdir(config+"startup/"):
     os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
-if not os.path.isfile(config+"LICENSE.txt"):
-    os.system("cd "+config+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/LICENSE.txt")
+if not os.path.isdir(config+"portable/"):
+    os.system("cd "+config+" ; mkdir portable")
+if not os.path.isfile(config+"portable/LICENSE.txt"):
+    os.system("cd "+config+"portable ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/LICENSE.txt")
+if not os.path.isfile(config+"portable/icon.png"):
+    os.system("cd "+config+"portable ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/icon.png")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
 if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
@@ -106,6 +131,8 @@ elif os.path.isfile(blue):
     ui.set_default_color_theme("blue")
 elif os.path.isfile(green):
     ui.set_default_color_theme("green")
+elif os.path.isfile(random_file):
+    ui.set_default_color_theme(random.choice(["blue", "dark-blue", "green"]))
 
 if os.path.isfile(en):
     searching = "Searching"
@@ -152,7 +179,7 @@ def install_app(appname: str, packagename: str):
             cmd = os.system('pkexec dnf install '+packagename+' -y')
         elif os.path.isfile(solus):
             cmd = os.system('pkexec eopkg install '+packagename+' -y')
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+        elif os.path.isfile(arch):
             cmd = os.system('pkexec pacman -S '+packagename+' --noconfirm')
         normal()
     elif ask_a == False:
@@ -178,7 +205,7 @@ def install_flatpak():
             cmd1 = os.system('pkexec eopkg install flatpak -y')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
             restart_system()
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+        elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman -S flatpak --noconfirm')
             restart_system()
         if ask_r == False:
@@ -220,7 +247,7 @@ class Sidebar(ui.CTkFrame):
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Color Theme:", anchor="w")
-            self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green"], command=self.change_color)
+            self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green", "Random"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Language:", anchor="w")
@@ -238,6 +265,8 @@ class Sidebar(ui.CTkFrame):
                 self.color_menu.set("Blue")
             elif os.path.isfile(green):
                 self.color_menu.set("Green")
+            elif os.path.isfile(random_file):
+                self.color_menu.set("Random")
         elif os.path.isfile(tr):
             self.version_b = ui.CTkButton(self, text="Sürüm: Taşınabilir", command=lambda:subprocess.Popen("xdg-open https://github.com/MuKonqi/grelintb/blob/main/grelintb-portable.py", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
@@ -247,7 +276,7 @@ class Sidebar(ui.CTkFrame):
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
             self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Renk Teması:", anchor="w")
-            self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil"], command=self.change_color)
+            self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil", "Rastgele"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
             self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
             self.language_label = ui.CTkLabel(self, text="Dil:", anchor="w")
@@ -265,6 +294,8 @@ class Sidebar(ui.CTkFrame):
                 self.color_menu.set("Mavi")
             elif os.path.isfile(green):
                 self.color_menu.set("Yeşil")
+            elif os.path.isfile(random_file):
+                self.color_menu.set("Rastgele")
         self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
         self.version_b.grid(row=1, column=0, padx=10, pady=0)
         self.mukonqi_b.grid(row=2, column=0, padx=10, pady=0)
@@ -302,7 +333,7 @@ class Sidebar(ui.CTkFrame):
             self.button2 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
             self.button3 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
             self.button4 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
-        with open(config+"LICENSE.txt", "r") as license_file:
+        with open(config+"portable/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
         self.textbox.insert("0.0", license_text)
@@ -316,7 +347,7 @@ class Sidebar(ui.CTkFrame):
         self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def update(self):
         root.destroy()
-        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
+        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; cd /home/"+username+"/.config/grelintb ; rm -rf portable")
         if os.path.isfile(en):
             mb.showinfo("Successful", "GrelinTB updated.")
         elif os.path.isfile(tr):
@@ -357,8 +388,10 @@ class Sidebar(ui.CTkFrame):
             os.system("cd "+config+"color ; rm * ; touch blue.txt")
         elif new_color == "Green" or new_color == "Yeşil":
             os.system("cd "+config+"color ; rm * ; touch green.txt")
+        elif new_color == "Random" or new_color == "Rastgele":
+            os.system("cd "+config+"color ; rm * ; touch random.txt")
         root.destroy()
-        os.system("grelintb")
+        os.system("chmod +x "+pathname+" ; "+pathname)
         exit()
     def change_appearance(self, new_appearance: str):
         if new_appearance == "System" or new_appearance == "Sistem":
@@ -376,7 +409,7 @@ class Sidebar(ui.CTkFrame):
         elif new_language == "Türkçe":
             os.system("cd "+config+"language ; rm * ; touch tr.txt")
         root.destroy()
-        os.system("grelintb")
+        os.system("chmod +x "+pathname+" ; "+pathname)
         exit()
 
 class Starting(ui.CTkFrame):
@@ -602,37 +635,62 @@ class AppStore(ui.CTkFrame):
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Application")
-            self.button1 = ui.CTkButton(self.frame, text="Install", command=self.go_install)
-            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=self.go_reinstall)
-            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=self.go_uninstall)
+            self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
+            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
+            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
         elif os.path.isfile(tr):
             self.text = ui.CTkLabel(self.frame, text="Uygulama")
-            self.button1 = ui.CTkButton(self.frame, text="Kur", command=self.go_install)
-            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=self.go_reinstall)
-            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=self.go_uninstall)
+            self.button1 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
+            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
+            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
         if os.path.isfile(debian):
             self.app = ui.CTkOptionMenu(self.frame, values=["Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"])
         if os.path.isfile(fedora):
             self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"])
         if os.path.isfile(solus):
             self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"])
-        if os.path.isfile(arch1) or os.path.isfile(arch2):
+        if os.path.isfile(arch):
             self.app = ui.CTkOptionMenu(self.frame, values=["Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"])
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.app.grid(row=1, column=0, sticky="nsew", pady=(5, 10), padx=(25, 0))
         self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
         self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=(25, 0))
         self.button3.grid(row=4, column=0, sticky="nsew", padx=(25, 0))
-    def install_main(self):
-        running(installing)
+    def do_main(self, operation: str):
+        if operation == "install":
+            running(installing)
+        elif operation == "reinstall":
+            running(reinstalling)
+        elif operation == "uninstall":
+            running(uninstalling)
         if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            if operation == "install":
+                cmd = subprocess.Popen('pkexec apt install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec apt install --reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            if operation == "install":
+                cmd = subprocess.Popen('pkexec dnf install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec dnf reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec dnf remove '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            if operation == "install":
+                cmd = subprocess.Popen('pkexec eopkg install '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec eopkg remove --purge -'+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch):
+            if operation == "install":
+                cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec pacman -Rns '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -640,48 +698,8 @@ class AppStore(ui.CTkFrame):
         self.textbox.configure(state="disabled")
         normal()
         main_successful()
-    def go_install(self):
-        t = threading.Thread(target=self.install_main, daemon=False)
-        t.start()
-    def reinstall_main(self):
-        running(reinstalling)
-        if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt install --reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg reinstall '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -S '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
-        self.textbox.configure(state="disabled")
-        normal()
-        main_successful()
-    def go_reinstall(self):
-        t = threading.Thread(target=self.reinstall_main, daemon=False)
-        t.start()
-    def uninstall_main(self):
-        running(uninstalling)
-        if os.path.isfile(debian):
-            cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(fedora):
-            cmd = subprocess.Popen('pkexec dnf remove '+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(solus):
-            cmd = subprocess.Popen('pkexec eopkg remove --purge'+self.app.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
-            cmd = subprocess.Popen('pkexec pacman -Rns '+self.app.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
-        self.textbox.configure(state="disabled")
-        normal()
-        main_successful()
-    def go_uninstall(self):
-        t = threading.Thread(target=self.uninstall_main, daemon=False)
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
 
 class OtherStore(ui.CTkFrame):
@@ -702,18 +720,18 @@ class OtherStore(ui.CTkFrame):
             self.source = ui.CTkLabel(self.frame, text="Source")
             self.repos = ui.CTkSwitch(self.frame, text="Repositories/Flathub", offvalue="repos", onvalue="flathub", variable=self.repos_var, command=self.repos_go)
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Please enter package name.")
-            self.button1 = ui.CTkButton(self.frame, text="Search", command=self.go_search)
-            self.button2 = ui.CTkButton(self.frame, text="Install", command=self.go_install)
-            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=self.go_reinstall)
-            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=self.go_uninstall)
+            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main("search"))
+            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
+            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
+            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
         elif os.path.isfile(tr):
             self.source = ui.CTkLabel(self.frame, text="Kaynak")
             self.repos = ui.CTkSwitch(self.frame, text="Depolar/Flathub", offvalue="repos", onvalue="flathub", variable=self.repos_var, command=self.repos_go)
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Lütfen paket adı girin.")
-            self.button1 = ui.CTkButton(self.frame, text="Ara", command=self.go_search)
-            self.button2 = ui.CTkButton(self.frame, text="Kur", command=self.go_install)
-            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=self.go_reinstall)
-            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=self.go_uninstall)
+            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main("search"))
+            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
+            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
+            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
         self.source.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.repos.grid(row=1, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.entry.grid(row=2, column=0, sticky="nsew", pady=(20, 0), padx=(25, 0))
@@ -727,23 +745,65 @@ class OtherStore(ui.CTkFrame):
     def repos_go(self):
         t = threading.Thread(target=self.repos_main, daemon=False)
         t.start()
-    def search_main(self):
-        running(searching)
+    def do_main(self, operation: str):
+        if operation == "search":
+            running(searching)
+        elif operation == "install":
+            running(installing)
+        elif operation == "reinstall":
+            running(reinstalling)
+        elif operation == "uninstall":
+            running(uninstalling)
         if self.repos_var.get() == "repos":
             if os.path.isfile(debian):
-                cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                if operation == "search":
+                    cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "install":
+                    cmd = subprocess.Popen('pkexec apt install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec apt install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                if operation == "search":
+                    cmd = subprocess.Popen('dnf search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "install":
+                    cmd = subprocess.Popen('pkexec dnf install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec dnf reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif os.path.isfile(solus):
-                cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                if operation == "search":
+                    cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "install":
+                    cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec eopkg remove --purge -'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif os.path.isfile(arch):
+                if operation == "search":
+                    cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "install":
+                    cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec pacman -Rns '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif self.repos_var.get() == "flathub":
             if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
                 install_flatpak()
                 if ask_f == False:
                     return
-            cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            if operation == "search":
+                cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "install":
+                cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('flatpak install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('flatpak uninstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -751,89 +811,8 @@ class OtherStore(ui.CTkFrame):
         self.textbox.configure(state="disabled")
         normal()
         main_successful()
-    def go_search(self):
-        t = threading.Thread(target=self.search_main, daemon=False)
-        t.start()
-    def install_main(self):
-        running(installing)
-        if self.repos_var.get() == "repos":
-            if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif self.repos_var.get() == "flathub":
-            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                install_flatpak()
-                if ask_f == False:
-                    return
-            cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
-        self.textbox.configure(state="disabled")
-        normal()
-        main_successful()
-    def go_install(self):
-        t = threading.Thread(target=self.install_main, daemon=False)
-        t.start()
-    def reinstall_main(self):
-        running(reinstalling)
-        if self.repos_var.get() == "repos":
-            if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif self.repos_var.get() == "flathub":
-            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                install_flatpak()
-                if ask_f == False:
-                    return
-            cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y --reinstall', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
-        self.textbox.configure(state="disabled")
-        normal()
-        main_successful()
-    def go_reinstall(self):
-        t = threading.Thread(target=self.reinstall_main, daemon=False)
-        t.start()
-    def uninstall_main(self):
-        running(uninstalling)
-        if self.repos_var.get() == "repos":
-            if os.path.isfile(debian):
-                cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(fedora):
-                cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(solus):
-                cmd = subprocess.Popen('pkexec eopkg remove --purge'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif os.path.isfile(arch1) or os.path.isfile(arch2):
-                cmd = subprocess.Popen('pkexec pacman -Rns '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif self.repos_var.get() == "flathub":
-            if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-                install_flatpak()
-                if ask_f == False:
-                    return
-            cmd = subprocess.Popen('flatpak uninstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
-        self.textbox.configure(state="disabled")
-        normal()
-        main_successful()
-    def go_uninstall(self):
-        t = threading.Thread(target=self.uninstall_main, daemon=False)
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
 
 class DEWMStore(ui.CTkFrame):
@@ -865,7 +844,7 @@ class DEWMStore(ui.CTkFrame):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "KDE", "Deepin", "GNOME", "Openbox", "Fluxbox", "Blackbox", "i3", "bspwm"])
         elif os.path.isfile(solus):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"])
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+        elif os.path.isfile(arch):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"])
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
         self.dewm.grid(row=1, column=0, sticky="nsew", pady=(5, 10), padx=(25, 0))
@@ -931,7 +910,7 @@ class DEWMStore(ui.CTkFrame):
                     cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
                 elif operation == "uninstall":
                     cmd = subprocess.Popen('pkexec eopkg remove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(arch1) or os.path.isfile(arch2):
+        elif os.path.isfile(arch):
             if operation == "install":
                 cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif operation == "reinstall":
@@ -1209,7 +1188,7 @@ class ComputerName(ui.CTkFrame):
         self.entry.grid(row=1, column=0, sticky="nsew", padx=80, pady=40)
         self.button.grid(row=2, column=0, sticky="nsew", padx=80, pady=40)
     def apply(self):
-        subprocess.Popen("pkexec "+pathname+" root pcrename "+self.entry.get(), shell=True)
+        subprocess.Popen("chmod +x "+pathname+" ; pkexec "+pathname+" root pcrename "+self.entry.get(), shell=True)
         restart_system()
 
 class OpenFM(ui.CTkFrame):
@@ -1603,7 +1582,7 @@ class Scripts(ui.CTkFrame):
             os.system("pkexec dnf update -y")
         elif os.path.isfile(solus):
             os.system("pkexec eopkg upgrade -y")
-        elif os.path.isifle(arch1) or os.path.isfile(arch2):
+        elif os.path.isifle(arch):
             os.system("pkexec pacman -Syu --noconfirm")
         normal()
         main_successful()
@@ -1621,7 +1600,7 @@ class Scripts(ui.CTkFrame):
             os.system("pkexec dnf clean all -y")
         elif os.path.isfile(solus):
             os.system("pkexec eopkg dc -y")
-        elif os.path.isifle(arch1) or os.path.isfile(arch2):
+        elif os.path.isifle(arch):
             os.system("pkexec pacman -Scc --noconfirm")
         normal()
         main_successful()
@@ -1639,7 +1618,7 @@ class Scripts(ui.CTkFrame):
             os.system("pkexec dnf autoremove -y")
         elif os.path.isfile(solus):
             os.system("pkexec eopkg rmf -y")
-        elif os.path.isifle(arch1) or os.path.isfile(arch2):
+        elif os.path.isifle(arch):
             os.system("pacman -Qdtq | pkexec pacman -Rns - --noconfirm")
         normal()
         main_successful()
@@ -1691,8 +1670,11 @@ class Scripts(ui.CTkFrame):
 class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.title("GrelinTB")
         self.geometry("1200x600")
         self.minsize(1200, 600)
+        self.icon = pi(file = config+"portable/icon.png")
+        self.wm_iconphoto(True, self.icon)
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.sidebar_frame = Sidebar(self, corner_radius=0)
@@ -1705,14 +1687,12 @@ class Root(ui.CTk):
             elif os.path.isfile(tr):
                 mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
         if os.path.isfile(en):
-            self.title("GrelinTB (Portable)")
             self.tab_starting = self.tabview.add("Starting")
             self.tab_notes = self.tabview.add("Notes")
             self.tab_store = self.tabview.add("Store")
             self.tab_tools = self.tabview.add("Tools")
             self.tab_scripts = self.tabview.add("Scripts")
         elif os.path.isfile(tr):
-            self.title("GrelinTB (Taşınabilir)")
             self.tab_starting = self.tabview.add("Başlangıç")
             self.tab_notes = self.tabview.add("Notlar")
             self.tab_store = self.tabview.add("Mağaza")
@@ -1778,7 +1758,7 @@ if __name__ == "__main__":
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
         exit()
     elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
-        with open(config+"LICENSE.txt", "r") as l_file:
+        with open(config+"portable/LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
         exit(l_text)
     elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
@@ -1790,7 +1770,7 @@ if __name__ == "__main__":
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             exit("GrelinTB sıfırlandı.")
     elif "update" in sys.argv[1:] or "güncelle" in sys.argv[1:]:
-        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py")
+        os.system("rm "+pathname+" ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; cd /home/"+username+"/.config/grelintb ; rm -rf portable")
         if os.path.isfile(en):
             exit("GrelinTB updated.")
         elif os.path.isfile(tr):

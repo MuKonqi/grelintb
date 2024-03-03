@@ -1,9 +1,9 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
-Version=v1.3.1.3
+Version=v1.3.2.0
 Name=GrelinTB
 Encoding=UTF-8
-Comment=Great toolbox for some Linux distrubitons.
+Comment=Great toolbox for some Linux distributions.
 Icon=/usr/local/bin/grelintb/icon.png
 Path=/usr/local/bin/grelintb
 Exec=/usr/bin/grelintb
