@@ -1,7 +1,7 @@
-- Added random option for color theme.
-- Added features for installing Pip with Tkinter to "grelintb.py" and "grelintb-portable.py" files.
-- Changed the detection method for Arch Linux.
-- Improved the methods of the "General Applications" and "Other Applications" sections.
-- Added feature to "update.sh" script to install if Git is missing.
-- Fixed minor typos.
-- Added icon for portable version.
+- Added package name, search, update to "General Applications" section.
+- Removed "Other Apps" section due to the change above.
+- Added "Flatpak Applications" section for Flatpak.
+- Overhauled installation methods for Fedora Linux based distributions in the "Desktop Environment/Window Manager" section.
+- Added progress bar and status text to "Desktop Environment/Window Manager", "General Applications" and "Other Applications" sections.
+- The general status text can now take 2 forms. The reason is that it will be wrong when multiple processes are started at the same time. That's why we switched to independent status texts.
+- Updated some variable names.
