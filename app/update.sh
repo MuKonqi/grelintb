@@ -38,7 +38,8 @@ function install_git {
         eopkg install git -y
     elif [ -f /etc/arch-release ]; then
         pacman -S git --noconfirm
-    }
+    fi
+}
 if [[ ! -f /bin/git/ ]] && [[ ! -f /usr/bin/git/ ]]; then
     install_git
 fi

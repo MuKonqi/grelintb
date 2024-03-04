@@ -212,6 +212,16 @@ def install_flatpak():
         elif os.path.isfile(tr):
             mb.showerror("Hata", "Flatpak paket yöneticisi kurulumu ve işlem iptal edildi.")
 
+def update():
+    root.destroy()
+    os.system("pkexec /usr/local/bin/grelintb/update.sh")
+    if os.path.isfile(en):
+        mb.showinfo("Successful", "GrelinTB updated.")
+    elif os.path.isfile(tr):
+        mb.showinfo("Başarılı", "GrelinTB güncellendi.")
+    os.system("grelintb")
+    exit()
+
 def main_successful():
     if os.path.isfile(en):
         mb.showinfo("Information","Process completed.")
@@ -357,15 +367,6 @@ class Sidebar(ui.CTkFrame):
         self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
         self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=5)
         self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
-    def update(self):
-        root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
-        if os.path.isfile(en):
-            mb.showinfo("Successful", "GrelinTB updated.")
-        elif os.path.isfile(tr):
-            mb.showinfo("Başarılı", "GrelinTB güncellendi.")
-        os.system("grelintb")
-        exit()
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -377,12 +378,12 @@ class Sidebar(ui.CTkFrame):
             if os.path.isfile(en):
                 self.window.title("Changelog For "+version_latest)
                 self.label = ui.CTkLabel(self.window, text="New version found: "+version_latest+"\n\nThe changelog for the "+version_latest+" version is below:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.window, text="Update To\n"+version_latest, command=self.update)
+                self.button = ui.CTkButton(self.window, text="Update To "+version_latest, command=update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-en.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             elif os.path.isfile(tr):
                 self.window.title(version_latest+" için Değişiklik Günlüğü")
                 self.label = ui.CTkLabel(self.window, text="Yeni sürüm bulundu: "+version_latest+"\n\n"+version_latest+" sürümünün değişiklik günlüğü aşağıdadır:", font=ui.CTkFont(size=16, weight="bold"))
-                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=self.update)
+                self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=update)
                 cl_text = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/changelog-tr.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
             self.textbox = ui.CTkTextbox(self.window)
             self.textbox.insert("0.0", cl_text)
