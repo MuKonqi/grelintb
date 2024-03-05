@@ -1,7 +1,6 @@
 # GrelinTB
 ## Bazı Linux dağıtımları için harika araç kutusu.
 - ![İkon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- ![İndirmeler](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
 - [Click on this sentence to switch to English language.](https://github.com/MuKonqi/grelintb/blob/main/README.md)
 - [Vikiyi detaylı bilgiler amacıyla ziyaret etmek için bu cümlenin üstüne tıklayın.](https://github.com/MuKonqi/grelintb/wiki)
 ## Özellikler
@@ -16,11 +15,6 @@
 ## Kurulum
 - Sadece terminalde şunu yazın: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
 - GrelinTB'nin tadını çıkarın!
-## Taşınabilir Sürümü Başlatma
-- Debian GNU/Linux tabanlı dağıtımlar için şunu terminale yazın: ```pkexec apt install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Fedora Linux tabanlı dağıtımlar için şunu terminale yazın: ```pkexec dnf install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Solus dağıtımı için terminale şunu yazın: ```pkexec eopkg install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Arch Linux tabanlı dağıtımlar için şunu terminale yazın: ```pkexec pacman -S python --no-confirm ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
 - GrelinTB'nin tadını çıkarın!
 ## Telif Hakkı Bildirimi, Lisans, Krediler
 - Telif Hakkı &copy; 2024 MuKonqi (Muhammed S.)

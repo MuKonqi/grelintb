@@ -1,7 +1,6 @@
-- "Genel Uygulamalar" bölümüne paket adı girme, arama, güncelleme eklendi.
-- "Diğer Uygulamalar" bölümü üstteki değişiklikten dolayı kaldırıldı.
-- Flatpak için "Flatpak Uygulamaları" bölümü eklendi.
-- "Masaüstü Ortamı/Pencere Yöneticisi" bölümünde Fedora Linux tabanlı dağıtımlar için kurulum yöntemleri elden geçirildi.
-- "Masaüstü Ortamı/Pencere Yöneticisi", "Genel Uygulamalar" ve "Diğer Uygulamalar" bölümlerine durum çubuğu ve durum metni eklendi.
-- Genel durum metni artık 2 hal alabiliyor. Sebebi ise aynı anda birden çok işlem başlatılınca yanılacak olması. Bu yüzden bağımsız durum metinlerine geçildi.
-- Bazı değişken adları güncellendi.
+- "Betikler" bölümü kaldırıldı.
+- "Mağaza" bölümüne "Betikler" bölümünden özellikler aktarıldı ve yeni özellikler eklendi.
+- Özel durum metinlerinin ve ilerleme çubuğu yerleri değiştirildi.
+- "Dosya Yöneticilerini Kök Haklarıyla Aç" bölümüne uyarı metni, ilerleme çubuğu, durum metni eklendi.
+- Taşınabilir sürüm kaldırıldı.
+- Solus desteği kaldırıldı.

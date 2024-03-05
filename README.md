@@ -1,7 +1,6 @@
 # GrelinTB
 ## Great toolbox for some Linux distributions.
 - ![Icon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- ![Downloads](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
 - [Türkçe diline geçmek için bu cümlenin üstüne tıklayın.](https://github.com/MuKonqi/grelintb/blob/main/BENİOKU.md)
 - [Click on this sentence to visit the wiki for more information.](https://github.com/MuKonqi/grelintb/wiki)
 ## Features
@@ -15,12 +14,6 @@
 - [Also...](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#also)
 ## Installation
 - Only type this in terminal: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
-- Enjoy GrelinTB!
-## Launching Portable Version
-- Type this in terminal for Debian GNU/Linux based distributions: ```pkexec apt install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Type this in terminal for Fedora Linux based distributions: ```pkexec dnf install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Type this in terminal for Solus distrubution: ```pkexec eopkg install python3 -y ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
-- Type this in terminal for Arch Linux based distributions: ```pkexec pacman -S python --no-confirm ; wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/grelintb-portable.py ; chmod +x grelintb-portable.py ; ./grelintb-portable.py```
 - Enjoy GrelinTB!
 ## Copyright Notification, License, Credits
 - Copyright &copy; 2024 MuKonqi (Muhammed S.)

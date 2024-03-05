@@ -57,9 +57,6 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/fedora-release ]; then
     dnf install python3 python3-tkinter python3-pip git curl lolcat neofetch xdg-utils -y
     install
-elif [ -f /etc/solus-release ]; then
-    eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
-    install
 elif [ -f /etc/arch-release ]; then
     pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm
     install

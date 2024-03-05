@@ -22,10 +22,9 @@ import os
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
-solus = "/etc/solus-release"
 arch = "/etc/arch-release"
 
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch):
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(arch):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 
 import sys
@@ -56,8 +55,6 @@ except:
         os.system("pkexec apt install python3-tk -y")
     elif os.path.isfile(fedora):
         os.system("pkexec dnf install python3-tkinter -y")
-    elif os.path.isfile(solus):
-        os.system("pkexec eopkg install python3-tkinter -y")
     elif os.path.isfile(arch):
         os.system("pkexec pacman -S tk --noconfirm")
 if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
@@ -66,8 +63,6 @@ if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
         os.system("pkexec apt install python3-pip -y")
     elif os.path.isfile(fedora):
         os.system("pkexec dnf install python3-pip -y")
-    elif os.path.isfile(solus):
-        os.system("pkexec eopkg install pip -y")
     elif os.path.isfile(arch):
         os.system("pkexec pacman -S python-pip --noconfirm")
 try:
@@ -154,6 +149,7 @@ def restart_system():
 
 def install_app(appname: str, packagename: str):
     global ask_a
+    global process_number
     if os.path.isfile(en):
         ask_a = mb.askyesno("Warning", appname+" can't found on your system.\nWe can try installing "+appname+" to your computer.\nDo you approve it?")
     elif os.path.isfile(tr):
@@ -165,8 +161,6 @@ def install_app(appname: str, packagename: str):
             cmd = os.system('pkexec apt install '+packagename+' -y')
         elif os.path.isfile(fedora):
             cmd = os.system('pkexec dnf install '+packagename+' -y')
-        elif os.path.isfile(solus):
-            cmd = os.system('pkexec eopkg install '+packagename+' -y')
         elif os.path.isfile(arch):
             cmd = os.system('pkexec pacman -S '+packagename+' --noconfirm')
         process_number = process_number - 1
@@ -178,6 +172,7 @@ def install_app(appname: str, packagename: str):
             mb.showerror("Hata", appname+" kurulumu ve işlem iptal edildi.")
 def install_flatpak():
     global ask_f
+    global process_number
     if os.path.isfile(en):
         ask_f = mb.askyesno("Warning", "Flatpak package manager can't found on your system.\nWe can try installing Flatpak package manager to your computer.\nDo you approve it?")
     elif os.path.isfile(tr):
@@ -191,10 +186,6 @@ def install_flatpak():
             restart_system()
         elif os.path.isfile(fedora):
             cmd1 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
-        elif os.path.isfile(solus):
-            cmd1 = os.system('pkexec eopkg install flatpak -y')
-            cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
-            restart_system()
         elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman -S flatpak --noconfirm')
             restart_system()
@@ -676,7 +667,7 @@ class GeneralApps(ui.CTkFrame):
         self.frame.grid_rowconfigure((3, 4, 5, 6, 7), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=0, pady=(3.75, 0), sticky="nsew")
+        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
         self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Application")
@@ -700,8 +691,6 @@ class GeneralApps(ui.CTkFrame):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"], command=self.option)
         elif os.path.isfile(fedora):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
-        elif os.path.isfile(solus):
-            self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"], command=self.option)
         elif os.path.isfile(arch):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
@@ -712,7 +701,7 @@ class GeneralApps(ui.CTkFrame):
         self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=6, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button5.grid(row=7, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=1, sticky="nsew", pady=(3.75, 0), padx=(25, 0))
+        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def name_error(self):
         if os.path.isfile(en):
             mb.showerror("Error", "Please select application from list or enter package(s) name below.")
@@ -785,17 +774,6 @@ class GeneralApps(ui.CTkFrame):
                 cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif operation == "update":
                 cmd = subprocess.Popen('pkexec dnf upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        elif os.path.isfile(solus):
-            if operation == "search":
-                cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "install":
-                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec eopkg remove --purge -'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "update":
-                cmd = subprocess.Popen('pkexec eopkg upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch):
             if operation == "search":
                 cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -845,7 +823,7 @@ class FlatpakApps(ui.CTkFrame):
         self.frame.grid_rowconfigure((2, 3, 4, 5, 6), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=0, pady=(3.75, 0), sticky="nsew")
+        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
         self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Application")
@@ -872,7 +850,7 @@ class FlatpakApps(ui.CTkFrame):
         self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=1, sticky="nsew", pady=(3.75, 0), padx=(25, 0))
+        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def name_error(self):
         if os.path.isfile(en):
             mb.showerror("Error", "Please select application from list or enter package(s) name below.")
@@ -966,7 +944,7 @@ class DEWM(ui.CTkFrame):
         self.frame.grid_rowconfigure((2, 3, 4, 5), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=0, pady=(3.75, 0), sticky="nsew")
+        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
         self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Desktop Environment\nWindow Manager")
@@ -986,8 +964,6 @@ class DEWM(ui.CTkFrame):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"])
         elif os.path.isfile(fedora):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["GNOME", "KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3", "Openbox", "Fluxbox", "Blackbox", "bspwm"])
-        elif os.path.isfile(solus):
-            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"])
         elif os.path.isfile(arch):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"])
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
@@ -996,7 +972,7 @@ class DEWM(ui.CTkFrame):
         self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=5, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=1, sticky="nsew", pady=(3.75, 0), padx=(25, 0))
+        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def do_main(self, operation: str):
         self.dewm.configure(state="disabled")
         self.button1.configure(state="disabled")
@@ -1073,25 +1049,6 @@ class DEWM(ui.CTkFrame):
                     cmd = subprocess.Popen('pkexec bash -c "dnf remove @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
                 elif operation == "update":
                     cmd = subprocess.Popen('pkexec bash -c "dnf remove @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)             
-        elif os.path.isfile(solus):
-            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
-                if operation == "install":
-                    cmd = subprocess.Popen('pkexec eopkg install -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec eopkg install --reinstall -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec eopkg remove --purge -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "update":
-                    cmd = subprocess.Popen('pkexec eopkg upgrade -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            else:
-                if operation == "install":
-                    cmd = subprocess.Popen('pkexec eopkg install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec eopkg remove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                elif operation == "update":
-                    cmd = subprocess.Popen('pkexec eopkg upgrade '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch):
             if operation == "install":
                 cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -1116,6 +1073,256 @@ class DEWM(ui.CTkFrame):
         self.button2.configure(state="normal")
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
+        process_number = process_number - 1
+        update_status()
+        main_successful()
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+        t.start()
+
+class GeneralScripts(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
+        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
+        self.progress_bar.start()
+        if os.path.isfile(en):
+            self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go_main("update"))
+            self.button2 = ui.CTkButton(self.frame, text="Do More Complex Updates\n(etc. Distribution Upgrades)", command=lambda:self.go_main("dist_update"))
+            self.button3 = ui.CTkButton(self.frame, text="Clean Package Cache", command=lambda:self.go_main("clean"))
+            self.button4 = ui.CTkButton(self.frame, text="Remove Unnecessary Package(s)", command=lambda:self.go_main("remove"))
+            self.button5 = ui.CTkButton(self.frame, text="Fix Broken Dependencies", command=lambda:self.go_main("fix"))
+            self.button6 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go_main("history"))
+            self.button7 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go_main("list"))
+            self.status = ui.CTkLabel(self, text="Ready", font=ui.CTkFont(size=12, weight="bold"))
+        elif os.path.isfile(tr):
+            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main("update"))
+            self.button2 = ui.CTkButton(self.frame, text="Daha Karmaşık Güncellemelar Yap\n(örn. Dağıtım Güncellemeleri)", command=lambda:self.go_main("dist_update"))
+            self.button3 = ui.CTkButton(self.frame, text="Paket Önbelleğini Temizle", command=lambda:self.go_main("clean"))
+            self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("remove"))
+            self.button5 = ui.CTkButton(self.frame, text="Bozuk Bağımlılıkları Düzelt", command=lambda:self.go_main("fix"))
+            self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
+            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))            
+            self.status = ui.CTkLabel(self, text="Hazır", font=ui.CTkFont(size=12, weight="bold"))
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button7.grid(row=6, column=0, sticky="nsew", padx=(25, 0))
+        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+    def do_main(self, operation: str):
+        self.button1.configure(state="disabled")
+        self.button2.configure(state="disabled")
+        self.button3.configure(state="disabled")
+        self.button4.configure(state="disabled")
+        self.button5.configure(state="disabled")
+        self.button6.configure(state="disabled")
+        self.button7.configure(state="disabled")
+        global process_number
+        process_number = process_number + 1
+        update_status()
+        if os.path.isfile(en):
+            if operation == "update":
+                self.status.configure(text="Updating All Packages")
+            elif operation == "dist_update":
+                self.status.configure(text="Doing More Complex Updates")
+            elif operation == "clean":
+                self.status.configure(text="Cleaning Up Package Cache")
+            elif operation == "remove":
+                self.status.configure(text="Removing Unnecessary Package(s)")
+            elif operation == "fix":
+                self.status.configure(text="Fixing Broken Dependencies")
+            elif operation == "history":
+                self.status.configure(text="Getting History")
+            elif operation == "list":
+                self.status.configure(text="Getting Installed Packages")
+        elif os.path.isfile(tr):
+            if operation == "update":
+                self.status.configure(text="Tüm Paketler Güncelleniyor")
+            elif operation == "dist_update":
+                self.status.configure(text="Daha Karmaşık Güncellemeler Yapılıyor")
+            elif operation == "clean":
+                self.status.configure(text="Paket Önbelleği Temizleniyor")
+            elif operation == "remove":
+                self.status.configure(text="Gereksiz Paketler Kaldırılıyor")
+            elif operation == "fix":
+                self.status.configure(text="Bozuk Bağımlılıklar Düzeltiliyor")
+            elif operation == "history":
+                self.status.configure(text="Geçmiş Alınıyor")
+            elif operation == "list":
+                self.status.configure(text="Kurulu Paketler Alınıyor")
+        self.progress_bar.configure(mode="determinate")
+        self.progress_bar.step()
+        if os.path.isfile(debian):
+            if operation == "update":
+                cmd = subprocess.Popen('pkexec apt upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "dist_update":
+                cmd = subprocess.Popen('pkexec apt dist-upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "clean":
+                cmd = subprocess.Popen('pkexec apt-get autoclean -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "remove":
+                cmd = subprocess.Popen('pkexec apt autoremove -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "fix":
+                cmd = subprocess.Popen('pkexec bash -c "apt-get install -f -y ; dpkg --configure -a ; aptitude install -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "history":
+                cmd = subprocess.Popen('cat /var/log/dpkg.log', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "list":
+                cmd = subprocess.Popen('dpkg --list | grep ^i', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(fedora):
+            if operation == "update":
+                cmd = subprocess.Popen('pkexec dnf upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "dist_update":
+                cmd = subprocess.Popen('pkexec dnf distro-sync -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "clean":
+                cmd = subprocess.Popen('pkexec dnf clean all -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "remove":
+                cmd = subprocess.Popen('pkexec dnf autoremove -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "fix":
+                cmd = subprocess.Popen('pkexec dnf repoquery --unsatisfied -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "history":
+                cmd = subprocess.Popen('dnf history', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "list":
+                cmd = subprocess.Popen('dnf list installed', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(arch):
+            if operation == "update":
+                cmd = subprocess.Popen('pkexec pacman -Syu --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "dist_update":
+                cmd = subprocess.Popen('pkexec pacman -Syu --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "clean":
+                cmd = subprocess.Popen('pkexec pacman -Scc --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "remove":
+                cmd = subprocess.Popen('pacman -Qdtq | pacman -Rs - --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "fix":
+                cmd = subprocess.Popen('pacman -Dk', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "history":
+                cmd = subprocess.Popen('cat /var/log/pacman.log', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "list":
+                cmd = subprocess.Popen('pacman -Q', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.progress_bar.configure(mode="indeterminate")
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        if os.path.isfile(en):
+            self.status.configure(text="Ready")
+        elif os.path.isfile(tr):
+            self.status.configure(text="Hazır")
+        self.button1.configure(state="normal")
+        self.button2.configure(state="normal")
+        self.button3.configure(state="normal")
+        self.button4.configure(state="normal")
+        self.button5.configure(state="normal")
+        self.button6.configure(state="normal")
+        self.button7.configure(state="normal")
+        process_number = process_number - 1
+        update_status()
+        main_successful()
+    def go_main(self, process: str):
+        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+        t.start()
+
+class FlatpakScripts(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.configure(fg_color="transparent")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=0, column=1, sticky="nsew")
+        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
+        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
+        self.progress_bar.start()
+        if os.path.isfile(en):
+            self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go_main("update -y"))
+            self.button2 = ui.CTkButton(self.frame, text="Remove Unnecessary Package(s)", command=lambda:self.go_main("uninstall --unused -y"))
+            self.button3 = ui.CTkButton(self.frame, text="Repair Flatpak Installation", command=lambda:self.go_main("repair"))
+            self.button4 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go_main("history"))
+            self.button5 = ui.CTkButton(self.frame, text="List Installed Applications/Environments", command=lambda:self.go_main("list"))
+            self.status = ui.CTkLabel(self, text="Ready", font=ui.CTkFont(size=12, weight="bold"))
+        elif os.path.isfile(tr):
+            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main("update -y"))
+            self.button2 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("uninstall --unused -y"))
+            self.button3 = ui.CTkButton(self.frame, text="Flatpak Kurulumunu Onar", command=lambda:self.go_main("repair"))
+            self.button4 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
+            self.button5 = ui.CTkButton(self.frame, text="Kurulu Uygulamaları/Ortamları Listele", command=lambda:self.go_main("list"))            
+            self.status = ui.CTkLabel(self, text="Hazır", font=ui.CTkFont(size=12, weight="bold"))
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
+        self.button5.grid(row=4, column=0, sticky="nsew", padx=(25, 0))
+        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+    def do_main(self, operation: str):
+        self.button1.configure(state="disabled")
+        self.button2.configure(state="disabled")
+        self.button3.configure(state="disabled")
+        self.button4.configure(state="disabled")
+        self.button5.configure(state="disabled")
+        global process_number
+        process_number = process_number + 1
+        update_status()
+        if os.path.isfile(en):
+            if operation == "update -y":
+                self.status.configure(text="Updating All Packages")
+            elif operation == "uninstall --unused -y":
+                self.status.configure(text="Removing Unnecessary Package(s)")
+            elif operation == "repair":
+                self.status.configure(text="Repairing Flatpak Installation")
+            elif operation == "history":
+                self.status.configure(text="Getting History")
+            elif operation == "list":
+                self.status.configure(text="Getting Installed Applications/Environments")
+        elif os.path.isfile(tr):
+            if operation == "update -y":
+                self.status.configure(text="Tüm Paketler Güncelleniyor")
+            elif operation == "uninstall --unused -y":
+                self.status.configure(text="Gereksiz Paket(ler) Kaldırılıyor")
+            elif operation == "repair":
+                self.status.configure(text="Flatpak Kurulumu Onarılıyor")
+            elif operation == "history":
+                self.status.configure(text="Geçmiş Alınıyor")
+            elif operation == "list":
+                self.status.configure(text="Kurulu Uygulamalar/Ortamlar Alınıyor")
+        self.progress_bar.configure(mode="determinate")
+        self.progress_bar.step()
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+            install_flatpak()
+            if ask_f == False:
+                return
+        cmd = subprocess.Popen('flatpak '+operation, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        (out, err) = cmd.communicate()
+        self.progress_bar.configure(mode="indeterminate")
+        self.textbox.configure(state="normal")
+        self.textbox.delete("0.0", 'end')
+        self.textbox.insert("0.0", (out+err))
+        self.textbox.configure(state="disabled")
+        if os.path.isfile(en):
+            self.status.configure(text="Ready")
+        elif os.path.isfile(tr):
+            self.status.configure(text="Hazır")
+        self.button1.configure(state="normal")
+        self.button2.configure(state="normal")
+        self.button3.configure(state="normal")
+        self.button4.configure(state="normal")
+        self.button5.configure(state="normal")
         process_number = process_number - 1
         update_status()
         main_successful()
@@ -1176,15 +1383,19 @@ class Store(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         if os.path.isfile(en):
-            self.generalapps = self.tabview.add("General Applications")
-            self.flatpakapps = self.tabview.add("Flatpak Applications")
+            self.generalapps = self.tabview.add("General\nApplications")
+            self.flatpakapps = self.tabview.add("Flatpak\nApplications")
             self.dewm = self.tabview.add("Desktop Environments\nWindow Managers")
-            self.systemd = self.tabview.add("systemd Services")
+            self.generalscripts = self.tabview.add("General\nScripts")
+            self.flatpakscripts = self.tabview.add("Flatpak\nScripts")
+            self.systemd = self.tabview.add("systemd\nServices")
         elif os.path.isfile(tr):
-            self.generalapps = self.tabview.add("Genel Uygulamalar")
-            self.flatpakapps = self.tabview.add("Flatpak Uygulamaları")
+            self.generalapps = self.tabview.add("Genel\nUygulamalar")
+            self.flatpakapps = self.tabview.add("Flatpak\nUygulamaları")
             self.dewm = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
-            self.systemd = self.tabview.add("systemd Servisleri")
+            self.generalscripts = self.tabview.add("Genel\nBetikler")
+            self.flatpakscripts = self.tabview.add("Flatpak\nBetikleri")
+            self.systemd = self.tabview.add("systemd\nServisleri")
         self.generalapps.grid_columnconfigure(0, weight=1)
         self.generalapps.grid_rowconfigure(0, weight=1)
         self.generalapps_frame=GeneralApps(self.generalapps)
@@ -1197,6 +1408,14 @@ class Store(ui.CTkFrame):
         self.dewm.grid_rowconfigure(0, weight=1)
         self.dewm_frame=DEWM(self.dewm)
         self.dewm_frame.grid(row=0, column=0, sticky="nsew")
+        self.generalscripts.grid_columnconfigure(0, weight=1)
+        self.generalscripts.grid_rowconfigure(0, weight=1)
+        self.generalscripts_frame=GeneralScripts(self.generalscripts)
+        self.generalscripts_frame.grid(row=0, column=0, sticky="nsew")
+        self.flatpakscripts.grid_columnconfigure(0, weight=1)
+        self.flatpakscripts.grid_rowconfigure(0, weight=1)
+        self.flatpakscripts_frame=FlatpakScripts(self.flatpakscripts)
+        self.flatpakscripts_frame.grid(row=0, column=0, sticky="nsew")
         self.systemd.grid_columnconfigure(0, weight=1)
         self.systemd.grid_rowconfigure(0, weight=1)
         self.systemd_frame=Systemd(self.systemd)
@@ -1388,73 +1607,59 @@ class ComputerName(ui.CTkFrame):
 class OpenFM(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.button1 = ui.CTkButton(self, text="Nautilus", command=self.go_nautilus)
-        self.button2 = ui.CTkButton(self, text="Nemo", command=self.go_nemo)
-        self.button3 = ui.CTkButton(self, text="Caja", command=self.go_caja)
-        self.button4 = ui.CTkButton(self, text="Thunar", command=self.go_thunar)
-        self.button5 = ui.CTkButton(self, text="PCManFM", command=self.go_pcmanfm)
-        self.button6 = ui.CTkButton(self, text="PCManFM-Qt", command=self.go_pcmanfmqt)
-        self.button1.grid(row=0, column=0, sticky="nsew", padx=50, pady=10)
-        self.button2.grid(row=1, column=0, sticky="nsew", padx=50, pady=10)
-        self.button3.grid(row=2, column=0, sticky="nsew", padx=50, pady=10)
-        self.button4.grid(row=3, column=0, sticky="nsew", padx=50, pady=10)
-        self.button5.grid(row=4, column=0, sticky="nsew", padx=50, pady=10)
-        self.button6.grid(row=5, column=0, sticky="nsew", padx=50, pady=10)
-    def main_nautilus(self):
-        if not os.path.isfile("/usr/bin/nautilus") and not os.path.isfile("/bin/nautilus"):
-            install_app("Nautilus", "nautilus")
+        self.grid_rowconfigure((1, 2, 3), weight=1)
+        self.grid_columnconfigure((0, 1), weight=1)
+        self.button1 = ui.CTkButton(self, text="Nautilus", command=lambda:self.go_main("Nautilus"))
+        self.button2 = ui.CTkButton(self, text="Nemo", command=lambda:self.go_main("Nemo"))
+        self.button3 = ui.CTkButton(self, text="Caja", command=lambda:self.go_main("Caja"))
+        self.button4 = ui.CTkButton(self, text="Thunar", command=lambda:self.go_main("Thunar"))
+        self.button5 = ui.CTkButton(self, text="PCManFM", command=lambda:self.go_main("PCManFM"))
+        self.button6 = ui.CTkButton(self, text="PCManFM-Qt", command=lambda:self.go_main("PCManFM-Qt"))
+        self.button1.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+        self.button2.grid(row=1, column=1, sticky="nsew", padx=20, pady=10)
+        self.button3.grid(row=2, column=0, sticky="nsew", padx=20, pady=10)
+        self.button4.grid(row=2, column=1, sticky="nsew", padx=20, pady=10)
+        self.button5.grid(row=3, column=0, sticky="nsew", padx=20, pady=10)
+        self.button6.grid(row=3, column=1, sticky="nsew", padx=20, pady=10)
+        if os.path.isfile(en):
+            self.text = ui.CTkLabel(self, text="Warning: Some of these no longer work with root user rights.")
+            self.status = ui.CTkLabel(self, text="Ready", font=ui.CTkFont(size=12, weight="bold"))
+        elif os.path.isfile(tr):
+            self.text = ui.CTkLabel(self, text="Uyarı: Bunların bazıları artık kök kullanıcı haklarıyla çalışmıyor.")
+            self.status = ui.CTkLabel(self, text="Hazır", font=ui.CTkFont(size=12, weight="bold"))
+        self.text.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
+        self.status.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
+        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
+        self.progress_bar.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
+        self.progress_bar.start()
+    def do_main(self, name: str):
+        global process_number
+        if not os.path.isfile("/usr/bin/"+name.lower()) and not os.path.isfile("/bin/"+name.lower()):
+            if os.path.isfile(en):
+                self.status.configure(text="Installing "+name)
+            elif os.path.isfile(tr):
+                self.status.configure(text=name+" Kuruluyor")
+            process_number = process_number + 1
+            update_status()
+            self.progress_bar.configure(mode="determinate")
+            self.progress_bar.step()
+            install_app(name, name.lower())
             if ask_a == False:
+                self.progress_bar.configure(mode="indeterminate")
+                process_number = process_number - 1
+                update_status()
+                if os.path.isfile(en):
+                    self.status.configure(text="Ready")
+                elif os.path.isfile(tr):
+                    self.status.configure(text="Hazır")
                 return
-        subprocess.Popen("pkexec nautilus", shell=True)
-    def go_nautilus(self):
-        t = threading.Thread(target=self.main_nautilus, daemon=False)
-        t.start()
-    def main_nemo(self):
-        if not os.path.isfile("/usr/bin/nemo") and not os.path.isfile("/bin/nemo"):
-            install_app("Nemo", "nemo")
-            if ask_a == False:
-                return
-        subprocess.Popen("pkexec nemo", shell=True)
-    def go_nemo(self):
-        t = threading.Thread(target=self.main_nemo, daemon=False)
-        t.start()
-    def main_caja(self):
-        if not os.path.isfile("/usr/bin/caja") and not os.path.isfile("/bin/caja"):
-            install_app("Caja", "caja")
-            if ask_a == False:
-                return
-        subprocess.Popen("pkexec caja", shell=True)
-    def go_caja(self):
-        t = threading.Thread(target=self.main_caja, daemon=False)
-        t.start()
-    def main_thunar(self):
-        if not os.path.isfile("/usr/bin/thunar") and not os.path.isfile("/bin/thunar"):
-            install_app("Thunar", "thunar")
-            if ask_a == False:
-                return
-        subprocess.Popen("pkexec thunar", shell=True)
-    def go_thunar(self):
-        t = threading.Thread(target=self.main_thunar, daemon=False)
-        t.start()
-    def main_pcmanfm(self):
-        if not os.path.isfile("/usr/bin/pcmanfm") and not os.path.isfile("/bin/pcmanfm"):
-            install_app("PCManFM", "pcmanfm")
-            if ask_a == False:
-                return
-        subprocess.Popen("pkexec pcmanfm", shell=True)
-    def go_pcmanfm(self):
-        t = threading.Thread(target=self.main_pcmanfm, daemon=False)
-        t.start()
-    def main_pcmanfmqt(self):
-        if not os.path.isfile("/usr/bin/pcmanfm-qt") and not os.path.isfile("/bin/pcmanfm-qt"):
-            install_app("PcMANFM-Qt", "pcmanfm-qt")
-            if ask_a == False:
-                return
-        subprocess.Popen("pkexec pcmanfm-qt", shell=True)
-    def go_pcmanfmqt(self):
-        t = threading.Thread(target=self.main_pcmanfmqt, daemon=False)
+            if os.path.isfile(en):
+                self.status.configure(text="Ready")
+            elif os.path.isfile(tr):
+                self.status.configure(text="Hazır")
+        subprocess.Popen("pkexec "+name.lower(), shell=True)
+    def go_main(self, name: str):
+        t = threading.Thread(target=lambda:self.do_main(name), daemon=False)
         t.start()
 
 class Distros(ui.CTkFrame):
@@ -1706,161 +1911,6 @@ class Tools(ui.CTkFrame):
         self.distros_frame=Calculator(self.calculator)
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
 
-
-class Scripts(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self, command=self.cups, text="Open Configure Cups Page")
-            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Open Configure Wine App")
-            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Open Grub Customizer App")
-            self.button4 = ui.CTkButton(self, command=self.go_update, text="Update Packages")
-            self.button5 = ui.CTkButton(self, command=self.go_clear, text="Clear Package Cache")
-            self.button6 = ui.CTkButton(self, command=self.go_remove, text="Remove Unnecessary Packages")
-            self.button7 = ui.CTkButton(self, command=self.go_f_update, text="Update Flatpak Packages")
-            self.button8 = ui.CTkButton(self, command=self.go_f_remove, text="Remove Unnecessary Flatpak Packages")
-            if os.path.isfile(debian):
-                self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1)
-                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Fix Package Errors").grid(row=8, column=0, sticky="nsew", pady=(15, 0), padx=30)
-        elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self, command=self.cups, text="Cups'ı Yapılandırma Sayfasını Aç")
-            self.button2 = ui.CTkButton(self, command=self.go_wine, text="Wine'ı Yapılandırma Uygulamasını Aç")
-            self.button3 = ui.CTkButton(self, command=self.go_grub, text="Grub Customizer Uygulamasını Aç")
-            self.button4 = ui.CTkButton(self, command=self.go_update, text="Paketleri Güncelle")
-            self.button5 = ui.CTkButton(self, command=self.go_clear, text="Paket Önbelleğini Temizle")
-            self.button6 = ui.CTkButton(self, command=self.go_remove, text="Gereksiz Paketleri Kaldır")
-            self.button7 = ui.CTkButton(self, command=self.go_f_update, text="Flatpak Paketlerini Güncelle")
-            self.button8 = ui.CTkButton(self, command=self.go_f_remove, text="Gereksiz Flatpak Paketlerini Kaldır")
-            if os.path.isfile(debian):
-                self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1)
-                self.button9 = ui.CTkButton(self, command=self.go_fix, text="Paket Hatalarını Düzelt").grid(row=8, column=0, sticky="nsew", pady=(15, 0), padx=30)
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button7.grid(row=6, column=0, sticky="nsew", pady=(0, 15), padx=30)
-        self.button8.grid(row=7, column=0, sticky="nsew", padx=30)
-        if not os.path.isfile("/usr/bin/winecfg") and not os.path.isfile("/bin/winecfg"):
-            if os.path.isfile(en):
-                self.button2.configure(text="Open Wine Configuration App\nError: Wine Not Installed", state="disabled")
-            elif os.path.isfile(tr):
-                self.button2.configure(text="Wine Yapılandırma Uygulamasını Aç\nHata: Wine Kurulu Değil", state="disabled")
-    def cups(self):
-        subprocess.Popen('xdg-open localhost:631', shell=True)
-    def wine_main(self):
-        subprocess.Popen('winecfg', shell=True)
-    def go_wine(self):
-        t = threading.Thread(target=self.wine_main, daemon=False)
-        t.start()
-    def grub_main(self):
-        if not os.path.isfile("/usr/bin/grub-customizer") and not os.path.isfile("/bin/grub-customizer"):
-            install_app("Grub Customizer", "grub-customizer")
-            if ask_a == False:
-                return
-        subprocess.Popen('grub-customizer', shell=True)
-    def go_grub(self):
-        t = threading.Thread(target=self.grub_main, daemon=False)
-        t.start()
-    def update_main(self):
-        if os.path.isfile(en):
-            status.configure(text="Status:\nUpdating Package(s)")
-        elif os.path.isfile(tr):
-            status.configure(text="Durum:\nPaket(ler) Güncelleniyor")
-        if os.path.isfile(debian):
-            os.system("pkexec apt upgrade -y")
-        elif os.path.isfile(fedora):
-            os.system("pkexec dnf update -y")
-        elif os.path.isfile(solus):
-            os.system("pkexec eopkg upgrade -y")
-        elif os.path.isifle(arch):
-            os.system("pkexec pacman -Syu --noconfirm")
-        #bbb
-        main_successful()
-    def go_update(self):
-        t = threading.Thread(target=self.update_main, daemon=False)
-        t.start()
-    def clear_main(self):
-        if os.path.isfile(en):
-            status.configure(text="Status:\nClearing Package Cache")
-        elif os.path.isfile(tr):
-            status.configure(text="Durum:\nPaket Önbelleği Temizleniyor")
-        if os.path.isfile(debian):
-            os.system("pkexec apt-get autoclean -y")
-        elif os.path.isfile(fedora):
-            os.system("pkexec dnf clean all -y")
-        elif os.path.isfile(solus):
-            os.system("pkexec eopkg dc -y")
-        elif os.path.isifle(arch):
-            os.system("pkexec pacman -Scc --noconfirm")
-        #bbb
-        main_successful()
-    def go_clear(self):
-        t = threading.Thread(target=self.clear_main, daemon=False)
-        t.start()
-    def remove_main(self):
-        global process_number
-        process_number = process_number + 1
-        update_status()
-        if os.path.isfile(debian):
-            os.system("pkexec apt-get autoremove -y")
-        elif os.path.isfile(fedora):
-            os.system("pkexec dnf autoremove -y")
-        elif os.path.isfile(solus):
-            os.system("pkexec eopkg rmf -y")
-        elif os.path.isifle(arch):
-            os.system("pacman -Qdtq | pkexec pacman -Rns - --noconfirm")
-        process_number = process_number - 1
-        update_status()
-        main_successful()
-    def go_remove(self):
-        t = threading.Thread(target=self.remove_main, daemon=False)
-        t.start()
-    def f_update_main(self):
-        global process_number
-        process_number = process_number + 1
-        update_status()
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                return
-        os.system("flatpak update -y")
-        process_number = process_number - 1
-        update_status()
-        main_successful()
-    def go_f_update(self):
-        t = threading.Thread(target=self.f_update_main, daemon=False)
-        t.start()
-    def f_remove_main(self):
-        global process_number
-        process_number = process_number + 1
-        update_status()
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                return
-        os.system("flatpak uninstall --unused -y")
-        process_number = process_number - 1
-        update_status()
-        main_successful()
-    def go_f_remove(self):
-        t = threading.Thread(target=self.f_remove_main, daemon=False)
-        t.start()
-    def fix_main(self):
-        global process_number
-        process_number = process_number + 1
-        update_status()
-        os.system('pkexec bash -c "apt-get install -f -y ; dpkg --configure -a"')
-        process_number = process_number - 1
-        update_status()
-        main_successful()
-    def go_fix(self):
-        t = threading.Thread(target=self.fix_main, daemon=False)
-        t.start()        
-
 class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -1887,13 +1937,11 @@ class Root(ui.CTk):
             self.tab_notes = self.tabview.add("Notes")
             self.tab_store = self.tabview.add("Store")
             self.tab_tools = self.tabview.add("Tools")
-            self.tab_scripts = self.tabview.add("Scripts")
         elif os.path.isfile(tr):
             self.tab_starting = self.tabview.add("Başlangıç")
             self.tab_notes = self.tabview.add("Notlar")
             self.tab_store = self.tabview.add("Mağaza")
             self.tab_tools = self.tabview.add("Araçlar")
-            self.tab_scripts = self.tabview.add("Betikler")
         self.tab_starting.grid_columnconfigure(0, weight=1)
         self.tab_starting.grid_rowconfigure(0, weight=1)
         self.starting_frame=Starting(self.tab_starting)
@@ -1910,10 +1958,6 @@ class Root(ui.CTk):
         self.tab_tools.grid_rowconfigure(0, weight=1)
         self.tools_frame=Tools(self.tab_tools)
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
-        self.tab_scripts.grid_columnconfigure(0, weight=1)
-        self.tab_scripts.grid_rowconfigure(0, weight=1)
-        self.scripts_frame=Scripts(self.tab_scripts)
-        self.scripts_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
     if "help" in sys.argv[1:] or "yardım" in sys.argv[1:]:

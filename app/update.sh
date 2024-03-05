@@ -34,8 +34,6 @@ function install_git {
         apt install git -y
     elif [ -f /etc/fedora-release ]; then
         dnf install git -y
-    elif [ -f /etc/solus-release ]; then
-        eopkg install git -y
     elif [ -f /etc/arch-release ]; then
         pacman -S git --noconfirm
     fi
