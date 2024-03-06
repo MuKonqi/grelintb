@@ -3,4 +3,3 @@
 - Changed the location of custom status text and progress bar.
 - Added warning text, progress bar, status text to "Open File Managers With Root Rights" section.
 - Removed the portable version.
-- Solus support removed.

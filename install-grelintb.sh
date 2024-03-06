@@ -17,12 +17,7 @@ if (( $EUID != 0 )); then
     echo -e "Please run as root. Exiting with status 1..."
     exit 1
 fi
-printf "Welcome to GrelinTB installer!\nGrelinTB and it's installer licensed under GPLv3. Do you agree them? [y/n]: "
-read choice
-if ! [ $choice = y ] ; then
-    echo -e "You didn't agree license or you entered something invalid. Exiting with status 1..."
-    exit 1
-fi
+printf "Welcome to GrelinTB installer! Below is a short text about the license. "
 echo -e "\nCopyright (C) 2024 MuKonqi (Muhammed S.)"
 echo -e "\nGrelinTB and it's installer are free software: you can redistribute it and/or modify"
 echo -e "it under the terms of the GNU General Public License as published by"
@@ -56,6 +51,9 @@ if [ -f /etc/debian_version ]; then
     install
 elif [ -f /etc/fedora-release ]; then
     dnf install python3 python3-tkinter python3-pip git curl lolcat neofetch xdg-utils -y
+    install
+elif [ -f /etc/solus-release ]; then
+    eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
     install
 elif [ -f /etc/arch-release ]; then
     pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm

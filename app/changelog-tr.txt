@@ -3,4 +3,3 @@
 - Özel durum metinlerinin ve ilerleme çubuğu yerleri değiştirildi.
 - "Dosya Yöneticilerini Kök Haklarıyla Aç" bölümüne uyarı metni, ilerleme çubuğu, durum metni eklendi.
 - Taşınabilir sürüm kaldırıldı.
-- Solus desteği kaldırıldı.

@@ -22,9 +22,10 @@ import os
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
+solus = "/etc/solus-release"
 arch = "/etc/arch-release"
 
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(arch):
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 
 import sys
@@ -55,6 +56,8 @@ except:
         os.system("pkexec apt install python3-tk -y")
     elif os.path.isfile(fedora):
         os.system("pkexec dnf install python3-tkinter -y")
+    elif os.path.isfile(solus):
+        os.system("pkexec eopkg install python3-tkinter -y")
     elif os.path.isfile(arch):
         os.system("pkexec pacman -S tk --noconfirm")
 if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
@@ -63,6 +66,8 @@ if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
         os.system("pkexec apt install python3-pip -y")
     elif os.path.isfile(fedora):
         os.system("pkexec dnf install python3-pip -y")
+    elif os.path.isfile(solus):
+        os.system("pkexec eopkg install pip -y")
     elif os.path.isfile(arch):
         os.system("pkexec pacman -S python-pip --noconfirm")
 try:
@@ -161,6 +166,8 @@ def install_app(appname: str, packagename: str):
             cmd = os.system('pkexec apt install '+packagename+' -y')
         elif os.path.isfile(fedora):
             cmd = os.system('pkexec dnf install '+packagename+' -y')
+        elif os.path.isfile(solus):
+            cmd = os.system('pkexec eopkg install '+packagename+' -y')
         elif os.path.isfile(arch):
             cmd = os.system('pkexec pacman -S '+packagename+' --noconfirm')
         process_number = process_number - 1
@@ -186,6 +193,10 @@ def install_flatpak():
             restart_system()
         elif os.path.isfile(fedora):
             cmd1 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
+        elif os.path.isfile(solus):
+            cmd1 = os.system('pkexec eopkg install flatpak -y')
+            cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
+            restart_system()
         elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman -S flatpak --noconfirm')
             restart_system()
@@ -691,6 +702,8 @@ class GeneralApps(ui.CTkFrame):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"], command=self.option)
         elif os.path.isfile(fedora):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
+        elif os.path.isfile(solus):
+            self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"], command=self.option)
         elif os.path.isfile(arch):
             self.app = ui.CTkOptionMenu(self.frame, values=["", "Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
@@ -774,6 +787,17 @@ class GeneralApps(ui.CTkFrame):
                 cmd = subprocess.Popen('pkexec dnf remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif operation == "update":
                 cmd = subprocess.Popen('pkexec dnf upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(solus):
+            if operation == "search":
+                cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "install":
+                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "reinstall":
+                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "uninstall":
+                cmd = subprocess.Popen('pkexec eopkg remove --purge -'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "update":
+                cmd = subprocess.Popen('pkexec eopkg upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch):
             if operation == "search":
                 cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -964,6 +988,8 @@ class DEWM(ui.CTkFrame):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"])
         elif os.path.isfile(fedora):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["GNOME", "KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3", "Openbox", "Fluxbox", "Blackbox", "bspwm"])
+        elif os.path.isfile(solus):
+            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"])
         elif os.path.isfile(arch):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"])
         self.text.grid(row=0, column=0, sticky="nsew", pady=0, padx=(25, 0))
@@ -1049,6 +1075,25 @@ class DEWM(ui.CTkFrame):
                     cmd = subprocess.Popen('pkexec bash -c "dnf remove @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
                 elif operation == "update":
                     cmd = subprocess.Popen('pkexec bash -c "dnf remove @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)             
+        elif os.path.isfile(solus):
+            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec eopkg install -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec eopkg install --reinstall -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec eopkg remove --purge -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "update":
+                    cmd = subprocess.Popen('pkexec eopkg upgrade -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            else:
+                if operation == "install":
+                    cmd = subprocess.Popen('pkexec eopkg install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "reinstall":
+                    cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "uninstall":
+                    cmd = subprocess.Popen('pkexec eopkg remove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                elif operation == "update":
+                    cmd = subprocess.Popen('pkexec eopkg upgrade '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)        
         elif os.path.isfile(arch):
             if operation == "install":
                 cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -1114,6 +1159,9 @@ class GeneralScripts(ui.CTkFrame):
             self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
             self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))            
             self.status = ui.CTkLabel(self, text="Hazır", font=ui.CTkFont(size=12, weight="bold"))
+        if os.path.isfile(solus):
+            self.button2.configure(state="disabled")
+            self.button5.configure(state="disabled")
         self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
@@ -1195,6 +1243,17 @@ class GeneralScripts(ui.CTkFrame):
                 cmd = subprocess.Popen('dnf history', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
             elif operation == "list":
                 cmd = subprocess.Popen('dnf list installed', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+        elif os.path.isfile(solus):
+            if operation == "update":
+                cmd = subprocess.Popen('pkexec eopkg upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "clean":
+                cmd = subprocess.Popen('pkexec eopkg dc -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "remove":
+                cmd = subprocess.Popen('pkexec eopkg rmf -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "history":
+                cmd = subprocess.Popen('eopkg history', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            elif operation == "list":
+                cmd = subprocess.Popen('eopkg list-installed', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif os.path.isfile(arch):
             if operation == "update":
                 cmd = subprocess.Popen('pkexec pacman -Syu --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -1227,6 +1286,9 @@ class GeneralScripts(ui.CTkFrame):
         self.button5.configure(state="normal")
         self.button6.configure(state="normal")
         self.button7.configure(state="normal")
+        if os.path.isfile(solus):
+            self.button2.configure(state="disabled")
+            self.button5.configure(state="disabled")
         process_number = process_number - 1
         update_status()
         main_successful()
@@ -1306,6 +1368,10 @@ class FlatpakScripts(ui.CTkFrame):
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
             install_flatpak()
             if ask_f == False:
+                if os.path.isfile(en):
+                    self.status.configure(text="Ready")
+                elif os.path.isfile(tr):
+                    self.status.configure(text="Hazır")
                 return
         cmd = subprocess.Popen('flatpak '+operation, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
