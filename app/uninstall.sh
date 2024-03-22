@@ -31,9 +31,13 @@ echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's uninstaller.  If not, see <https://www.gnu.org/licenses/>."
 if [ -f /etc/fedora-release ]; then
     dnf remove grelintb -y
-    if [ -f /usr/bin/grelintb/ && -f /usr/share/applications/grelintb.desktop && -d /usr/local/bin/grelintb/ ] ; then
-        rm /usr/bin/grelintb
-        rm /usr/share/applications/grelintb.desktop
+    if [ -f /usr/bin/grelintb/ ] ; then
+        rm -rf /usr/local/bin/grelintb/
+    fi
+    if [ -f /usr/share/applications/grelintb.desktop ] ; then
+        rm -rf /usr/local/bin/grelintb/
+    fi
+    if [ -d /usr/local/bin/grelintb/ ] ; then
         rm -rf /usr/local/bin/grelintb/
     fi
 elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release ]; then
