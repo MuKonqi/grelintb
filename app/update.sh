@@ -33,7 +33,7 @@ if [ -f /etc/fedora-release ]; then
     wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
     dnf update grelintb.rpm -y
     rm grelintb.rpm
-elif  [ -f /etc/debian_version || -f /etc/solus-release || /etc/arch-release]; then
+elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release]; then
     function install_git {
         if [ -f /etc/debian_version ]; then
             apt install git -y
