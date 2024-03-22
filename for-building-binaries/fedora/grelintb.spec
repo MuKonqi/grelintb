@@ -33,9 +33,6 @@ chmod +x $RPM_BUILD_ROOT/usr/share/applications/grelintb.desktop
 mkdir -p $RPM_BUILD_ROOT/usr/local/bin/grelintb
 cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
 %{_bindir}/grelintb
 %license /usr/local/bin/grelintb/LICENSE.txt
