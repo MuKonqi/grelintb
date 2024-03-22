@@ -36,7 +36,7 @@ if [ -f /etc/fedora-release ]; then
         rm /usr/share/applications/grelintb.desktop
         rm -rf /usr/local/bin/grelintb/
     fi
-elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release]; then
+elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release ]; then
     rm /usr/bin/grelintb
     rm /usr/share/applications/grelintb.desktop
     rm -rf /usr/local/bin/grelintb/

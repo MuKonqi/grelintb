@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.3.4.2
-Release:        4
+Release:        5
 Summary:        Great toolbox for some Linux distributions.
 
 License:        GPLv3-or-later
