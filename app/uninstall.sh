@@ -32,10 +32,10 @@ echo -e "along with GrelinTB and it's uninstaller.  If not, see <https://www.gnu
 if [ -f /etc/fedora-release ]; then
     dnf remove grelintb -y
     if [ -f /usr/bin/grelintb/ ] ; then
-        rm -rf /usr/local/bin/grelintb/
+        rm /usr/bin/grelintb
     fi
     if [ -f /usr/share/applications/grelintb.desktop ] ; then
-        rm -rf /usr/local/bin/grelintb/
+        rm /usr/share/applications/grelintb.desktop
     fi
     if [ -d /usr/local/bin/grelintb/ ] ; then
         rm -rf /usr/local/bin/grelintb/
