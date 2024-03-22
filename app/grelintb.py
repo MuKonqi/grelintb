@@ -218,7 +218,7 @@ def update():
     root.destroy()
     os.system("pkexec /usr/local/bin/grelintb/update.sh")
     if os.path.isfile(en):
-        mb.showinfo("Successful", "GrelinTB updated.")
+        mb.showinfo("Successful", "GrelinTB has been updated.")
     elif os.path.isfile(tr):
         mb.showinfo("Başarılı", "GrelinTB güncellendi.")
     os.system("grelintb")
@@ -242,8 +242,8 @@ class Sidebar(ui.CTkFrame):
         elif os.path.isfile(s_false):
             self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
-            self.version_b = ui.CTkButton(self, text="Version: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.version_b = ui.CTkButton(self, text=version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Developer", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
@@ -271,8 +271,8 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(random_file):
                 self.color_menu.set("Random")
         elif os.path.isfile(tr):
-            self.version_b = ui.CTkButton(self, text="Sürüm: "+version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.version_b = ui.CTkButton(self, text=version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
@@ -393,7 +393,7 @@ class Sidebar(ui.CTkFrame):
             self.textbox.grid(row=1, column=0, sticky="nsew", padx=50, pady=10)
             self.button.grid(row=2, column=0, sticky="nsew", padx=100, pady=10)
             self.textbox.configure(state="disabled")
-        elif string != "starting":
+        elif string != "startup":
             if os.path.isfile(en):
                 mb.showinfo("Information","GrelinTB is up to date.")
             elif os.path.isfile(tr):
@@ -415,7 +415,7 @@ class Sidebar(ui.CTkFrame):
         os.system("cd /home/"+username+" ; rm .*-grelintb*")
         if os.path.isfile(en):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
-            mb.showinfo("See you!","GrelinTB uninstalled from your system.")
+            mb.showinfo("See you!","GrelinTB was uninstalled from your system.")
         elif os.path.isfile(tr):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
@@ -456,7 +456,7 @@ class Sidebar(ui.CTkFrame):
         os.system("grelintb")
         exit()
 
-class Starting(ui.CTkFrame):
+class Startup(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         if os.path.isfile(s_true):
@@ -494,7 +494,7 @@ class Starting(ui.CTkFrame):
                 self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username, font=ui.CTkFont(size=80, weight="normal"))
             self.label0.grid(row=0, column=0, sticky="nsew")
 
-class Notes(ui.CTkFrame):
+class NotesAndDocuments(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.file_a = None
@@ -507,41 +507,41 @@ class Notes(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, fg_color="transparent")
         self.tabview.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
         if os.path.isfile(en):
-            self.from_list = self.tabview.add("From List")
-            self.any = self.tabview.add("Any")
+            self.notes = self.tabview.add("Notes")
+            self.documents = self.tabview.add("Documents")
         elif os.path.isfile(tr):
-            self.from_list = self.tabview.add("Listeden")
-            self.any = self.tabview.add("Herhangi")
-        self.from_list.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
-        self.from_list.grid_columnconfigure(0, weight=1),
-        self.any.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-        self.any.grid_columnconfigure(0, weight=1)
+            self.notes = self.tabview.add("Notlar")
+            self.documents = self.tabview.add("Belgeler")
+        self.notes.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.notes.grid_columnconfigure(0, weight=1),
+        self.documents.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.documents.grid_columnconfigure(0, weight=1)
         self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list = ui.CTkTextbox(self.from_list, fg_color="transparent")
+        self.list = ui.CTkTextbox(self.notes, fg_color="transparent")
         self.list.insert("0.0", self.command)
         self.list.configure(state="disabled")
         if os.path.isfile(en):
-            self.label1 = ui.CTkLabel(self.from_list, text="If you have taken notes, they are listed below:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Please enter note name.")
-            self.button11 = ui.CTkButton(self.from_list, text="Open", command=self.open_list)
-            self.button12 = ui.CTkButton(self.from_list, text="Delete", command=self.delete_list)
-            self.button13 = ui.CTkButton(self.from_list, text="Save", command=self.save_list)
-            self.label2 = ui.CTkLabel(self.any, text="- You can enter the note name yourself.\n- Do not enter it to select it with the file dialog.")
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Act according to the instructions above.")
-            self.button21 = ui.CTkButton(self.any, text="Open", command=self.open_any)
-            self.button22 = ui.CTkButton(self.any, text="Delete", command=self.delete_any)
-            self.button23 = ui.CTkButton(self.any, text="Save", command=self.save_any)
+            self.label1 = ui.CTkLabel(self.notes, text="If you have taken notes, they are listed below:")
+            self.entry1 = ui.CTkEntry(self.notes, placeholder_text="Please enter note name.")
+            self.button11 = ui.CTkButton(self.notes, text="Open", command=self.open_list)
+            self.button12 = ui.CTkButton(self.notes, text="Delete", command=self.delete_list)
+            self.button13 = ui.CTkButton(self.notes, text="Save", command=self.save_list)
+            self.label2 = ui.CTkLabel(self.documents, text="- You can enter the document name yourself.\n- Do not enter it to select it with the file dialog.")
+            self.entry2 = ui.CTkEntry(self.documents)
+            self.button21 = ui.CTkButton(self.documents, text="Open", command=self.open_any)
+            self.button22 = ui.CTkButton(self.documents, text="Delete", command=self.delete_any)
+            self.button23 = ui.CTkButton(self.documents, text="Save", command=self.save_any)
         elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self.from_list, text="Notlar aldıysanız aşağıda listelenmiştir:")
-            self.entry1 = ui.CTkEntry(self.from_list, placeholder_text="Lütfen not adı girin.")
-            self.button11 = ui.CTkButton(self.from_list, text="Aç", command=self.open_list)
-            self.button12 = ui.CTkButton(self.from_list, text="Sil", command=self.delete_list)
-            self.button13 = ui.CTkButton(self.from_list, text="Kaydet", command=self.save_list)
-            self.label2 = ui.CTkLabel(self.any, text="- Kendiniz not adı girebilirsiniz.\n- Dosya diyoloğu ile seçmek için girmeyin.")
-            self.entry2 = ui.CTkEntry(self.any, placeholder_text="Üstteki yönergeye göre davranın.")
-            self.button21 = ui.CTkButton(self.any, text="Aç", command=self.open_any)
-            self.button22 = ui.CTkButton(self.any, text="Sil", command=self.delete_any)
-            self.button23 = ui.CTkButton(self.any, text="Kaydet", command=self.save_any)
+            self.label1 = ui.CTkLabel(self.notes, text="Notlar aldıysanız aşağıda listelenmiştir:")
+            self.entry1 = ui.CTkEntry(self.notes, placeholder_text="Lütfen not adı girin.")
+            self.button11 = ui.CTkButton(self.notes, text="Aç", command=self.open_list)
+            self.button12 = ui.CTkButton(self.notes, text="Sil", command=self.delete_list)
+            self.button13 = ui.CTkButton(self.notes, text="Kaydet", command=self.save_list)
+            self.label2 = ui.CTkLabel(self.documents, text="- Kendiniz belge adı girebilirsiniz.\n- Dosya diyoloğu ile seçmek için girmeyin.")
+            self.entry2 = ui.CTkEntry(self.documents)
+            self.button21 = ui.CTkButton(self.documents, text="Aç", command=self.open_any)
+            self.button22 = ui.CTkButton(self.documents, text="Sil", command=self.delete_any)
+            self.button23 = ui.CTkButton(self.documents, text="Kaydet", command=self.save_any)
         self.label1.grid(row=0, column=0, sticky="nsew", pady=0, padx=(15, 0))
         self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
         self.entry1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
@@ -677,9 +677,6 @@ class GeneralApps(ui.CTkFrame):
         self.frame.grid(row=0, column=1, sticky="nsew")
         self.frame.grid_rowconfigure((3, 4, 5, 6, 7), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
-        self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Application")
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Please enter or select.")
@@ -714,7 +711,7 @@ class GeneralApps(ui.CTkFrame):
         self.button3.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=6, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button5.grid(row=7, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+        self.status.grid(columnspan=2, row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def name_error(self):
         if os.path.isfile(en):
             mb.showerror("Error", "Please select application from list or enter package(s) name below.")
@@ -763,8 +760,6 @@ class GeneralApps(ui.CTkFrame):
                 self.status.configure(text=self.entry.get()+" Kaldırılıyor")
             elif operation == "update":
                 self.status.configure(text=self.entry.get()+" Güncelleniyor")
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.step()
         if os.path.isfile(debian):
             if operation == "search":
                 cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -810,7 +805,6 @@ class GeneralApps(ui.CTkFrame):
             elif operation == "update":
                 cmd = subprocess.Popen('pkexec pacman -Syu '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
-        self.progress_bar.configure(mode="indeterminate")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -846,9 +840,6 @@ class FlatpakApps(ui.CTkFrame):
         self.frame.grid(row=0, column=1, sticky="nsew")
         self.frame.grid_rowconfigure((2, 3, 4, 5, 6), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
-        self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Application")
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Please enter name.")
@@ -874,7 +865,7 @@ class FlatpakApps(ui.CTkFrame):
         self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+        self.status.grid(columnspan=2, row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def name_error(self):
         if os.path.isfile(en):
             mb.showerror("Error", "Please select application from list or enter package(s) name below.")
@@ -915,8 +906,6 @@ class FlatpakApps(ui.CTkFrame):
                 self.status.configure(text=self.entry.get()+" Kaldırılıyor")
             elif operation == "update":
                 self.status.configure(text=self.entry.get()+" Güncelleniyor")
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.step()
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
             install_flatpak()
             if ask_f == False:
@@ -932,7 +921,6 @@ class FlatpakApps(ui.CTkFrame):
         elif operation == "update":
             cmd = subprocess.Popen('flatpak update '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
-        self.progress_bar.configure(mode="indeterminate")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -967,9 +955,6 @@ class DEWM(ui.CTkFrame):
         self.frame.grid(row=0, column=1, sticky="nsew")
         self.frame.grid_rowconfigure((2, 3, 4, 5), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
-        self.progress_bar.start()
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Desktop Environment\nWindow Manager")
             self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
@@ -998,7 +983,7 @@ class DEWM(ui.CTkFrame):
         self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=5, column=0, sticky="nsew", pady=0, padx=(25, 0))
-        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+        self.status.grid(columnspan=2, row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def do_main(self, operation: str):
         self.dewm.configure(state="disabled")
         self.button1.configure(state="disabled")
@@ -1026,8 +1011,6 @@ class DEWM(ui.CTkFrame):
                 self.status.configure(text=self.dewm.get()+" Kaldırılıyor")
             elif operation == "update":
                 self.status.configure(text=self.dewm.get()+" Güncelleniyor")
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.step()
         if os.path.isfile(debian):
             if self.dewm.get().lower() != "mate":
                 if operation == "install":
@@ -1104,7 +1087,6 @@ class DEWM(ui.CTkFrame):
             elif operation == "update":
                 cmd = subprocess.Popen('pkexec pacman -Syu '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
-        self.progress_bar.configure(mode="indeterminate")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -1138,9 +1120,6 @@ class GeneralScripts(ui.CTkFrame):
         self.frame.grid(row=0, column=1, sticky="nsew")
         self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
-        self.progress_bar.start()
         if os.path.isfile(en):
             self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go_main("update"))
             self.button2 = ui.CTkButton(self.frame, text="Do More Complex Updates\n(etc. Distribution Upgrades)", command=lambda:self.go_main("dist_update"))
@@ -1169,7 +1148,7 @@ class GeneralScripts(ui.CTkFrame):
         self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button7.grid(row=6, column=0, sticky="nsew", padx=(25, 0))
-        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+        self.status.grid(columnspan=2, row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def do_main(self, operation: str):
         self.button1.configure(state="disabled")
         self.button2.configure(state="disabled")
@@ -1211,8 +1190,6 @@ class GeneralScripts(ui.CTkFrame):
                 self.status.configure(text="Geçmiş Alınıyor")
             elif operation == "list":
                 self.status.configure(text="Kurulu Paketler Alınıyor")
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.step()
         if os.path.isfile(debian):
             if operation == "update":
                 cmd = subprocess.Popen('pkexec apt upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
@@ -1270,7 +1247,6 @@ class GeneralScripts(ui.CTkFrame):
             elif operation == "list":
                 cmd = subprocess.Popen('pacman -Q', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
-        self.progress_bar.configure(mode="indeterminate")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -1309,9 +1285,6 @@ class FlatpakScripts(ui.CTkFrame):
         self.frame.grid(row=0, column=1, sticky="nsew")
         self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=1, column=1, pady=(7.5, 0), padx=(25, 0), sticky="nsew")
-        self.progress_bar.start()
         if os.path.isfile(en):
             self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go_main("update -y"))
             self.button2 = ui.CTkButton(self.frame, text="Remove Unnecessary Package(s)", command=lambda:self.go_main("uninstall --unused -y"))
@@ -1331,7 +1304,7 @@ class FlatpakScripts(ui.CTkFrame):
         self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 7.5), padx=(25, 0))
         self.button5.grid(row=4, column=0, sticky="nsew", padx=(25, 0))
-        self.status.grid(row=1, column=0, sticky="nsew", pady=(7.5, 0))
+        self.status.grid(columnspan=2, row=1, column=0, sticky="nsew", pady=(7.5, 0))
     def do_main(self, operation: str):
         self.button1.configure(state="disabled")
         self.button2.configure(state="disabled")
@@ -1363,8 +1336,6 @@ class FlatpakScripts(ui.CTkFrame):
                 self.status.configure(text="Geçmiş Alınıyor")
             elif operation == "list":
                 self.status.configure(text="Kurulu Uygulamalar/Ortamlar Alınıyor")
-        self.progress_bar.configure(mode="determinate")
-        self.progress_bar.step()
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
             install_flatpak()
             if ask_f == False:
@@ -1375,7 +1346,6 @@ class FlatpakScripts(ui.CTkFrame):
                 return
         cmd = subprocess.Popen('flatpak '+operation, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         (out, err) = cmd.communicate()
-        self.progress_bar.configure(mode="indeterminate")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", (out+err))
@@ -1396,7 +1366,7 @@ class FlatpakScripts(ui.CTkFrame):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
 
-class Systemd(ui.CTkFrame):
+class SystemdServices(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.configure(fg_color="transparent")
@@ -1454,14 +1424,14 @@ class Store(ui.CTkFrame):
             self.dewm = self.tabview.add("Desktop Environments\nWindow Managers")
             self.generalscripts = self.tabview.add("General\nScripts")
             self.flatpakscripts = self.tabview.add("Flatpak\nScripts")
-            self.systemd = self.tabview.add("systemd\nServices")
+            self.systemd = self.tabview.add("Systemd\nServices")
         elif os.path.isfile(tr):
             self.generalapps = self.tabview.add("Genel\nUygulamalar")
             self.flatpakapps = self.tabview.add("Flatpak\nUygulamaları")
             self.dewm = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
             self.generalscripts = self.tabview.add("Genel\nBetikler")
             self.flatpakscripts = self.tabview.add("Flatpak\nBetikleri")
-            self.systemd = self.tabview.add("systemd\nServisleri")
+            self.systemd = self.tabview.add("Systemd\nServisleri")
         self.generalapps.grid_columnconfigure(0, weight=1)
         self.generalapps.grid_rowconfigure(0, weight=1)
         self.generalapps_frame=GeneralApps(self.generalapps)
@@ -1484,7 +1454,7 @@ class Store(ui.CTkFrame):
         self.flatpakscripts_frame.grid(row=0, column=0, sticky="nsew")
         self.systemd.grid_columnconfigure(0, weight=1)
         self.systemd.grid_rowconfigure(0, weight=1)
-        self.systemd_frame=Systemd(self.systemd)
+        self.systemd_frame=SystemdServices(self.systemd)
         self.systemd_frame.grid(row=0, column=0, sticky="nsew")
 
 class BashButtons(ui.CTkFrame):
@@ -1688,16 +1658,13 @@ class OpenFM(ui.CTkFrame):
         self.button5.grid(row=3, column=0, sticky="nsew", padx=20, pady=10)
         self.button6.grid(row=3, column=1, sticky="nsew", padx=20, pady=10)
         if os.path.isfile(en):
-            self.text = ui.CTkLabel(self, text="Warning: Some of these no longer work with root user rights.")
+            self.text = ui.CTkLabel(self, text="Warning: This method is generally no longer working. Please try different methods.")
             self.status = ui.CTkLabel(self, text="Ready", font=ui.CTkFont(size=12, weight="bold"))
         elif os.path.isfile(tr):
-            self.text = ui.CTkLabel(self, text="Uyarı: Bunların bazıları artık kök kullanıcı haklarıyla çalışmıyor.")
+            self.text = ui.CTkLabel(self, text="Uyarı: Bu yöntem artık genellikle çalışmamaktır. Lütfen farklı yöntemler deneyin.")
             self.status = ui.CTkLabel(self, text="Hazır", font=ui.CTkFont(size=12, weight="bold"))
         self.text.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
-        self.status.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
-        self.progress_bar = ui.CTkProgressBar(self, mode="indeterminate")
-        self.progress_bar.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=0, pady=10)
-        self.progress_bar.start()
+        self.status.grid(columnspan=2, row=4, column=0, sticky="nsew", padx=0, pady=10)
     def do_main(self, name: str):
         global process_number
         if not os.path.isfile("/usr/bin/"+name.lower()) and not os.path.isfile("/bin/"+name.lower()):
@@ -1707,11 +1674,8 @@ class OpenFM(ui.CTkFrame):
                 self.status.configure(text=name+" Kuruluyor")
             process_number = process_number + 1
             update_status()
-            self.progress_bar.configure(mode="determinate")
-            self.progress_bar.step()
             install_app(name, name.lower())
             if ask_a == False:
-                self.progress_bar.configure(mode="indeterminate")
                 process_number = process_number - 1
                 update_status()
                 if os.path.isfile(en):
@@ -1997,25 +1961,25 @@ class Root(ui.CTk):
             elif os.path.isfile(tr):
                 mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
         if dt.datetime.now().weekday() == 0:
-            Sidebar.check_update(self, "starting")
+            Sidebar.check_update(self, "startup")
         if os.path.isfile(en):
-            self.tab_starting = self.tabview.add("Starting")
-            self.tab_notes = self.tabview.add("Notes")
+            self.tab_startup = self.tabview.add("Startup")
+            self.tab_notes_and_documents = self.tabview.add("Notes and Documents")
             self.tab_store = self.tabview.add("Store")
             self.tab_tools = self.tabview.add("Tools")
         elif os.path.isfile(tr):
-            self.tab_starting = self.tabview.add("Başlangıç")
-            self.tab_notes = self.tabview.add("Notlar")
+            self.tab_startup = self.tabview.add("Başlangıç")
+            self.tab_notes_and_documents = self.tabview.add("Notlar ve Belgeler")
             self.tab_store = self.tabview.add("Mağaza")
             self.tab_tools = self.tabview.add("Araçlar")
-        self.tab_starting.grid_columnconfigure(0, weight=1)
-        self.tab_starting.grid_rowconfigure(0, weight=1)
-        self.starting_frame=Starting(self.tab_starting)
-        self.starting_frame.grid(row=0, column=0, sticky="nsew")
-        self.tab_notes.grid_columnconfigure(0, weight=1)
-        self.tab_notes.grid_rowconfigure(0, weight=1)
-        self.notes_frame=Notes(self.tab_notes)
-        self.notes_frame.grid(row=0, column=0, sticky="nsew")
+        self.tab_startup.grid_columnconfigure(0, weight=1)
+        self.tab_startup.grid_rowconfigure(0, weight=1)
+        self.startup_frame=Startup(self.tab_startup)
+        self.startup_frame.grid(row=0, column=0, sticky="nsew")
+        self.tab_notes_and_documents.grid_columnconfigure(0, weight=1)
+        self.tab_notes_and_documents.grid_rowconfigure(0, weight=1)
+        self.notes_and_documents_frame=NotesAndDocuments(self.tab_notes_and_documents)
+        self.notes_and_documents_frame.grid(row=0, column=0, sticky="nsew")
         self.tab_store.grid_columnconfigure(0, weight=1)
         self.tab_store.grid_rowconfigure(0, weight=1)
         self.store_frame=Store(self.tab_store)
@@ -2030,9 +1994,9 @@ if __name__ == "__main__":
         if os.path.isfile(en):
             print("This is GrelinTB's help page.\nGrelinTB is great toolbox for some Linux distros.")
             print("Current version: "+version_current)
-            print("Developer:       MuKonqi")
+            print("Developer:       MuKonqi (Muhammed S.)")
             print("License:         GPLv3-or-later")
-            print("Credits:         Neofetch (for system information), Lolcat (for colorful commands in terminal), wttr.in (for weather forecast)")
+            print("Credits:         Neofetch (for system information), Lolcat (for colorful commands in terminal), wttr.in (for weather forecast), Google Material Symbols (for application icon)")
             print("List of all parameters for GrelinTB:")
             print("  help:          Show this page")
             print("  grelintb:      Open website of GrelinTB's GitHub repository")
@@ -2046,9 +2010,9 @@ if __name__ == "__main__":
         elif os.path.isfile(tr):
             print("Bu GrelinTB'nin yardım sayfasıdır.\nGrelinTB bazı Linux dağıtımları için harika bir araç kutusudur.")
             print("Şimdiki sürüm:   "+version_current)
-            print("Geliştirici:     MuKonqi")
+            print("Geliştirici:     MuKonqi (Muhammed S.)")
             print("Lisans:          GPLv3-or-later")
-            print("Krediler:        Neofetch (sistem bilgisi için), Lolcat (terminalde renkli komutlar için), wttr.in (hava durumu için)")            
+            print("Krediler:        Neofetch (sistem bilgisi için), Lolcat (terminalde renkli komutlar için), wttr.in (hava durumu için), Google Material Symbols (uygulama ikonu için)")            
             print("GrelinTB için tüm parametrelerin listesi:")
             print("  yardım:        Bu sayfayı göster")
             print("  grelintb:      GrelinTB'nin GitHub deposunu aç")
@@ -2098,7 +2062,7 @@ if __name__ == "__main__":
             if question.lower() == "y" or question.lower() == "e":
                 os.system("pkexec /usr/local/bin/grelintb/update.sh")
                 if os.path.isfile(en):
-                    exit("GrelinTB updated.")
+                    exit("GrelinTB has been updated.")
                 elif os.path.isfile(tr):
                     exit("GrelinTB güncellendi.")
         else:

@@ -1,5 +1,5 @@
-- Removed the "Scripts" section.
-- Transferred features from the "Scripts" section and added new features to the "Store" section.
-- Changed the location of custom status text and progress bar.
-- Added warning text, progress bar, status text to "Open File Managers With Root Rights" section.
-- Removed the portable version.
+-   RPM files have been made to improve the installation experience.
+-   Improvements have been made to the installer script.
+-   Transferred features from the "Scripts" section and added new features to the "Store" section.
+-   Removed the "Scripts" installation.
+-   Removed the portable version.

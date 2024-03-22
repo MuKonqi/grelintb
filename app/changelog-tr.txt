@@ -1,5 +1,5 @@
-- "Betikler" bölümü kaldırıldı.
-- "Mağaza" bölümüne "Betikler" bölümünden özellikler aktarıldı ve yeni özellikler eklendi.
-- Özel durum metinlerinin ve ilerleme çubuğu yerleri değiştirildi.
-- "Dosya Yöneticilerini Kök Haklarıyla Aç" bölümüne uyarı metni, ilerleme çubuğu, durum metni eklendi.
-- Taşınabilir sürüm kaldırıldı.
+-   RPM dosyaları kurulum deneyimini iyileştirmek için yapıldı.
+-   Kurucu betiğinde iyileştirmeler yapıldı.
+-   "Betikler" bölümünden özellikler transfer edildi ve yeni özellikler "Mağaza" bölümüne eklendi.
+-   "Betikler" kurulumu kaldırıldı.
+-   Taşınabilir sürüm kaldırıldı.

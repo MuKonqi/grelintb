@@ -17,7 +17,7 @@ if (( $EUID != 0 )); then
     echo -e "Please run as root. Exiting with status 1..."
     exit 1
 fi
-printf "Welcome to GrelinTB installer! Below is a short text about the license. "
+printf "Welcome to GrelinTB installer! Below is a short text about the license and copyright notification. "
 echo -e "\nCopyright (C) 2024 MuKonqi (Muhammed S.)"
 echo -e "\nGrelinTB and it's installer are free software: you can redistribute it and/or modify"
 echo -e "it under the terms of the GNU General Public License as published by"
@@ -29,7 +29,7 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's installer.  If not, see <https://www.gnu.org/licenses/>."
-function install {
+function install_other {
     if ! [ -d /usr/local/ ]; then
         mkdir /usr/local/
     fi
@@ -48,16 +48,19 @@ function install {
 }
 if [ -f /etc/debian_version ]; then
     apt install python3 python3-tk python3-pip git curl lolcat neofetch xdg-utils -y
-    install
+    install_other
 elif [ -f /etc/fedora-release ]; then
-    dnf install python3 python3-tkinter python3-pip git curl lolcat neofetch xdg-utils -y
-    install
+    wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
+    dnf install grelintb.rpm -y
+    rm grelintb.rpm
+    echo -e "Installation completed. Exiting with status 0..."
+    exit 0
 elif [ -f /etc/solus-release ]; then
     eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
-    install
+    install_other
 elif [ -f /etc/arch-release ]; then
     pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm
-    install
+    install_other
 else
     echo 'The distribution you are using is not supported from GrelinTB. Exiting with status 1...'
     exit 1

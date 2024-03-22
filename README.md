@@ -1,20 +1,22 @@
 # GrelinTB
 ## Great toolbox for some Linux distributions.
 - ![Icon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- [Türkçe diline geçmek için bu cümlenin üstüne tıklayın.](https://github.com/MuKonqi/grelintb/blob/main/BENİOKU.md)
-- [Click on this sentence to visit the wiki for more information.](https://github.com/MuKonqi/grelintb/wiki)
+- ![Downloads](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
+- [Wiki](https://github.com/MuKonqi/grelintb/wiki)
+- [Türkçe (Turkish)](https://github.com/MuKonqi/grelintb/blob/main/BENİOKU.md)
 ## Features
 ### [Click on this sentence or on the bullets for a full list of features.](https://github.com/MuKonqi/grelintb/wiki/EN:-Features)
 - [Sidebar](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#sidebar)
-- [Starting](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#starting)
-- [Notes](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#notes)
+- [Startup](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#startup)
+- [Notes and Documents](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#notes-and-documents)
 - [Store](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#store)
 - [Tools](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#tools)
-- [Scripts](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#scripts)
 - [Also...](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#also)
 ## Installation
-- Only type this in terminal: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
-- Enjoy GrelinTB!
+- For Fedora Linux based distributions, type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf update grelintb.rpm -y ; rm grelintb.rpm``
+- For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
+1. Install the following, although they usually come already installed: wget, pkexec
+2. Type the following into the terminal: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh``
 ## Copyright Notification, License, Credits
 - Copyright &copy; 2024 MuKonqi (Muhammed S.)
 - GNU General Public License, Version 3.0 or later

@@ -29,8 +29,11 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's uninstaller.  If not, see <https://www.gnu.org/licenses/>."
-rm /usr/bin/grelintb
-rm /usr/share/applications/grelintb.desktop
-rm -rf /usr/local/bin/grelintb/
-echo -e "Binary files removed from your system."
+if [ -f /etc/fedora-release ]; then
+    dnf remove grelintb -y
+elif  [ -f /etc/debian_version || -f /etc/solus-release || /etc/arch-release]; then
+    rm /usr/bin/grelintb
+    rm /usr/share/applications/grelintb.desktop
+    rm -rf /usr/local/bin/grelintb/
+echo -e "GrelinTB was uninstalled from your system. Exiting with status 0..."
 exit 0

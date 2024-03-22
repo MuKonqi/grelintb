@@ -1,21 +1,22 @@
 # GrelinTB
 ## Bazı Linux dağıtımları için harika araç kutusu.
-- ![İkon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- [Click on this sentence to switch to English language.](https://github.com/MuKonqi/grelintb/blob/main/README.md)
-- [Vikiyi detaylı bilgiler amacıyla ziyaret etmek için bu cümlenin üstüne tıklayın.](https://github.com/MuKonqi/grelintb/wiki)
+- ![İkn](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
+- ![İndirmeler](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
+- [Viki](https://github.com/MuKonqi/grelintb/wiki)
+- [English (İngilizce)](https://github.com/MuKonqi/grelintb/blob/main/README.md)
 ## Özellikler
 ### [Özelliklerin tam listesi için bu cümlenin üstüne veya maddelerin üstüne tıklayın.](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler)
 - [Kenar Çubuğu](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#kenar-%C3%A7ubu%C4%9Fu)
 - [Başlangıç](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#ba%C5%9Flang%C4%B1%C3%A7)
-- [Notlar](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#notlar)
+- [Notlar ve Belgeler](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#notlar-ve-belgeler)
 - [Mağaza](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#ma%C4%9Faza)
 - [Araçlar](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#ara%C3%A7lar)
-- [Betikler](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#betikler)
 - [Ayrıca...](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#ayr%C4%B1ca)
 ## Kurulum
-- Sadece terminalde şunu yazın: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
-- GrelinTB'nin tadını çıkarın!
-- GrelinTB'nin tadını çıkarın!
+- Fedora Linux tabanlı dağıtımlar için terminale şunu yazın: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf update grelintb.rpm -y ; rm grelintb.rpm``
+- Debian GNU/Linux, Solus ve Arch Linux tabanlı dağıtımlar için terminale şunu yazın: 
+1. Genelde kurulu gelse de şunları yükleyin: wget, pkexec
+2. Terminale şunu yazın: ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
 ## Telif Hakkı Bildirimi, Lisans, Krediler
 - Telif Hakkı &copy; 2024 MuKonqi (Muhammed S.)
 - GNU General Public License, Version 3.0 veya sonrası

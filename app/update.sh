@@ -29,29 +29,56 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's updater.  If not, see <https://www.gnu.org/licenses/>."
-function install_git {
-    if [ -f /etc/debian_version ]; then
-        apt install git -y
-    elif [ -f /etc/fedora-release ]; then
-        dnf install git -y
-    elif [ -f /etc/solus-release ]; then
-        eopkg install git -y
-    elif [ -f /etc/arch-release ]; then
-        pacman -S git --noconfirm
+if [ -f /etc/fedora-release ]; then
+    wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
+    dnf update grelintb.rpm -y
+    rm grelintb.rpm
+elif  [ -f /etc/debian_version || -f /etc/solus-release || /etc/arch-release]; then
+    function install_git {
+        if [ -f /etc/debian_version ]; then
+            apt install git -y
+        elif [ -f /etc/solus-release ]; then
+            eopkg install git -y
+        elif [ -f /etc/arch-release ]; then
+            pacman -S git --noconfirm
+        fi
+    }
+    if [[ ! -f /bin/git ]] && [[ ! -f /usr/bin/git ]]; then
+        install_git
     fi
-}
-if [[ ! -f /bin/git/ ]] && [[ ! -f /usr/bin/git/ ]]; then
-    install_git
-fi
-rm /usr/bin/grelintb
-rm /usr/share/applications/grelintb.desktop
-rm -rf /usr/local/bin/grelintb/
-mkdir /usr/local/bin/grelintb
-git clone https://github.com/mukonqi/grelintb.git
-chmod +x grelintb/app/*
-cp grelintb/app/grelintb.py /usr/bin/grelintb
-cp grelintb/app/grelintb.desktop /usr/share/applications/
-cp grelintb/app/* /usr/local/bin/grelintb/
-rm -rf grelintb
+    function install_pip {
+        if [ -f /etc/debian_version ]; then
+            apt install pip -y
+        elif [ -f /etc/solus-release ]; then
+            eopkg install pip -y
+        elif [ -f /etc/arch-release ]; then
+            pacman -S pip --noconfirm
+        fi
+    }
+    if [[ ! -f /bin/pip ]] && [[ ! -f /usr/bin/pip ]]; then
+        install_pip
+    fi
+    function install_python3 {
+        if [ -f /etc/debian_version ]; then
+            apt install python3 -y
+        elif [ -f /etc/solus-release ]; then
+            eopkg install python3 -y
+        elif [ -f /etc/arch-release ]; then
+            pacman -S python3 --noconfirm
+        fi
+    }
+    if [[ ! -f /bin/python3 ]] && [[ ! -f /usr/bin/python3 ]]; then
+        install_python3
+    fi
+    rm /usr/bin/grelintb
+    rm /usr/share/applications/grelintb.desktop
+    rm -rf /usr/local/bin/grelintb/
+    mkdir /usr/local/bin/grelintb
+    git clone https://github.com/mukonqi/grelintb.git
+    chmod +x grelintb/app/*
+    cp grelintb/app/grelintb.py /usr/bin/grelintb
+    cp grelintb/app/grelintb.desktop /usr/share/applications/
+    cp grelintb/app/* /usr/local/bin/grelintb/
+    rm -rf grelintb
 echo -e "GrelinTB updated. Exiting with status 0..."
 exit 0
