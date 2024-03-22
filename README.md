@@ -1,7 +1,6 @@
 # GrelinTB
 ## Great toolbox for some Linux distributions.
 - ![Icon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- ![Downloads](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
 - [Wiki](https://github.com/MuKonqi/grelintb/wiki)
 - [Türkçe (Turkish)](https://github.com/MuKonqi/grelintb/blob/main/BENİOKU.md)
 ## Features

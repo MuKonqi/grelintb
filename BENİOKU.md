@@ -1,7 +1,6 @@
 # GrelinTB
 ## Bazı Linux dağıtımları için harika araç kutusu.
-- ![İkn](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
-- ![İndirmeler](https://img.shields.io/github/downloads/mukonqi/grelintb/total)
+- ![İkon](https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true)
 - [Viki](https://github.com/MuKonqi/grelintb/wiki)
 - [English (İngilizce)](https://github.com/MuKonqi/grelintb/blob/main/README.md)
 ## Özellikler
