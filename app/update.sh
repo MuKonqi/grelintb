@@ -80,5 +80,6 @@ elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release]
     cp grelintb/app/grelintb.desktop /usr/share/applications/
     cp grelintb/app/* /usr/local/bin/grelintb/
     rm -rf grelintb
+fi
 echo -e "GrelinTB updated. Exiting with status 0..."
 exit 0

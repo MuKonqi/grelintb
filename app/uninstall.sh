@@ -35,5 +35,6 @@ elif  [ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release]
     rm /usr/bin/grelintb
     rm /usr/share/applications/grelintb.desktop
     rm -rf /usr/local/bin/grelintb/
+fi
 echo -e "GrelinTB was uninstalled from your system. Exiting with status 0..."
 exit 0
