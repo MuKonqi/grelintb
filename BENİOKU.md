@@ -13,7 +13,7 @@
 - [Ayrıca...](https://github.com/MuKonqi/grelintb/wiki/TR:-%C3%96zellikler#ayr%C4%B1ca)
 ## Kurulum
 - Uyarı: Genellikle önceden yüklenmiş olarak gelmelerine rağmen aşağıdakileri yükleyin: wget, pkexec
-- Fedora Linux tabanlı dağıtımlar için aşağıdakileri terminale yazın: ``wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf update grelintb.rpm -y ; rm grelintb.rpm``
+- Fedora Linux tabanlı dağıtımlar için aşağıdakileri terminale yazın: ``wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf install grelintb.rpm -y ; rm grelintb.rpm``
 - Debian GNU/Linux, Solus ve Arch Linux tabanlı dağıtımlar için aşağıdakileri terminale yazın: 
 ``wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh``
 ## Telif Hakkı Bildirimi, Lisans, Krediler

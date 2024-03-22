@@ -13,7 +13,7 @@
 - [Also...](https://github.com/MuKonqi/grelintb/wiki/EN:-Features#also)
 ## Installation
 - Warning: Install the following, although they usually come already installed: wget, pkexec
-- For Fedora Linux based distributions, type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf update grelintb.rpm -y ; rm grelintb.rpm```
+- For Fedora Linux based distributions, type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; pkexec dnf install grelintb.rpm -y ; rm grelintb.rpm```
 - For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
 ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; pkexec ./install-grelintb.sh ; rm install-grelintb.sh```
 ## Copyright Notification, License, Credits
