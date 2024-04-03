@@ -1,5 +1,5 @@
--   RPM dosyaları kurulum deneyimini iyileştirmek için yapıldı.
--   Kurucu betiğinde iyileştirmeler yapıldı.
--   "Betikler" bölümünden özellikler transfer edildi ve yeni özellikler "Mağaza" bölümüne eklendi.
--   "Betikler" kurulumu kaldırıldı.
--   Taşınabilir sürüm kaldırıldı.
+-   Başlangıç sayfası sıfırdan yapıldı.
+-   "Notlar ve Belgeler" bölümünde çeşitli iyileştirmeler yapıldı.
+-   Kenar çubuğunda başlangıç bilgileri için seçenek kaldırıldı.
+-   Pazartesi günü olan otomatik güncelleme kontrolü açılışı uzatmamak için arkaplanda gerçekleşiyor.
+-   Hava durumu ile CPU kullanım yüzdesi açılışı uzatmamak için arkaplanda alınıyor.

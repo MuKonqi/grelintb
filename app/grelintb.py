@@ -42,10 +42,12 @@ elif os.getuid() == 0:
 
 import locale
 import getpass
-import random
+import random as rd
 import threading
 import subprocess
 import datetime as dt
+import socket
+import platform
 try:
     from tkinter import messagebox as mb
     from tkinter import filedialog as fd
@@ -75,12 +77,31 @@ try:
 except:
     try:
         print("Installing CustomTkinter...")
-        os.system("pip install customtkinter")
-        import customtkinter as ui
+        os.system("pip install customtkinter ; grelintb")
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install customtkinter --break-system-packages ; grelintb")
-        exit()
+    exit()
+try:
+    import psutil
+except:
+    try:
+        print("Installing psutil...")
+        os.system("pip install psutil ; grelintb")
+    except:
+        print("Installing CustomTkinter with --break-system-packages parameter...")
+        os.system("pip install psutil --break-system-packages ; grelintb")
+    exit()
+try:
+    import distro
+except:
+    try:
+        print("Installing distro...")
+        os.system("pip install distro ; grelintb")
+    except:
+        print("Installing CustomTkinter with --break-system-packages parameter...")
+        os.system("pip install distro --break-system-packages ; grelintb")
+    exit()
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
@@ -93,9 +114,7 @@ dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
 dark_blue = "/home/"+username+"/.config/grelintb/color/dark_blue.txt"
 blue = "/home/"+username+"/.config/grelintb/color/blue.txt"
 green = "/home/"+username+"/.config/grelintb/color/green.txt"
-random_file = "/home/"+username+"/.config/grelintb/color/random.txt"
-s_true = "/home/"+username+"/.config/grelintb/startup/true.txt"
-s_false = "/home/"+username+"/.config/grelintb/startup/false.txt"
+random = "/home/"+username+"/.config/grelintb/color/random.txt"
 process_number = 0
 
 if not os.path.isdir(config):
@@ -109,8 +128,6 @@ if not os.path.isdir(config+"theme/"):
     os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
 if not os.path.isdir(config+"color/"):
     os.system("cd "+config+" ; mkdir color ; cd color ; touch dark-blue.txt")
-if not os.path.isdir(config+"startup/"):
-    os.system("cd "+config+" ; mkdir startup ; cd startup ; touch false.txt")
 if not os.path.isdir(notes):
     os.system("cd /home/"+username+" ; mkdir Notes")
 if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
@@ -128,8 +145,8 @@ elif os.path.isfile(blue):
     ui.set_default_color_theme("blue")
 elif os.path.isfile(green):
     ui.set_default_color_theme("green")
-elif os.path.isfile(random_file):
-    ui.set_default_color_theme(random.choice(["blue", "dark-blue", "green"]))
+elif os.path.isfile(random):
+    ui.set_default_color_theme(rd.choice(["blue", "dark-blue", "green"]))
 
 def update_status():
     if process_number == 0:
@@ -177,6 +194,7 @@ def install_app(appname: str, packagename: str):
             mb.showerror("Error", appname+" installation ve process cancelled.")
         elif os.path.isfile(tr):
             mb.showerror("Hata", appname+" kurulumu ve işlem iptal edildi.")
+
 def install_flatpak():
     global ask_f
     global process_number
@@ -237,18 +255,13 @@ class Sidebar(ui.CTkFrame):
         self.grid_rowconfigure((4, 8), weight=1)
         self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb/wiki", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
-        if os.path.isfile(s_true):
-            self.startup_var = ui.StringVar(value="on")
-        elif os.path.isfile(s_false):
-            self.startup_var = ui.StringVar(value="off")
         if os.path.isfile(en):
-            self.version_b = ui.CTkButton(self, text=version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Developer", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Developer: Mukonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Startup Informations\n(Increases Time)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Color Theme:", anchor="w")
             self.color_menu = ui.CTkOptionMenu(self, values=["Dark Blue", "Blue", "Green", "Random"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Appearance:", anchor="w")
@@ -268,16 +281,15 @@ class Sidebar(ui.CTkFrame):
                 self.color_menu.set("Blue")
             elif os.path.isfile(green):
                 self.color_menu.set("Green")
-            elif os.path.isfile(random_file):
+            elif os.path.isfile(random):
                 self.color_menu.set("Random")
         elif os.path.isfile(tr):
-            self.version_b = ui.CTkButton(self, text=version_current, command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
+            self.version_b = ui.CTkButton(self, text=f"Sürüm: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: Mukonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
             self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.startup = ui.CTkCheckBox(self, text="Başlangıç Bilgileri\n(Süreyi Arttırır)", command=self.startup_option, variable=self.startup_var, onvalue="on", offvalue="off")
             self.color_label = ui.CTkLabel(self, text="Renk Teması:", anchor="w")
             self.color_menu = ui.CTkOptionMenu(self, values=["Koyu Mavi", "Mavi", "Yeşil", "Rastgele"], command=self.change_color)
             self.appearance_label = ui.CTkLabel(self, text="Görünüm:", anchor="w")
@@ -297,7 +309,7 @@ class Sidebar(ui.CTkFrame):
                 self.color_menu.set("Mavi")
             elif os.path.isfile(green):
                 self.color_menu.set("Yeşil")
-            elif os.path.isfile(random_file):
+            elif os.path.isfile(random):
                 self.color_menu.set("Rastgele")
         self.text.grid(row=0, column=0, padx=10, pady=(10, 0))
         self.version_b.grid(row=1, column=0, padx=10, pady=0)
@@ -306,14 +318,13 @@ class Sidebar(ui.CTkFrame):
         self.update_b.grid(row=5, column=0, padx=10, pady=5)
         self.reset_b.grid(row=6, column=0, padx=10, pady=5)
         self.uninstall_b.grid(row=7, column=0, padx=10, pady=5)
-        self.startup.grid(row=9, column=0, padx=10, pady=(0, 5))
-        self.color_label.grid(row=10, column=0, padx=10, pady=(5, 0))
-        self.color_menu.grid(row=11, column=0, padx=10, pady=(0, 5))
-        self.appearance_label.grid(row=12, column=0, padx=10, pady=(5, 0))
-        self.appearance_menu.grid(row=13, column=0, padx=10, pady=(0, 5))
-        self.language_label.grid(row=14, column=0, padx=10, pady=(5, 0))
-        self.language_menu.grid(row=15, column=0, padx=10, pady=(0, 5))
-        status.grid(row=16, column=0, padx=10, pady=(0, 5))
+        self.color_label.grid(row=9, column=0, padx=10, pady=(5, 0))
+        self.color_menu.grid(row=10, column=0, padx=10, pady=(0, 5))
+        self.appearance_label.grid(row=11, column=0, padx=10, pady=(5, 0))
+        self.appearance_menu.grid(row=12, column=0, padx=10, pady=(0, 5))
+        self.language_label.grid(row=13, column=0, padx=10, pady=(5, 0))
+        self.language_menu.grid(row=14, column=0, padx=10, pady=(0, 5))
+        status.grid(row=15, column=0, padx=10, pady=(0, 5))
     def changelog(self):
         self.window = ui.CTkToplevel()
         self.window.geometry("600x600")
@@ -345,30 +356,27 @@ class Sidebar(ui.CTkFrame):
             self.window.title("License And Credits")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credits")
-            self.button1 = ui.CTkButton(self.window, text="Neofetch (for system information)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
-            self.button2 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="wttr.in (for weather forecast)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button4 = ui.CTkButton(self.window, text="Google Material Symbols (for application icon)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))    
+            self.button1 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button2 = ui.CTkButton(self.window, text="wttr.in (for weather forecast)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="Google Material Symbols (for application icon)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))    
         elif os.path.isfile(tr):
             self.window.title("Lisans Ve Krediler")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Krediler")
-            self.button1 = ui.CTkButton(self.window, text="Neofetch (sistem bilgileri için)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
-            self.button2 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button4 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
+            self.button1 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button2 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
         self.textbox.insert("0.0", license_text)
         self.textbox.configure(state="disabled")
-        self.label1.grid(row=0, column=0, sticky="nsew", pady=10)
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=(10, 5))
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=20)
-        self.label2.grid(row=2, column=0, sticky="nsew", pady=10)
+        self.label2.grid(row=2, column=0, sticky="nsew", pady=(10, 0))
         self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=5)
         self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
-        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=5)
-        self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
+        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -420,11 +428,6 @@ class Sidebar(ui.CTkFrame):
             os.system("cd /home/"+username+"/.config ; rm -rf grelintb")
             mb.showinfo("Görüşürüz!","GrelinTB sisteminizden kaldırıldı.")
         exit()
-    def startup_option(self):
-        if self.startup_var.get() == "on":
-            os.system("cd "+config+"startup/ ; rm * ; touch true.txt")
-        elif self.startup_var.get() == "off":
-            os.system("cd "+config+"startup/ ; rm * ; touch false.txt")
     def change_color(self, new_color: str):
         if new_color == "Dark Blue" or new_color == "Koyu Mavi":
             os.system("cd "+config+"color ; rm * ; touch dark-blue.txt")
@@ -456,213 +459,289 @@ class Sidebar(ui.CTkFrame):
         os.system("grelintb")
         exit()
 
-class Startup(ui.CTkFrame):
+class Startup(ui.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        if os.path.isfile(s_true):
-            if not os.path.isfile("/usr/bin/neofetch") and not os.path.isfile("/bin/neofetch"):
-                install_app("Neofetch", "neofetch")
-                if ask_a == False:
-                    return
-            self.grid_rowconfigure(3, weight=1)
-            self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        if os.path.isfile(en):
+            self.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=15, weight="bold"))
+            self.weather = ui.CTkLabel(self, text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
+            self.system = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
+            self.hostname = ui.CTkLabel(self, text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+            self.distro = ui.CTkLabel(self, text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+            self.kernel = ui.CTkLabel(self, text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+            self.uptime = ui.CTkLabel(self, text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace("up ", "")}", font=ui.CTkFont(size=13, weight="bold"))
+            self.boot_time = ui.CTkLabel(self, text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime("%d.%m.%Y %H:%M:%S"))}", font=ui.CTkFont(size=13, weight="bold"))
+            self.usages = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
+            self.cpu_usage = ui.CTkLabel(self, text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
+            self.disk_usage = ui.CTkLabel(self, text=f"Disk: {str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.ram_usage = ui.CTkLabel(self, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.swap_usage = ui.CTkLabel(self, text=f"Swap: {str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        elif os.path.isfile(tr):
+            self.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=15, weight="bold"))
+            self.weather = ui.CTkLabel(self, text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
+            self.system = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
+            self.hostname = ui.CTkLabel(self, text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+            self.distro = ui.CTkLabel(self, text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+            self.kernel = ui.CTkLabel(self, text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+            self.uptime = ui.CTkLabel(self, text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace("up ", "")}", font=ui.CTkFont(size=13, weight="bold"))
+            self.boot_time = ui.CTkLabel(self, text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime("%d.%m.%Y %H:%M:%S"))}", font=ui.CTkFont(size=13, weight="bold"))
+            self.usages = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
+            self.cpu_usage = ui.CTkLabel(self, text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
+            self.disk_usage = ui.CTkLabel(self, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.ram_usage = ui.CTkLabel(self, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.swap_usage = ui.CTkLabel(self, text=f"Takas: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.weather.grid(row=0, column=0, pady=(7.5, 10), columnspan=4)
+        self.system.grid(row=2, column=0, pady=(0, 7.5), columnspan=4)
+        self.hostname.grid(row=3, column=0, pady=(0, 7.5), columnspan=4)
+        self.distro.grid(row=4, column=0, pady=(0, 7.5), columnspan=4)
+        self.kernel.grid(row=5, column=0, pady=(0, 7.5), columnspan=4)
+        self.uptime.grid(row=6, column=0, pady=(0, 7.5), columnspan=4)
+        self.boot_time.grid(row=7, column=0, pady=(0, 10), columnspan=4)
+        self.usages.grid(row=8, column=0, pady=(0, 7.5), columnspan=4)
+        self.cpu_usage.grid(row=9, column=0, pady=(0, 10))
+        self.disk_usage.grid(row=9, column=1, pady=(0, 10))
+        self.ram_usage.grid(row=9, column=2, pady=(0, 10))
+        self.swap_usage.grid(row=9, column=3, pady=(0, 10))
+        self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
+        self.weather_thread.start()
+        self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
+        self.cpu_usage_thread.start()
+        self.other_thread = threading.Thread(target=lambda:self.other_def(), daemon=True)
+        self.other_thread.start()
+    def weather_def(self):
+        if os.path.isfile(en):
+            self.weather.configure(text=f"Weather Forecast: {str(subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
+        elif os.path.isfile(tr):
+            self.weather.configure(text=f"Hava Durumu: {str(subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
+    def cpu_usage_def(self):
+        if os.path.isfile(en):
+            self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
+        elif os.path.isfile(tr):
+            self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
+    def other_def(self):
+        if hasattr (psutil, "sensors_temperatures") and psutil.sensors_temperatures():
+            self.temps_ok = True
+            self.temps_number = 10
+            self.temps = psutil.sensors_temperatures()
             if os.path.isfile(en):
-                self.label0 = ui.CTkLabel(self, text="Welcome "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="Weather Forecast\nSystem Information", font=ui.CTkFont(size=15, weight="normal"))
-                self.weather = subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+                self.temps_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Temperatures", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
             elif os.path.isfile(tr):
-                self.label0 = ui.CTkLabel(self, text="Merhabalar "+username+"!", font=ui.CTkFont(size=25, weight="bold"))
-                self.label1 = ui.CTkLabel(self, text="Hava Durumu\nSistem Bilgileri", font=ui.CTkFont(size=15, weight="normal"))
-                self.weather = subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.label0.grid(row=0, column=0, pady=(0, 10))
-            self.label1.grid(row=1, column=0, pady=(0, 10))
-            self.textbox1 = ui.CTkTextbox(self, fg_color="transparent", height=25)
-            self.textbox1.grid(row=2, column=0, sticky="nsew")
-            self.textbox2 = ui.CTkTextbox(self, fg_color="transparent")
-            self.textbox2.grid(row=3, column=0, sticky="nsew")
-            self.system = subprocess.Popen('neofetch --stdout', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-            self.textbox1.insert("0.0", self.weather)
-            self.textbox1.configure(state="disabled")
-            self.textbox2.insert("0.0", self.system)
-            self.textbox2.configure(state="disabled")
-        elif os.path.isfile(s_false):
-            self.grid_rowconfigure(0, weight=1)
-            self.grid_columnconfigure(0, weight=1)
+                self.temps_header= ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sıcaklıklar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+            for self.temps_name, self.temps_entries in self.temps.items():
+                self.temps_number = self.temps_number + 1
+                if os.path.isfile(en):
+                    self.temps_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                elif os.path.isfile(tr):
+                    self.temps_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                for self.temps_entry in self.temps_entries:
+                    self.temps_number = self.temps_number + 1
+                    if os.path.isfile(en): 
+                        ui.CTkLabel(self, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, High = {self.temps_entry.high} °C, Critical = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+                    elif os.path.isfile(tr): 
+                        ui.CTkLabel(self, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, Yüksek = {self.temps_entry.high} °C, Kritik = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+        if hasattr (psutil, "sensors_fans") and psutil.sensors_fans():
+            self.fans_ok = True
+            if self.temps_ok == True:
+                self.fans_number = self.temps_number + 1
+            else:
+                self.fans_number = 10
             if os.path.isfile(en):
-                self.label0 = ui.CTkLabel(self, text="Welcome\n"+username, font=ui.CTkFont(size=80, weight="normal"))
+                self.fans_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fans", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
             elif os.path.isfile(tr):
-                self.label0 = ui.CTkLabel(self, text="Merhabalar\n"+username, font=ui.CTkFont(size=80, weight="normal"))
-            self.label0.grid(row=0, column=0, sticky="nsew")
-
+                self.fans_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fanlar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
+            self.fans = psutil.sensors_fans()
+            for self.fans_name, self.fans_entries in self.fans.items():
+                self.fans_number = self.fans_number + 1
+                if os.path.isfile(en):
+                    self.fans_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                elif os.path.isfile(tr):
+                    self.fans_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                for self.fans_entry in self.fans_entries:
+                    self.fans_number = self.fans_number + 1
+                    ui.CTkLabel(self, text=f"{self.fans_entry.label or self.fans_name}: {self.fans_entry.current} RPM", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 5), columnspan=4)
+        if hasattr (psutil, "sensors_battery") and psutil.sensors_battery():
+            if self.fans_ok == True:
+                self.batt_number = self.fans_number + 1
+            elif self.temps_ok == True:
+                self.batt_number = self.temps_number + 1
+            else:
+                self.batt_number = 10
+            if os.path.isfile(en):
+                self.batt_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Battery", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+            elif os.path.isfile(tr):
+                self.batt_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Batarya", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+            self.batt = psutil.sensors_battery()
+            if os.path.isfile(en):
+                ui.CTkLabel(self, text=f"Charge: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 1, column=0, pady=(0, 5), columnspan=4)
+                if self.batt.power_plugged:
+                    ui.CTkLabel(self, text=f"Status: {str("Charging" if self.batt.percent < 100 else "Fully Charged")}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Plugged In: Yes", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
+                else:
+                    ui.CTkLabel(self, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Status: Discharging", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Plugged In: No", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 4, column=0, pady=(0, 5), columnspan=4)
+            elif os.path.isfile(tr):
+                ui.CTkLabel(self, text=f"Şarj: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 1, column=0, pady=(0, 5), columnspan=4)
+                if self.batt.power_plugged:
+                    ui.CTkLabel(self, text=f"Durum: {str("Şarj Oluyor" if self.batt.percent < 100 else "Şarj Oldu")}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Şarja Takılı: Evet", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
+                else:
+                    ui.CTkLabel(self, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Durum: Şarj Azalıyor", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self, text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.batt_number + 4, column=0, pady=(0, 5), columnspan=4)
+        
 class NotesAndDocuments(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.file_a = None
-        self.file_l = None
         self.configure(fg_color="transparent")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.content = ui.CTkTextbox(self)
         self.content.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-        self.tabview = ui.CTkTabview(self, fg_color="transparent")
-        self.tabview.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
+        self.options = ui.CTkFrame(self, fg_color="transparent")
+        self.options.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
+        self.options.grid_rowconfigure((2, 3, 4, 5, 6), weight=1)
+        self.options.grid_columnconfigure(0, weight=1)
+        self.notes = os.listdir(notes)
         if os.path.isfile(en):
-            self.notes = self.tabview.add("Notes")
-            self.documents = self.tabview.add("Documents")
+            self.list = ui.CTkOptionMenu(self.options, values=["List Of Your Notes"]+ self.notes, command=self.option)
+            self.entry = ui.CTkEntry(self.options, placeholder_text="Name")
+            self.button1 = ui.CTkButton(self.options, text="Take A New Note", command=self.new_note)
+            self.button2 = ui.CTkButton(self.options, text="Open", command=self.open)
+            self.button3 = ui.CTkButton(self.options, text="Rename", command=self.rename)
+            self.button4 = ui.CTkButton(self.options, text="Save", command=self.save)
+            self.button5 = ui.CTkButton(self.options, text="Delete", command=self.delete)
         elif os.path.isfile(tr):
-            self.notes = self.tabview.add("Notlar")
-            self.documents = self.tabview.add("Belgeler")
-        self.notes.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
-        self.notes.grid_columnconfigure(0, weight=1),
-        self.documents.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-        self.documents.grid_columnconfigure(0, weight=1)
-        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list = ui.CTkTextbox(self.notes, fg_color="transparent")
-        self.list.insert("0.0", self.command)
-        self.list.configure(state="disabled")
-        if os.path.isfile(en):
-            self.label1 = ui.CTkLabel(self.notes, text="If you have taken notes, they are listed below:")
-            self.entry1 = ui.CTkEntry(self.notes, placeholder_text="Please enter note name.")
-            self.button11 = ui.CTkButton(self.notes, text="Open", command=self.open_list)
-            self.button12 = ui.CTkButton(self.notes, text="Delete", command=self.delete_list)
-            self.button13 = ui.CTkButton(self.notes, text="Save", command=self.save_list)
-            self.label2 = ui.CTkLabel(self.documents, text="- You can enter the document name yourself.\n- Do not enter it to select it with the file dialog.")
-            self.entry2 = ui.CTkEntry(self.documents)
-            self.button21 = ui.CTkButton(self.documents, text="Open", command=self.open_any)
-            self.button22 = ui.CTkButton(self.documents, text="Delete", command=self.delete_any)
-            self.button23 = ui.CTkButton(self.documents, text="Save", command=self.save_any)
-        elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self.notes, text="Notlar aldıysanız aşağıda listelenmiştir:")
-            self.entry1 = ui.CTkEntry(self.notes, placeholder_text="Lütfen not adı girin.")
-            self.button11 = ui.CTkButton(self.notes, text="Aç", command=self.open_list)
-            self.button12 = ui.CTkButton(self.notes, text="Sil", command=self.delete_list)
-            self.button13 = ui.CTkButton(self.notes, text="Kaydet", command=self.save_list)
-            self.label2 = ui.CTkLabel(self.documents, text="- Kendiniz belge adı girebilirsiniz.\n- Dosya diyoloğu ile seçmek için girmeyin.")
-            self.entry2 = ui.CTkEntry(self.documents)
-            self.button21 = ui.CTkButton(self.documents, text="Aç", command=self.open_any)
-            self.button22 = ui.CTkButton(self.documents, text="Sil", command=self.delete_any)
-            self.button23 = ui.CTkButton(self.documents, text="Kaydet", command=self.save_any)
-        self.label1.grid(row=0, column=0, sticky="nsew", pady=0, padx=(15, 0))
-        self.list.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.entry1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button11.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button12.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button13.grid(row=5, column=0, sticky="nsew", pady=(0, 0), padx=(15, 0))
-        self.label2.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.entry2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button21.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button22.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button23.grid(row=4, column=0, sticky="nsew", pady=0, padx=(15, 0))
-    def open_error(self):
-        if os.path.isfile(en):
-            mb.showerror("Error","The note could not be opened.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata","Not açılamadı.")
-    def no_note_error(self):
-        if os.path.isfile(en):
-            mb.showerror("Error","There is no such note.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata","Öyle bir not yok.")
-    def delete_error(self):
-        if os.path.isfile(en):
-            mb.showerror("Error","The note could not be deleted.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata","Not silinemedi.")
-    def delete_successful(self):
-        if os.path.isfile(en):
-            mb.showinfo("Information","The note deleted.")
-        elif os.path.isfile(tr):
-            mb.showinfo("Bilgilendirme","Not silindi.")
-    def save_successful(self):
-        if os.path.isfile(en):
-            mb.showinfo("Information","The note saved.")
-        elif os.path.isfile(tr):
-            mb.showinfo("Bilgilendirme","Not kaydedildi.")
-    def save_error(self):
-        if os.path.isfile(en):
-            mb.showerror("Error","The note could not be saved.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata","Not kaydedilemedi.")
-    def open_list(self):
-        try:
-            with open(notes+self.entry1.get(), "r") as self.file_l:
-                self.text = self.file_l.read()
-        except:
-            self.open_error()
-            return
-        self.content.delete("0.0", 'end')
-        self.content.insert("0.0", self.text)
-    def delete_list(self):
-        if not os.path.isfile(notes+self.entry1.get()):
-            self.no_note_error()
-            return
-        os.system("cd "+notes+" ; rm '"+self.entry1.get()+"'")
-        if os.path.isfile(notes+self.entry1.get()):
-            self.delete_error()
+            self.list = ui.CTkOptionMenu(self.options, values=["Notlarınızın Listesi"] + self.notes, command=self.option)
+            self.entry = ui.CTkEntry(self.options, placeholder_text="Ad")
+            self.button1 = ui.CTkButton(self.options, text="Yeni Bir Not Al", command=self.new_note)
+            self.button2 = ui.CTkButton(self.options, text="Aç", command=self.open)
+            self.button3 = ui.CTkButton(self.options, text="Yeniden Adlandır", command=self.rename)
+            self.button4 = ui.CTkButton(self.options, text="Kaydet", command=self.save)
+            self.button5 = ui.CTkButton(self.options, text="Sil", command=self.delete)
+        self.list.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=(15, 0))
+        self.entry.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button4.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(15, 0))
+    def option(self, note_name: str):
+        if note_name != "List Of Your Notes" and note_name != "Notlarınızın Listesi":
+            self.entry.delete(0, "end")
+            self.entry.insert(0, f"{notes}{note_name}")
         else:
-            self.delete_successful()
-        self.list.configure(state="normal")
-        self.list.delete("0.0", 'end')
-        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list.insert("0.0", self.command)
-        self.list.configure(state="disabled")
-    def save_list(self):
-        if self.entry1.get() == None:
+            self.entry.delete(0, "end")
+    def new_note(self):
+        if os.path.isfile(en):
+            self.dialog = ui.CTkInputDialog(text=f"Type a new note name.", title="Type New Name")
+        elif os.path.isfile(tr):
+            self.dialog = ui.CTkInputDialog(text=f"Yeni bir not adı girin.", title="Yeni Ad Girin")
+        self.new_name = self.dialog.get_input()
+        if self.new_name == None:
             if os.path.isfile(en):
-                mb.showerror("Error","You did not enter a note name.")
+                mb.showerror("Error", "Taking a new note was canceled.")
             elif os.path.isfile(tr):
-                mb.showerror("Hata","Not adı girmediniz.")
+                mb.showerror("Hata", "Yeni bir not alma iptal edildi.")
             return
-        with open(notes+self.entry1.get(), "w+") as self.file:
-            self.file.write(self.content.get("0.0", 'end'))
-        with open(notes+self.entry1.get()) as self.file:
-            self.output = self.file.read()
-        self.list.configure(state="normal")
-        self.list.delete("0.0", 'end')
-        self.command = subprocess.Popen('ls '+notes, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        self.list.insert("0.0", self.command)
-        self.list.configure(state="disabled")
-        if self.output == self.content.get("0.0", 'end'):
-            self.save_successful()
-        else:
-            self.save_error()
-    def open_any(self):
-        if self.entry2.get() == "":
-            try:
+        os.system(f"touch {notes}{self.new_name}")
+        self.entry.delete(0, "end")
+        self.entry.insert(0, f"{notes}{self.new_name}")
+        self.notes = os.listdir(notes)
+        if os.path.isfile(en):
+            mb.showinfo("Information", f"The note was created.")
+            self.list.configure(values=["List Of Your Notes"] + self.notes)
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme", f"Not oluşturuldu.")
+            self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
+    def open(self):
+        try:
+            if self.entry.get() != "List Of Your Notes" and self.entry.get() != "Notlarınızın Listesi" and self.entry.get() != "" :
+                with open(self.entry.get(), "r") as self.file_lo:
+                    self.text = self.file_lo.read()
+            else:
                 self.file_a = fd.askopenfilename()
                 with open(self.file_a, "r") as self.file_ao:
                     self.text = self.file_ao.read()
-                self.entry2.insert(0, self.file_a)
-            except:
-                self.open_error()
-                return
-        else:
-            try:
-                with open(self.entry2.get(), "r") as self.file_a:
-                    self.text = self.file_a.read()
-            except:
-                self.open_error()
-                return
+                self.entry.delete(0, "end")
+                self.entry.insert(0, self.file_a)
+        except:
+            if os.path.isfile(en):
+                mb.showerror("Error","The note or document could not be opened.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not ya da belge açılamadı.")
+            return
         self.content.delete("0.0", 'end')
         self.content.insert("0.0", self.text)
-    def delete_any(self):
-        if not os.path.isfile(self.entry2.get()):
-            self.no_note_error()
+    def rename(self):
+        if not os.path.isfile(self.entry.get()):
+            if os.path.isfile(en):
+                mb.showerror("Error","There is no such note or document.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Öyle bir not ya da belge yok.")
             return
-        os.system("rm '"+self.entry2.get()+"'")
-        if os.path.isfile(self.entry2.get()):
-            self.delete_error()
-        else:
-            self.delete_successful()
-    def save_any(self):
-        with open(self.entry2.get(), "w+") as self.file:
+        if os.path.isfile(en):
+            self.dialog = ui.CTkInputDialog(text=f"Type a new file name for {self.entry.get()}.", title="Type New Name")
+        elif os.path.isfile(tr):
+            self.dialog = ui.CTkInputDialog(text=f"{self.entry.get()} için yeni bir ad girin.", title="Yeni Ad Girin")
+        self.new_name = self.dialog.get_input()
+        if self.new_name == None:
+            if os.path.isfile(en):
+                mb.showerror("Error", f"Renaming {self.entry.get()} was canceled.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata", f"{self.entry.get()} notunu ya da belgesini yeniden adlandırmadan vazgeçildi.")
+            return
+        os.system(f"mv {self.entry.get()} {os.path.dirname(self.entry.get())}/{self.new_name}")
+        self.entry.delete(0, "end")
+        self.entry.insert(0, f"{notes}{self.new_name}")
+        self.notes = os.listdir(notes)
+        if os.path.isfile(en):
+            mb.showinfo("Information", f"The note or document was renamed as {self.new_name}.")
+            self.list.configure(values=["List Of Your Notes"] + self.notes)
+        elif os.path.isfile(tr):
+            mb.showinfo("Bilgilendirme", f"Not ya da belge {self.new_name} olarak yeniden adlandırıldı.")
+            self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
+    def save(self):
+        with open(self.entry.get(), "w+") as self.file:
             self.file.write(self.content.get("0.0", 'end'))
-        with open(self.entry2.get()) as self.file:
+        with open(self.entry.get()) as self.file:
             self.output = self.file.read()
+        self.notes = os.listdir(notes)
         if self.output == self.content.get("0.0", 'end'):
-            self.save_successful()
+            if os.path.isfile(en):
+                mb.showinfo("Information","The note or document saved.")
+                self.list.configure(values=["List Of Your Notes"] + self.notes)
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Not ya da belge kaydedildi.")
+                self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
         else:
-            self.save_error()
+            if os.path.isfile(en):
+                mb.showerror("Error","The note or document could not be saved.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not ya da belge kaydedilemedi.")
+    def delete(self):
+        if not os.path.isfile(self.entry.get()):
+            if os.path.isfile(en):
+                mb.showerror("Error","There is no such note or document.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Öyle bir not ya da belge yok.")
+            return
+        os.system(f"rm {self.entry.get()}")
+        self.notes = os.listdir(notes)
+        if os.path.isfile(self.entry.get()):
+            if os.path.isfile(en):
+                mb.showerror("Error","The note or document could not be deleted.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not ya da belge silinemedi.")
+            return
+        else:
+            if os.path.isfile(en):
+                mb.showinfo("Information","The note or document was deleted.")
+                self.list.configure(values=["List Of Your Notes"] + self.notes)
+            elif os.path.isfile(tr):
+                mb.showinfo("Bilgilendirme","Not ya da belge silindi.")
+                self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
 
 class GeneralApps(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1961,7 +2040,8 @@ class Root(ui.CTk):
             elif os.path.isfile(tr):
                 mb.showinfo("Doğum Günü","Bugün GrelinTB geliştiricisi MuKonqi'nin (Muhammed S.) doğum günü!\nUmarım sitesindeki bilgiyi bu sefer zamanında güncellemiştir :D")
         if dt.datetime.now().weekday() == 0:
-            Sidebar.check_update(self, "startup")
+            self.check_update_thread = threading.Thread(target=lambda:Sidebar.check_update(self, "startup"), daemon=True)
+            self.check_update_thread.start()
         if os.path.isfile(en):
             self.tab_startup = self.tabview.add("Startup")
             self.tab_notes_and_documents = self.tabview.add("Notes and Documents")

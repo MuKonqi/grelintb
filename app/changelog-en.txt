@@ -1,5 +1,5 @@
--   RPM files have been made to improve the installation experience.
--   Improvements have been made to the installer script.
--   Transferred features from the "Scripts" section and added new features to the "Store" section.
--   Removed the "Scripts" installation.
--   Removed the portable version.
+-   Startup page made from scratch.
+-   Various improvements have been made to the "Notes and Documents" section.
+-   Removed the option for startup information in the sidebar.
+-   The automatic update check on Monday is done in the background so as not to prolong startup.
+-   Weather and CPU utilization percentage are taken in the background so as not to prolong startup.

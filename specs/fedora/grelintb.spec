@@ -1,13 +1,12 @@
 Name:           grelintb
-Version:        1.3.4.2
-Release:        8
+Version:        1.3.5.0
+Release:        1
 Summary:        Great toolbox for some Linux distributions.
-
-License:        GPLv3-or-later
+License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
 Source0:        %{name}-%{version}.tar.gz
 
-Requires:       python3 python3-tkinter python3-pip git curl lolcat neofetch xdg-utils
+Requires:       python3 python3-tkinter python3-pip git curl lolcat xdg-utils
 
 %description
 GrelinTB is a great (simple, useful, fast, modern) toolbox for some Linux distributions made in Python3 and CustomTkinter.
@@ -34,7 +33,6 @@ mkdir -p $RPM_BUILD_ROOT/usr/local/bin/grelintb
 cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 
 %files
-%{_bindir}/grelintb
 %license /usr/local/bin/grelintb/LICENSE.txt
 /usr/local/bin/grelintb/changelog-en.txt
 /usr/local/bin/grelintb/changelog-tr.txt
@@ -45,12 +43,13 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/local/bin/grelintb/update.sh
 /usr/local/bin/grelintb/version.txt
 /usr/share/applications/grelintb.desktop
+/usr/bin/grelintb
 
 %changelog
 * Fri Mar 22 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
 - %{version}
--   RPM files have been made to improve the installation experience.
--   Improvements have been made to the installer script.
--   Transferred features from the "Scripts" section and added new features to the "Store" section.
--   Removed the "Scripts" installation.
--   Removed the portable version.
+-   Startup page made from scratch.
+-   Various improvements have been made to the "Notes and Documents" section.
+-   Removed the option for startup information in the sidebar.
+-   The automatic update check on Monday is done in the background so as not to prolong startup.
+-   Weather and CPU utilization percentage are taken in the background so as not to prolong startup.
