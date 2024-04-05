@@ -89,7 +89,8 @@ try:
 except:
     try:
         print("Installing psutil...")
-        os.system("pip install psutil ; grelintb")
+        os.system("pip install psutil")
+        import psutil
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install psutil --break-system-packages ; grelintb")
@@ -99,7 +100,8 @@ try:
 except:
     try:
         print("Installing distro...")
-        os.system("pip install distro ; grelintb")
+        os.system("pip install distro")
+        import distro
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install distro --break-system-packages ; grelintb")
