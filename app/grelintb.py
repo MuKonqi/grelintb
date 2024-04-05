@@ -233,7 +233,7 @@ def install_flatpak():
             add_operation(f"Installing Flatpak", time_process)
         elif os.path.isfile(tr):
             add_operation(f"Flatpak Kuruluyor", time_process)
-        if os.path.isfile(fedora):
+        if os.path.isfile(debian):
             cmd1 = os.system('pkexec apt install flatpak -y')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
             restart_system()
@@ -246,12 +246,6 @@ def install_flatpak():
         elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman -S flatpak --noconfirm')
             restart_system()
-        if ask_r == False:
-            ask_f = False
-            if os.path.isfile(en):
-                mb.showinfo("Information", "Flatpak package manager installation could not be completed, process cancelled.")
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme", "Flatpak paket yöneticisi kurulumu tamamlanamadı, işlem iptal edildi.")
         if os.path.isfile(en):
             delete_operation(f"Installing Flatpak", time_process)
         elif os.path.isfile(tr):
@@ -1012,6 +1006,10 @@ class FlatpakPackages(ui.CTkFrame):
             elif os.path.isfile(tr):
                 mb.showerror("Hata", "Lütfen paketlerin adını girin.")
             return
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+            install_flatpak()
+            if ask_f == False:
+                return
         self.entry.configure(state="disabled")
         self.button1.configure(state="disabled")
         self.button2.configure(state="disabled")
@@ -1041,10 +1039,6 @@ class FlatpakPackages(ui.CTkFrame):
                 add_operation(f"{self.entry.get()} Kaldırılıyor (Flatpak)", self.time)
             elif operation == "update":
                 add_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                return
         if operation == "search":
             cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
         elif operation == "install":
@@ -1477,6 +1471,10 @@ class FlatpakScripts(ui.CTkFrame):
         self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button5.grid(row=4, column=0, sticky="nsew", padx=(10, 0))
     def do_main(self, operation: str):
+        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
+            install_flatpak()
+            if ask_f == False:
+                return
         self.button1.configure(state="disabled")
         self.button2.configure(state="disabled")
         self.button3.configure(state="disabled")
@@ -1926,7 +1924,7 @@ class Distros(ui.CTkFrame):
                 "\nDebian offers a very stable experience, but this makes it less up-to-date.")
             self.button4 = ui.CTkButton(self.distro4, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
             self.text5 = ui.CTkLabel(self.distro5, text="Manjaro is a distribution based on Arch Linux. It is aimed at the end user."+
-                "\n\nNote from GrelinTB developer: If you are going to use the Arch base, I suggest you look for other alternatives.")
+                "\n\nNote from GrelinTB developer: For Arch base, I suggest you look for other alternatives.")
             self.button5 = ui.CTkButton(self.distro5, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
             self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu targets many audiences. There are many variants."+
                 "\n\nNote from GrelinTB developer: In Ubuntu, telemetry is turned on by default, but it can be turned off."+
@@ -1970,7 +1968,7 @@ class Distros(ui.CTkFrame):
                 "\nDebian çok stabil bir deneyim sunar fakat bu güncelliği azaltır.")
             self.button4 = ui.CTkButton(self.distro4, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
             self.text5 = ui.CTkLabel(self.distro5, text="Manjaro, Arch Linux tabanlı bir dağıtımdır. Son kullanıcıyı hedef alır."+
-                "\n\nGrelinTB geliştiricisinin notu: Arch tabanı kullanacaksanız başka alternatiflere yönelmenizi öneririm.")
+                "\n\nGrelinTB geliştiricisinin notu: Arch tabanı için başka alternatiflere yönelmenizi öneririm.")
             self.button5 = ui.CTkButton(self.distro5, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
             self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu birçok kitleyi hedefler. Birçok türevi vardır."+
                 "\n\nGrelinTB geliştiricisinin notu: Ubuntu'da varsayılan olarak telemetriler açık gelir ama kapıtabilir."+
