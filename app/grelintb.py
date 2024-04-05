@@ -78,7 +78,8 @@ try:
 except:
     try:
         print("Installing CustomTkinter...")
-        os.system("pip install customtkinter ; grelintb")
+        os.system("pip install customtkinter")
+        import customtkinter as ui
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install customtkinter --break-system-packages ; grelintb")
