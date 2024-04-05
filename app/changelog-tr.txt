@@ -1,5 +1,11 @@
--   Başlangıç sayfası sıfırdan yapıldı.
--   "Notlar ve Belgeler" bölümünde çeşitli iyileştirmeler yapıldı.
--   Kenar çubuğunda başlangıç bilgileri için seçenek kaldırıldı.
--   Pazartesi günü olan otomatik güncelleme kontrolü açılışı uzatmamak için arkaplanda gerçekleşiyor.
--   Hava durumu ile CPU kullanım yüzdesi açılışı uzatmamak için arkaplanda alınıyor.
+-   Minumum pencere boyutu 1200x600'den 960x540'a düşürüldü.
+-   "Bazı Dosya Yöneticilerini Kök Haklarıyla Aç" özelliği hem güvenliksizlik hem de işlevselliksizlikten dolayı kaldırıldı.
+-   Kenar çubuğundaki durum metni, buton haline getirildi: Artık çalışan işlem varsa butona tıklanınca yeni bir pencere açıp onları listeliyor.
+-   Mağaza bölümünün hemen hemen hepsinde çeşitli değişiklikler (anlık durum metnini kaldırma, aralık boyutlarını değiştirme, methodları iyileştirme, alt bölüm başlıkları) yapıldı.
+-   "Bash'ı Yapılandır" bölümüne Zsh desteği de eklendi. Artık bölümün adı "Bash'ı ve Zsh'ı Yapılandır" oldu.
+-   "Bazı Dağıtımlar Hakkında" bölümünde bilgiler güncellendi ve alt bölüm başlıkları kısaltıldı.
+-   "Hesap Makinesi" bölümünün adı "Hesaplayıcı" oldu.
+-   "Bash'ı ve Zsh'ı Yapılandır", "Bilgisayarın Adını Değiştir" ve "Hesaplayıcı" bölümlerinin elemanlarının aralık boyutlarında iyileştirmeler yapıldı.
+-   Hata düzeltmeleri yapıldı: Mesela fark etmeden Python 3.12'deki bir yeniliği kullandığımdan 3.11'de kritik söz dizimi sıkıntılar oluyordu.
+-   Çeşitli ufak iyileştirmeler yapıldı.
+-   Çeşitli yerlerde yazım iyileştirildi.

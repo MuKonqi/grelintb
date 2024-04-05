@@ -47,7 +47,7 @@ function install_other {
     exit 0
 }
 if [ -f /etc/debian_version ]; then
-    apt install python3 python3-tk python3-pip git curl lolcat neofetch xdg-utils -y
+    apt install python3 python3-tk python3-pip git curl xdg-utils -y
     install_other
 elif [ -f /etc/fedora-release ]; then
     wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
@@ -56,10 +56,10 @@ elif [ -f /etc/fedora-release ]; then
     echo -e "Installation completed. Exiting with status 0..."
     exit 0
 elif [ -f /etc/solus-release ]; then
-    eopkg install python3 python3-tkinter pip git curl lolcat neofetch xdg-utils -y
+    eopkg install python3 python3-tkinter pip git curl xdg-utils -y
     install_other
 elif [ -f /etc/arch-release ]; then
-    pacman -S python tk python-pip git curl neofetch lolcat xdg-utils --noconfirm
+    pacman -S python tk python-pip git curl xdg-utils --noconfirm
     install_other
 else
     echo 'The distribution you are using is not supported from GrelinTB. Exiting with status 1...'
