@@ -19,6 +19,7 @@
 ## Copyright Notification, License, Credits
 - Copyright &copy; 2024 MuKonqi (Muhammed S.)
 - GNU General Public License, Version 3.0 or later
-- [Lolcat](https://github.com/busyloop/lolcat) (for colorful commands in terminal)
-- [wttr.in](https://github.com/chubin/wttr.in) (for weather forecast)
 - [Google Material Symbols](https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048) (for application icon)
+- [wttr.in](https://github.com/chubin/wttr.in) (for getting weather forecast in startup section)
+- [Lolcat](https://github.com/busyloop/lolcat) (for colorful commands in terminal)
+- [Neofetch](https://github.com/dylanaraps/neofetch) (for getting system informations in terminal)

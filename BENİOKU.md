@@ -19,6 +19,7 @@
 ## Telif Hakkı Bildirimi, Lisans, Krediler
 - Telif Hakkı &copy; 2024 MuKonqi (Muhammed S.)
 - GNU General Public License, Version 3.0 veya sonrası
-- [Lolcat](https://github.com/busyloop/lolcat) (terminalde renkli komutlar için)
-- [wttr.in](https://github.com/chubin/wttr.in) (hava durumu için)
 - [Google Material Symbols](https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048) (uygulama ikonu için)
+- [wttr.in](https://github.com/chubin/wttr.in) (başlangıç bölümünde hava durumunu almak için)
+- [Lolcat](https://github.com/busyloop/lolcat) (terminalde renkli komutlar için)
+- [Neofetch](https://github.com/dylanaraps/neofetch) (terminalde sistem bilgisini almak için)

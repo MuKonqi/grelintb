@@ -380,19 +380,21 @@ class Sidebar(ui.CTkFrame):
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.window.title("License And Credits")
+            self.window.title("License and Credits")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credits")
-            self.button1 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button2 = ui.CTkButton(self.window, text="wttr.in (for weather forecast)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="Google Material Symbols (for application icon)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))    
+            self.button1 = ui.CTkButton(self.window, text="Google Material Symbols (for application icon)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))    
+            self.button2 = ui.CTkButton(self.window, text="wttr.in (for getting weather forecast in startup section)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button4 = ui.CTkButton(self.window, text="Neofetch (for getting system information in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
         elif os.path.isfile(tr):
-            self.window.title("Lisans Ve Krediler")
+            self.window.title("Lisans ve Krediler")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
             self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Krediler")
-            self.button1 = ui.CTkButton(self.window, text="Lolcat (terminaldeki renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button2 = ui.CTkButton(self.window, text="wttr.in (hava durumu için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
+            self.button1 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
+            self.button2 = ui.CTkButton(self.window, text="wttr.in (başlangıç bölümünde hava durumunu almak için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
+            self.button3 = ui.CTkButton(self.window, text="Lolcat (terminalde renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
+            self.button4 = ui.CTkButton(self.window, text="Neofetch (terminalde sistem bilgilerini almak için)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -403,7 +405,8 @@ class Sidebar(ui.CTkFrame):
         self.label2.grid(row=2, column=0, sticky="nsew", pady=(10, 0))
         self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=5)
         self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
-        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=(5, 10))
+        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=5)
+        self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
