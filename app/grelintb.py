@@ -951,52 +951,53 @@ class TraditionalPackages(ui.CTkFrame):
                 add_operation(f"{self.entry.get()} Güncelleniyor", self.time)
         if os.path.isfile(debian):
             if operation == "search":
-                cmd = subprocess.Popen('apt search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"apt search {self.entry.get()}"
             elif operation == "install":
-                cmd = subprocess.Popen('pkexec apt install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec apt install -y {self.entry.get()}"
             elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec apt install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec apt reinstall -y {self.entry.get()}"
             elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec apt autoremove --purge -y {self.entry.get()}"
             elif operation == "update":
-                cmd = subprocess.Popen('pkexec apt upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec apt update -y {self.entry.get()}"
         elif os.path.isfile(fedora):
             if operation == "search":
-                cmd = subprocess.Popen('dnf --nogpgcheck search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"dnf search {self.entry.get()}"
             elif operation == "install":
-                cmd = subprocess.Popen('pkexec dnf --nogpgcheck install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec dnf install --nogpgcheck -y {self.entry.get()}"
             elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec dnf --nogpgcheck reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec dnf reinstall --nogpgcheck -y {self.entry.get()}"
             elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec dnf --nogpgcheck remove '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec dnf remove --nogpgcheck -y {self.entry.get()}"
             elif operation == "update":
-                cmd = subprocess.Popen('pkexec dnf --nogpgcheck upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec dnf update --nogpgcheck -y {self.entry.get()}"
         elif os.path.isfile(solus):
             if operation == "search":
-                cmd = subprocess.Popen('eopkg search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"eopkg search {self.entry.get()}"
             elif operation == "install":
-                cmd = subprocess.Popen('pkexec eopkg install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec eopkg install -y {self.entry.get()}"
             elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec eopkg install --reinstall -y {self.entry.get()}"
             elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec eopkg remove --purge -'+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec eopkg remove --purge -y {self.entry.get()}"
             elif operation == "update":
-                cmd = subprocess.Popen('pkexec eopkg upgrade '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec eopkg upgrade -y {self.entry.get()}"
         elif os.path.isfile(arch):
             if operation == "search":
-                cmd = subprocess.Popen('pacman -Ss '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "install":
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-            elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec pacman -S '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pacman -Ss {self.entry.get()}"
+            elif operation == "install" or operation == "reinstall":
+                self.command = f"pkexec pacman -S --noconfirm {self.entry.get()}"
             elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec pacman -Rns '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec pacman -Rns --noconfirm {self.entry.get()}"
             elif operation == "update":
-                cmd = subprocess.Popen('pkexec pacman -Syu '+self.entry.get()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
+                self.command = f"pkexec pacman -Syu --noconfirm {self.entry.get()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "search":
@@ -1106,19 +1107,22 @@ class FlatpakPackages(ui.CTkFrame):
             elif operation == "update":
                 add_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
         if operation == "search":
-            cmd = subprocess.Popen('flatpak search '+self.entry.get(), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            self.command = f"flatpak search {self.entry.get()}"
         elif operation == "install":
-            cmd = subprocess.Popen('flatpak install '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            self.command = f"flatpak install -y {self.entry.get()}"
         elif operation == "reinstall":
-            cmd = subprocess.Popen('flatpak install --reinstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            self.command = f"flatpak install --reinstall -y '{self.entry.get()}"
         elif operation == "uninstall":
-            cmd = subprocess.Popen('flatpak uninstall '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+            self.command = f"flatpak uninstall -y {self.entry.get()}"
         elif operation == "update":
-            cmd = subprocess.Popen('flatpak update '+self.entry.get()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
+            self.command = f"flatpak update -y '{self.entry.get()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "search":
@@ -1220,82 +1224,85 @@ class DEWM(ui.CTkFrame):
         if os.path.isfile(debian):
             if self.dewm.get().lower() != "mate":
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec apt install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt install {self.dewm.get().lower()}"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec apt install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt install --reinstall {self.dewm.get().lower()} -y"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec apt autoremove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt autoremove --purge {self.dewm.get().lower()} -y"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec apt upgrade '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt upgrade {self.dewm.get().lower()} -y"
             elif self.dewm.get().lower() == "mate":
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec apt install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec apt install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec apt autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec apt upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec apt upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
         elif os.path.isfile(fedora):
             if self.dewm.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf install --nogpgcheck @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall --nogpgcheck @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf remove --nogpgcheck @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uodate":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf upgrade --nogpgcheck @'+self.dewm.get().lower()+'-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf install --nogpgcheck '+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall --nogpgcheck '+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf remove --nogpgcheck '+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf upgrade --nogpgcheck '+self.dewm.get().lower()+'-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() == "GNOME":
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf install --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf reinstall --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf remove --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec bash -c "dnf upgrade --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)             
+                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"             
         elif os.path.isfile(solus):
             if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec eopkg install -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg install -c desktop.{self.dewm.get().lower()} -y"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec eopkg install --reinstall -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg install --reinstall -c desktop.{self.dewm.get().lower()} -y"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec eopkg remove --purge -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg remove --purge -c desktop.{self.dewm.get().lower()} -y"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec eopkg upgrade -c desktop.'+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg upgrade -c desktop.{self.dewm.get().lower()} -y"
             else:
                 if operation == "install":
-                    cmd = subprocess.Popen('pkexec eopkg install '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg install {self.dewm.get().lower()} -y"
                 elif operation == "reinstall":
-                    cmd = subprocess.Popen('pkexec eopkg install --reinstall '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg install --reinstall {self.dewm.get().lower()} -y"
                 elif operation == "uninstall":
-                    cmd = subprocess.Popen('pkexec eopkg remove --purge '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                    self.command = f"pkexec eopkg remove --purge {self.dewm.get().lower()} -y"
                 elif operation == "update":
-                    cmd = subprocess.Popen('pkexec eopkg upgrade '+self.dewm.get().lower()+' -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)        
+                    self.command = f"pkexec eopkg upgrade {self.dewm.get().lower()} -y"        
         elif os.path.isfile(arch):
             if operation == "install":
-                cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec pacman -S {self.dewm.get().lower()} --noconfirm"
             elif operation == "reinstall":
-                cmd = subprocess.Popen('pkexec pacman -S '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec pacman -S {self.dewm.get().lower()} --noconfirm"
             elif operation == "uninstall":
-                cmd = subprocess.Popen('pkexec pacman -Rns '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = f"pkexec pacman -Rns {self.dewm.get().lower()} --noconfirm"
             elif operation == "update":
-                cmd = subprocess.Popen('pkexec pacman -Syu '+self.dewm.get().lower()+' --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
+                self.command = f"pkexec pacman -Syu {self.dewm.get().lower()} --noconfirm"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "install":
@@ -1405,64 +1412,67 @@ class TraditionalScripts(ui.CTkFrame):
                 add_operation(f"Kurulu Paketler Alınıyor", self.time)
         if os.path.isfile(debian):
             if operation == "update":
-                cmd = subprocess.Popen('pkexec apt upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec apt upgrade -y'
             elif operation == "dist_update":
-                cmd = subprocess.Popen('pkexec apt dist-upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec apt dist-upgrade -y'
             elif operation == "clean":
-                cmd = subprocess.Popen('pkexec apt-get autoclean -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec apt-get autoclean -y'
             elif operation == "remove":
-                cmd = subprocess.Popen('pkexec apt autoremove -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec apt autoremove -y'
             elif operation == "fix":
-                cmd = subprocess.Popen('pkexec bash -c "apt-get install -f -y ; dpkg --configure -a ; aptitude install -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec bash -c "apt-get install -f -y ; dpkg --configure -a ; aptitude install -y"'
             elif operation == "history":
-                cmd = subprocess.Popen('cat /var/log/dpkg.log', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'cat /var/log/dpkg.log'
             elif operation == "list":
-                cmd = subprocess.Popen('dpkg --list | grep ^i', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'dpkg --list | grep ^i'
         elif os.path.isfile(fedora):
             if operation == "update":
-                cmd = subprocess.Popen('pkexec dnf upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec dnf upgrade -y'
             elif operation == "dist_update":
-                cmd = subprocess.Popen('pkexec dnf distro-sync -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec dnf distro-sync -y'
             elif operation == "clean":
-                cmd = subprocess.Popen('pkexec dnf clean all -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec dnf clean all -y'
             elif operation == "remove":
-                cmd = subprocess.Popen('pkexec dnf autoremove -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec dnf autoremove -y'
             elif operation == "fix":
-                cmd = subprocess.Popen('pkexec dnf repoquery --unsatisfied -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec dnf repoquery --unsatisfied -y'
             elif operation == "history":
-                cmd = subprocess.Popen('dnf history', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'dnf history'
             elif operation == "list":
-                cmd = subprocess.Popen('dnf list installed', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'dnf list installed'
         elif os.path.isfile(solus):
             if operation == "update":
-                cmd = subprocess.Popen('pkexec eopkg upgrade -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec eopkg upgrade -y'
             elif operation == "clean":
-                cmd = subprocess.Popen('pkexec eopkg dc -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec eopkg dc -y'
             elif operation == "remove":
-                cmd = subprocess.Popen('pkexec eopkg rmf -y', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec eopkg rmf -y'
             elif operation == "history":
-                cmd = subprocess.Popen('eopkg history', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'eopkg history'
             elif operation == "list":
-                cmd = subprocess.Popen('eopkg list-installed', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'eopkg list-installed'
         elif os.path.isfile(arch):
             if operation == "update":
-                cmd = subprocess.Popen('pkexec pacman -Syu --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec pacman -Syu --noconfirm'
             elif operation == "dist_update":
-                cmd = subprocess.Popen('pkexec pacman -Syu --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec pacman -Syu --noconfirm'
             elif operation == "clean":
-                cmd = subprocess.Popen('pkexec pacman -Scc --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pkexec pacman -Scc --noconfirm'
             elif operation == "remove":
-                cmd = subprocess.Popen('pacman -Qdtq | pacman -Rs - --noconfirm', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pacman -Qdtq | pacman -Rs - --noconfirm'
             elif operation == "fix":
-                cmd = subprocess.Popen('pacman -Dk', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'pacman -Dk'
             elif operation == "history":
-                cmd = subprocess.Popen('cat /var/log/pacman.log', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                self.command = 'cat /var/log/pacman.log'
             elif operation == "list":
-                cmd = subprocess.Popen('pacman -Q', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
+                self.command = 'pacman -Q'
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "update":
@@ -1577,11 +1587,13 @@ class FlatpakScripts(ui.CTkFrame):
                 elif os.path.isfile(tr):
                     self.status.configure(text="Hazır")
                 return
-        cmd = subprocess.Popen('flatpak '+operation, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(f"flatpak {operation}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "update -y":
@@ -1655,11 +1667,14 @@ class SystemdServices(ui.CTkFrame):
             elif os.path.isfile(tr):
                 mb.showerror("Hata", "Lütfen servis adı girin.")
             return
-        cmd = subprocess.Popen('pkexec bash -c "SYSTEMD_COLORS=0 systemctl '+operation+' '+self.entry.get()+'"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-        (out, err) = cmd.communicate()
+        self.textbox.configure(state="disabled")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        self.textbox.insert("0.0", (out+err))
+        with subprocess.Popen(f"pkexec bash -c 'SYSTEMD_COLORS=0 systemctl {operation} {self.entry.get()}'", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.insert("end", self.out)
+            for self.err in self.run_command.stderr:
+                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
         main_successful()
     def go_main(self, process: str):

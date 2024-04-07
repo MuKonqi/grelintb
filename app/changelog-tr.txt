@@ -1,5 +1,6 @@
 - Minumum pencere boyutu 1200x600'den 960x540'a düşürüldü.
 - "Başlangıç" bölümüne bilgileri tazelemek için buton eklendi.
+- "Mağaza" bölümüne gerçek zamanlı çıktı eklendi.
 - "Bazı Dosya Yöneticilerini Kök Haklarıyla Aç" özelliği hem güvenliksizlik hem de işlevselliksizlikten dolayı kaldırıldı.
 - Kenar çubuğundaki durum metni, buton haline getirildi: Artık çalışan işlem varsa butona tıklanınca yeni bir pencere açıp onları listeliyor.
 - Mağaza bölümünün hemen hemen hepsinde çeşitli değişiklikler (anlık durum metnini kaldırma, aralık boyutlarını değiştirme, methodları iyileştirme, alt bölüm başlıkları) yapıldı.

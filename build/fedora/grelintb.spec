@@ -1,5 +1,5 @@
 Name:           grelintb
-Version:        1.3.6.1
+Version:        1.3.6.2
 Release:        1
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
@@ -49,6 +49,7 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 * Sun Apr 7 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
 - Reduced the minimum window size from 1200x600 to 960x540.
 - Added a button to refresh information in the "Start" section.
+- Added real-time outputs to "Store" section.
 - Removed the "Open Some File Managers with Root Rights" feature due to both insecurity and lack of functionality.
 - Changed the status text in the sidebar to a button: Now, if there are running processes, clicking the button opens a new window and lists them.
 - Various changes (removing the status text, changing the range sizes, optimizing methods, sub-section headers) were made to almost all of the store section.
