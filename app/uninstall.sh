@@ -29,7 +29,14 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's uninstaller.  If not, see <https://www.gnu.org/licenses/>."
-if [ -f /etc/fedora-release ]; then
+function uninstall {
+    rm /usr/bin/grelintb
+    rm /usr/share/applications/grelintb.desktop
+    rm -rf /usr/local/bin/grelintb/
+}
+if  [ -f /etc/debian_version ]; then
+    uninstall
+elif [ -f /etc/fedora-release ]; then
     dnf remove grelintb -y
     if [ -f /usr/bin/grelintb/ ] ; then
         rm /usr/bin/grelintb
@@ -40,10 +47,10 @@ if [ -f /etc/fedora-release ]; then
     if [ -d /usr/local/bin/grelintb/ ] ; then
         rm -rf /usr/local/bin/grelintb/
     fi
-elif  [[ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release ]]; then
-    rm /usr/bin/grelintb
-    rm /usr/share/applications/grelintb.desktop
-    rm -rf /usr/local/bin/grelintb/
+elif  [ -f /etc/solus-release ]; then
+    uninstall
+elif  [ -f /etc/arch-release ]; then
+    uninstall
 fi
 echo -e "GrelinTB was uninstalled from your system. Exiting with status 0..."
 exit 0

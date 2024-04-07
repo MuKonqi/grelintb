@@ -29,11 +29,7 @@ echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 echo -e "GNU General Public License for more details."
 echo -e "\nYou should have received a copy of the GNU General Public License"
 echo -e "along with GrelinTB and it's updater.  If not, see <https://www.gnu.org/licenses/>."
-if [ -f /etc/fedora-release ]; then
-    wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
-    dnf update grelintb.rpm -y
-    rm grelintb.rpm
-elif  [[ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release]]; then
+function update{
     function install_git {
         if [ -f /etc/debian_version ]; then
             apt install git -y
@@ -80,6 +76,17 @@ elif  [[ -f /etc/debian_version || -f /etc/solus-release || -f /etc/arch-release
     cp grelintb/app/grelintb.desktop /usr/share/applications/
     cp grelintb/app/* /usr/local/bin/grelintb/
     rm -rf grelintb
+}
+if  [ -f /etc/debian_version ]; then
+    update
+elif [ -f /etc/fedora-release ]; then
+    wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
+    dnf update grelintb.rpm -y
+    rm grelintb.rpm
+elif  [ -f /etc/solus-release ]; then
+    update
+elif  [ -f /etc/arch-release ]; then
+    update
 fi
 echo -e "GrelinTB updated. Exiting with status 0..."
 exit 0
