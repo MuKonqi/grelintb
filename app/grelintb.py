@@ -31,7 +31,7 @@ if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isf
 import sys
 
 if "root" in sys.argv[1:]:
-    if os.getuid() == 0:
+    if os.getuid() != 0:
         exit("Root rights are required for this feature.")
     if "pcrename" in sys.argv[2:]:
         with open("/etc/hostname", "w") as pcname:
@@ -58,17 +58,20 @@ except:
     if os.path.isfile(debian):
         os.system("pkexec apt install python3-tk -y")
     elif os.path.isfile(fedora):
-        os.system("pkexec dnf install python3-tkinter -y")
+        os.system("pkexec dnf install --nogpgcheck python3-tkinter -y")
     elif os.path.isfile(solus):
         os.system("pkexec eopkg install python3-tkinter -y")
     elif os.path.isfile(arch):
         os.system("pkexec pacman -S tk --noconfirm")
+    from tkinter import messagebox as mb
+    from tkinter import filedialog as fd
+    from tkinter import PhotoImage as pi
 if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
     print("Installing Pip...")
     if os.path.isfile(debian):
         os.system("pkexec apt install python3-pip -y")
     elif os.path.isfile(fedora):
-        os.system("pkexec dnf install python3-pip -y")
+        os.system("pkexec dnf install --nogpgcheck python3-pip -y")
     elif os.path.isfile(solus):
         os.system("pkexec eopkg install pip -y")
     elif os.path.isfile(arch):
@@ -83,7 +86,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install customtkinter --break-system-packages ; grelintb")
-    exit()
+        exit()
 try:
     import psutil
 except:
@@ -94,7 +97,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install psutil --break-system-packages ; grelintb")
-    exit()
+        exit()
 try:
     import distro
 except:
@@ -105,7 +108,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install distro --break-system-packages ; grelintb")
-    exit()
+        exit()
 
 username = getpass.getuser()
 config = "/home/"+username+"/.config/grelintb/"
@@ -158,6 +161,8 @@ elif os.path.isfile(green):
     ui.set_default_color_theme("green")
 elif os.path.isfile(random):
     ui.set_default_color_theme(rd.choice(["blue", "dark-blue", "green"]))
+if "set-version" in sys.argv[1:]:
+    version_current = sys.argv[2]
 
 def update_status():
     if process_number <= 0:
@@ -282,7 +287,7 @@ class Sidebar(ui.CTkFrame):
         if os.path.isfile(en):
             self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.license_and_credits_b = ui.CTkButton(self, text="License and Credits", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.license_and_credits_b = ui.CTkButton(self, text="License and Credit", command=self.license_and_credit, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
@@ -310,7 +315,7 @@ class Sidebar(ui.CTkFrame):
         elif os.path.isfile(tr):
             self.version_b = ui.CTkButton(self, text=f"Sürüm: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Krediler", command=self.license_and_credits, fg_color="transparent", text_color=("gray14", "gray84"))
+            self.license_and_credits_b = ui.CTkButton(self, text="Lisans ve Kredi", command=self.license_and_credit, fg_color="transparent", text_color=("gray14", "gray84"))
             self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
@@ -370,28 +375,22 @@ class Sidebar(ui.CTkFrame):
         self.textbox.configure(state="disabled")
         self.label.grid(row=0, column=0, sticky="nsew", pady=10)
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
-    def license_and_credits(self):
+    def license_and_credit(self):
         self.window = ui.CTkToplevel()
         self.window.geometry("540x540")
         self.window.minsize(540, 540)
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.window.title("License and Credits")
+            self.window.title("License and Credit")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
-            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credits")
+            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Credit")
             self.button1 = ui.CTkButton(self.window, text="Google Material Symbols (for application icon)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))    
-            self.button2 = ui.CTkButton(self.window, text="wttr.in (for getting weather forecast in startup section)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="Lolcat (for colorful commands in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button4 = ui.CTkButton(self.window, text="Neofetch (for getting system information in terminal)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
         elif os.path.isfile(tr):
-            self.window.title("Lisans ve Krediler")
+            self.window.title("Lisans ve Kredi")
             self.label1 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
-            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Krediler")
+            self.label2 = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Kredi")
             self.button1 = ui.CTkButton(self.window, text="Google Material Symbols (uygulama ikonu için)", command=lambda:subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True))  
-            self.button2 = ui.CTkButton(self.window, text="wttr.in (başlangıç bölümünde hava durumunu almak için)", command=lambda:subprocess.Popen("xdg-open https://github.com/chubin/wttr.in", shell=True))
-            self.button3 = ui.CTkButton(self.window, text="Lolcat (terminalde renkli komutlar için)", command=lambda:subprocess.Popen("xdg-open https://github.com/busyloop/lolcat", shell=True))
-            self.button4 = ui.CTkButton(self.window, text="Neofetch (terminalde sistem bilgilerini almak için)", command=lambda:subprocess.Popen("xdg-open https://github.com/dylanaraps/neofetch", shell=True))
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as license_file:
             license_text = license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -400,10 +399,7 @@ class Sidebar(ui.CTkFrame):
         self.label1.grid(row=0, column=0, sticky="nsew", pady=(10, 5))
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=20)
         self.label2.grid(row=2, column=0, sticky="nsew", pady=(10, 0))
-        self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=5)
-        self.button2.grid(row=4, column=0, sticky="nsew", padx=50, pady=5)
-        self.button3.grid(row=5, column=0, sticky="nsew", padx=50, pady=5)
-        self.button4.grid(row=6, column=0, sticky="nsew", padx=50, pady=(5, 10))
+        self.button1.grid(row=3, column=0, sticky="nsew", padx=50, pady=(5, 10))
     def check_update(self, string: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -512,53 +508,57 @@ class Sidebar(ui.CTkFrame):
             elif os.path.isfile(tr):
                 mb.showwarning("Uyarı", "Şu anda çalışan hiçbir işlem yok.")
 
-class Startup(ui.CTkScrollableFrame):
+class Startup(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.scrollable = ui.CTkScrollableFrame(self, fg_color="transparent")
+        self.scrollable.grid(row=0, column=0, sticky="nsew")
+        self.scrollable.grid_columnconfigure((0, 1, 2, 3), weight=1)
         if os.path.isfile(en):
-            self.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+            self.scrollable.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+            self.weather = ui.CTkLabel(self.scrollable, text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
+            self.system = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
+            self.hostname = ui.CTkLabel(self.scrollable, text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+            self.distro = ui.CTkLabel(self.scrollable, text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+            self.kernel = ui.CTkLabel(self.scrollable, text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+            self.uptime = ui.CTkLabel(self.scrollable, text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+            self.boot_time = ui.CTkLabel(self.scrollable, text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+            self.usages = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
+            self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
+            self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.swap_usage = ui.CTkLabel(self.scrollable, text=f"Swap: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
             self.refresh_button = ui.CTkButton(self, text="Refresh", command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
-            self.weather = ui.CTkLabel(self, text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
-            self.system = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname = ui.CTkLabel(self, text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro = ui.CTkLabel(self, text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel = ui.CTkLabel(self, text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime = ui.CTkLabel(self, text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time = ui.CTkLabel(self, text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage = ui.CTkLabel(self, text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage = ui.CTkLabel(self, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage = ui.CTkLabel(self, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage = ui.CTkLabel(self, text=f"Swap: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
         elif os.path.isfile(tr):
-            self.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-            self.refresh_button = ui.CTkButton(self, text="Yenile", command=self.refresh, label_font=ui.CTkFont(size=15, weight="bold"))
-            self.weather = ui.CTkLabel(self, text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
-            self.system = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname = ui.CTkLabel(self, text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro = ui.CTkLabel(self, text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel = ui.CTkLabel(self, text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime = ui.CTkLabel(self, text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time = ui.CTkLabel(self, text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage = ui.CTkLabel(self, text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage = ui.CTkLabel(self, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage = ui.CTkLabel(self, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage = ui.CTkLabel(self, text=f"Takas: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-        self.refresh_button.grid(row=0, column=0, pady=0, columnspan=4)
-        self.weather.grid(row=1, column=0, pady=10, columnspan=4)
-        self.system.grid(row=2, column=0, pady=(0, 7.5), columnspan=4)
-        self.hostname.grid(row=3, column=0, pady=(0, 7.5), columnspan=4)
-        self.distro.grid(row=4, column=0, pady=(0, 7.5), columnspan=4)
-        self.kernel.grid(row=5, column=0, pady=(0, 7.5), columnspan=4)
-        self.uptime.grid(row=6, column=0, pady=(0, 7.5), columnspan=4)
-        self.boot_time.grid(row=7, column=0, pady=(0, 10), columnspan=4)
-        self.usages.grid(row=8, column=0, pady=(0, 7.5), columnspan=4)
-        self.cpu_usage.grid(row=9, column=0, pady=(0, 10))
-        self.disk_usage.grid(row=9, column=1, pady=(0, 10))
-        self.ram_usage.grid(row=9, column=2, pady=(0, 10))
-        self.swap_usage.grid(row=9, column=3, pady=(0, 10))
+            self.scrollable.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+            self.weather = ui.CTkLabel(self.scrollable, text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
+            self.system = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
+            self.hostname = ui.CTkLabel(self.scrollable, text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+            self.distro = ui.CTkLabel(self.scrollable, text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+            self.kernel = ui.CTkLabel(self.scrollable, text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+            self.uptime = ui.CTkLabel(self.scrollable, text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+            self.boot_time = ui.CTkLabel(self.scrollable, text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+            self.usages = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
+            self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
+            self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.swap_usage = ui.CTkLabel(self.scrollable, text=f"Takas: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+            self.refresh_button = ui.CTkButton(self, text="Yenile", command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
+        self.weather.grid(row=0, column=0, pady=(0, 10), columnspan=4)
+        self.system.grid(row=1, column=0, pady=(0, 7.5), columnspan=4)
+        self.hostname.grid(row=2, column=0, pady=(0, 7.5), columnspan=4)
+        self.distro.grid(row=3, column=0, pady=(0, 7.5), columnspan=4)
+        self.kernel.grid(row=4, column=0, pady=(0, 7.5), columnspan=4)
+        self.uptime.grid(row=5, column=0, pady=(0, 7.5), columnspan=4)
+        self.boot_time.grid(row=6, column=0, pady=(0, 10), columnspan=4)
+        self.usages.grid(row=7, column=0, pady=(0, 7.5), columnspan=4)
+        self.cpu_usage.grid(row=8, column=0, pady=(0, 10))
+        self.disk_usage.grid(row=8, column=1, pady=(0, 10))
+        self.ram_usage.grid(row=8, column=2, pady=(0, 10))
+        self.swap_usage.grid(row=8, column=3, pady=(0, 10))
+        self.refresh_button.grid(row=1, column=0, pady=(10, 0), sticky="nsew")
         self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
         self.weather_thread.start()
         self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
@@ -572,79 +572,81 @@ class Startup(ui.CTkScrollableFrame):
     def cpu_usage_def(self):
         self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
     def other_def(self, mode: str):
+        self.temps_ok = False
+        self.fans_ok = False
         if hasattr (psutil, "sensors_temperatures") and psutil.sensors_temperatures():
             self.temps_ok = True
-            self.temps_number = 10
+            self.temps_number = 9
             self.temps = psutil.sensors_temperatures()
             if os.path.isfile(en):
-                self.temps_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Temperatures", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.temps_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Temperatures", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
             elif os.path.isfile(tr):
-                self.temps_header= ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sıcaklıklar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.temps_header= ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sıcaklıklar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
             for self.temps_name, self.temps_entries in self.temps.items():
                 self.temps_number = self.temps_number + 1
                 if os.path.isfile(en):
-                    self.temps_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                    self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
                 elif os.path.isfile(tr):
-                    self.temps_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                    self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.temps_entry in self.temps_entries:
                     self.temps_number = self.temps_number + 1
                     if os.path.isfile(en): 
-                        ui.CTkLabel(self, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, High = {self.temps_entry.high} °C, Critical = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+                        ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, High = {self.temps_entry.high} °C, Critical = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
                     elif os.path.isfile(tr): 
-                        ui.CTkLabel(self, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, Yüksek = {self.temps_entry.high} °C, Kritik = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+                        ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, Yüksek = {self.temps_entry.high} °C, Kritik = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
         if hasattr (psutil, "sensors_fans") and psutil.sensors_fans():
             self.fans_ok = True
             if self.temps_ok == True:
                 self.fans_number = self.temps_number + 1
             else:
-                self.fans_number = 10
+                self.fans_number = 9
             if os.path.isfile(en):
-                self.fans_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fans", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
+                self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fans", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
             elif os.path.isfile(tr):
-                self.fans_header = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fanlar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
+                self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fanlar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
             self.fans = psutil.sensors_fans()
             for self.fans_name, self.fans_entries in self.fans.items():
                 self.fans_number = self.fans_number + 1
                 if os.path.isfile(en):
-                    self.fans_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                    self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
                 elif os.path.isfile(tr):
-                    self.fans_label = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                    self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.fans_entry in self.fans_entries:
                     self.fans_number = self.fans_number + 1
-                    ui.CTkLabel(self, text=f"{self.fans_entry.label or self.fans_name}: {self.fans_entry.current} RPM", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self.scrollable, text=f"{self.fans_entry.label or self.fans_name}: {self.fans_entry.current} RPM", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 5), columnspan=4)
         if hasattr (psutil, "sensors_battery") and psutil.sensors_battery():
             if self.fans_ok == True:
                 self.batt_number = self.fans_number + 1
             elif self.temps_ok == True:
                 self.batt_number = self.temps_number + 1
             else:
-                self.batt_number = 10
+                self.batt_number = 9
             self.batt = psutil.sensors_battery()
             if mode == "startup":
                 if os.path.isfile(en):
-                    self.header_text = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Battery", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
-                    self.charge_text = ui.CTkLabel(self, text=f"Charge: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.header_text = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Battery", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+                    self.charge_text = ui.CTkLabel(self.scrollable, text=f"Charge: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 elif os.path.isfile(tr):
-                    self.header_text = ui.CTkLabel(self, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Batarya", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
-                    self.charge_text = ui.CTkLabel(self, text=f"Şarj: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.header_text = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Batarya", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+                    self.charge_text = ui.CTkLabel(self.scrollable, text=f"Şarj: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 if self.batt.power_plugged:
                     if os.path.isfile(en):
-                        self.remaining_text = ui.CTkLabel(self, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self, text=f"Status: {str('Charging' if self.batt.percent < 100 else 'Fully Charged')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self, text=f"Plugged In: Yes", font=ui.CTkFont(size=13, weight="bold"))
+                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Status: {str('Charging' if self.batt.percent < 100 else 'Fully Charged')}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Plugged In: Yes", font=ui.CTkFont(size=13, weight="bold"))
                     elif os.path.isfile(tr):
-                        self.remaining_text = ui.CTkLabel(self, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self, text=f"Durum: {str('Şarj Oluyor' if self.batt.percent < 100 else 'Şarj Oldu')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self, text=f"Şarja Takılı: Evet", font=ui.CTkFont(size=13, weight="bold"))
+                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Durum: {str('Şarj Oluyor' if self.batt.percent < 100 else 'Şarj Oldu')}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Şarja Takılı: Evet", font=ui.CTkFont(size=13, weight="bold"))
                 else:
                     if os.path.isfile(en):
-                        self.remaining_text = ui.CTkLabel(self, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self, text=f"Status: Discharging", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self, text=f"Plugged In: No", font=ui.CTkFont(size=13, weight="bold"))
+                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Status: Discharging", font=ui.CTkFont(size=13, weight="bold"))
+                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Plugged In: No", font=ui.CTkFont(size=13, weight="bold"))
                     elif os.path.isfile(tr):
-                        self.remaining_text = ui.CTkLabel(self, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self, text=f"Durum: Şarj Azalıyor", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self, text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold"))
+                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Durum: Şarj Azalıyor", font=ui.CTkFont(size=13, weight="bold"))
+                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold"))
                 self.charge_text.grid(row=self.batt_number + 1, column=0, pady=(0, 5), columnspan=4)
                 self.remaining_text.grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
                 self.status_text.grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
@@ -674,7 +676,7 @@ class Startup(ui.CTkScrollableFrame):
                         self.plugged_text.configure(text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold"))
     def refresh(self):
         if os.path.isfile(en):
-            self.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+            self.scrollable.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
             self.weather.configure(text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
             self.system.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
             self.hostname.configure(text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
@@ -688,7 +690,7 @@ class Startup(ui.CTkScrollableFrame):
             self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
             self.swap_usage.configure(text=f"Swap: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
         elif os.path.isfile(tr):
-            self.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+            self.scrollable.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
             self.weather.configure(text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
             self.system.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
             self.hostname.configure(text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
@@ -2211,9 +2213,9 @@ class Root(ui.CTk):
         self.tabview.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
         if dt.date.today().strftime("%d/%m") == "04/12":
             if os.path.isfile(en):
-                self.title("GrelinTB - Today is developer's (MuKonqi) birthday!")
+                self.title(f"GrelinTB says at {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}: Today is developer's (MuKonqi) birthday!")
             elif os.path.isfile(tr):
-                self.title("GrelinTB - Bugün geliştiricinin (MuKonqi) doğum günü!")
+                self.title(f'Vakit {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}, GrelinTB söyler: Bugün geliştiricinin (MuKonqi) doğum günü!')
         if dt.datetime.now().weekday() == 0:
             self.check_update_thread = threading.Thread(target=lambda:Sidebar.check_update(self, "startup"), daemon=True)
             self.check_update_thread.start()
@@ -2251,7 +2253,7 @@ if __name__ == "__main__":
             print("Current version: "+version_current)
             print("Developer:       MuKonqi (Muhammed S.)")
             print("License:         GPLv3+")
-            print("Credits:         Lolcat (for colorful commands in terminal), wttr.in (for weather forecast), Google Material Symbols (for application icon)")
+            print("Credit:          Google Material Symbols (for application icon)")
             print("List of all parameters for GrelinTB:")
             print("  help:          Show this page")
             print("  grelintb:      Open website of GrelinTB's GitHub repository")
@@ -2267,7 +2269,7 @@ if __name__ == "__main__":
             print("Şimdiki sürüm:   "+version_current)
             print("Geliştirici:     MuKonqi (Muhammed S.)")
             print("Lisans:          GPLv3+")
-            print("Krediler:        Lolcat (terminalde renkli komutlar için), wttr.in (hava durumu için), Google Material Symbols (uygulama ikonu için)")            
+            print("Kredi:           Google Material Symbols (uygulama ikonu için)")            
             print("GrelinTB için tüm parametrelerin listesi:")
             print("  yardım:        Bu sayfayı göster")
             print("  grelintb:      GrelinTB'nin GitHub deposunu aç")

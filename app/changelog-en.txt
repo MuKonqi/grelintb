@@ -7,6 +7,6 @@
 - Zsh support has been added to the "Configure Bash" section. The section is now called "Configure Bash and Zsh".
 - Updated information and shortened subsection titles in the "About Some Distributions" section.
 - Improvements were made to the range sizes of the elements of the "Configure Bash and Zsh", "Change Computer Name" and "Calculator" sections.
-- Bug fixes have been made: Syntax fixes for grelintb.py under Python 3.12 and for update.sh and uninstall.sh.
-- Various minor improvements.
+- Fix minor and major errors.
+- Make various minor improvements.
 - Improved spelling in various places.

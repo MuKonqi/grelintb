@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.3.6.2
-Release:        3
+Release:        4
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
@@ -9,14 +9,41 @@ Source0:        %{name}-%{version}.tar.gz
 Requires:       python3 python3-tkinter python3-pip git curl xdg-utils
 
 %description
-GrelinTB is a great (simple, useful, fast, modern) toolbox for some Linux distributions made in Python3 and CustomTkinter.
-GrelinTB's features:
-- Sidebar for customizing GrelinTB and other good things
-- A ufeful startup page
-- Note and document editor
-- Store for basic operations and some related scripts
-- Other useful tools
-- And more
+GrelinTB's name stands for great toolbox for some Linux distributions because of these features:
+- Sidebar
+     - A button with hidden style for showing application's name for opening this repository.
+     - A button with hidden style for showing version for opening current version's changelog.
+     - A button with hidden style for opening developer's website.
+     - A button with hidden style for opening a window which showing license and credit.
+     - A button for controling updates. If new version available, get the changelog of the new version and update to new version.
+     - A button for resetting GrelinTB.
+     - A button for uninstalling GrelinTB.
+     - A list for changing color theme (random, dark blue, blue, green).
+     - A list for Changing appearance mode (system, light, dark).
+     - A list for Changing language (English, Turkish).
+     - A button for showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
+- Startup
+     - Showing warious informations (weather forecast, system, usages, fans, tempatures, battery).
+     - Refreshing these informations.
+- Notes and Documents
+     - Creating, editing, renaming, deleting notes or any documents.
+- Store
+     - Traditional Applications: Searching, installing, reinstalling, uninstalling and updating predefined and desired applications.
+     - Flatpak Applications: Searching, installing, reinstalling, uninstalling and updating desired applications.
+     - Desktop Environments and Window Managers: Installing, reinstalling, uninstalling and updating some desktop environemtns and window managers.
+     - Traditional Scripts: Updating all packages, making more complex updates, clearing package cache, removing unnecessary packages, fixing broken dependencies, showing history and listing installed packages.
+     - Flatpak Scripts: Updating all packages, removing unnecessary packages, repairing Flatpak installation, showing history and listing installed packages.
+     - Systemd Services: Getting the status of any service or enabling, disabling, starting and stopping it.
+- Tools
+     - Configuring Bash and Zsh.
+     - Changing the name of the computer.
+     - Showing some informations about some distributions.
+     - Making simple math operations (basic calculator).
+- Also
+     - GrelinTB can auto detect tr_TR locale when there is no config related with language setting. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
+     - GrelinTB can synchronize with the system theme (dark or light) when appearance setted to system.
+     - Check GrelinTB updates every Monday.
+     - Some parameters for terminal. Tip: Help page for all parameters: grelintb help
 
 %prep
 %setup -q
@@ -46,7 +73,7 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Sun Apr 7 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+* Tue Apr 16 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
 - Reduced the minimum window size from 1200x600 to 960x540.
 - Added a button to refresh information in the "Start" section.
 - Added real-time outputs to "Store" section.
@@ -56,6 +83,6 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 - Zsh support has been added to the "Configure Bash" section. The section is now called "Configure Bash and Zsh".
 - Updated information and shortened subsection titles in the "About Some Distributions" section.
 - Improvements were made to the range sizes of the elements of the "Configure Bash and Zsh", "Change Computer Name" and "Calculator" sections.
-- Bug fixes have been made: Syntax fixes for grelintb.py under Python 3.12 and for update.sh and uninstall.sh.
-- Various minor improvements.
+- Fix minor and major errors.
+- Make various minor improvements.
 - Improved spelling in various places.

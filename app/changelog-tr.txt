@@ -8,6 +8,6 @@
 - "Bazı Dağıtımlar Hakkında" bölümünde bilgiler güncellendi ve alt bölüm başlıkları kısaltıldı.
 - "Hesap Makinesi" bölümünün adı "Hesaplayıcı" oldu.
 - "Bash'ı ve Zsh'ı Yapılandır", "Bilgisayarın Adını Değiştir" ve "Hesaplayıcı" bölümlerinin elemanlarının aralık boyutlarında iyileştirmeler yapıldı.
-- Hata düzeltmeleri yapıldı: grelintb.py dosyasında Python 3.12 altı ve update.sh ile uninstall.sh dosyalarında için söz dizimi düzeltmeleri.
+- Küçük ve büyük hataları düzelt.
 - Çeşitli ufak iyileştirmeler yapıldı.
 - Çeşitli yerlerde yazım iyileştirildi.
