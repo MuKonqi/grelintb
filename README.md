@@ -13,10 +13,10 @@
 - [Also](https://github.com/MuKonqi/grelintb/wiki/#also)
 ## Installation
 
-<p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=RPM Package" alt="Latest RPM Package"></a><a href="https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh"><img src="https://img.shields.io/badge/Installer Script-5C5C5C" alt="Installer Script"></a></p>
+<p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=RPM Package" alt="Latest RPM Package"></a></p>
 
 - Warning: Install the following, although they usually come already installed: wget, sudo
-- For Fedora Linux based distributions, type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; sudo dnf install grelintb.rpm -y ; rm grelintb.rpm```
+- For Fedora Linux based distributions, install the RPM package at the top with clicking to it or type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; sudo dnf install grelintb.rpm -y ; rm grelintb.rpm```
 - For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
 ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; sudo ./install-grelintb.sh ; rm install-grelintb.sh```
 ## Gallery
