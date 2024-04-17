@@ -282,7 +282,7 @@ class Sidebar(ui.CTkFrame):
         super().__init__(master, **kwargs)
         global status
         self.grid_rowconfigure((4, 8, 15), weight=1)
-        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb/wiki", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         self.language_menu = ui.CTkOptionMenu(self, values=["English", "Türkçe"], command=self.change_language)
         if os.path.isfile(en):
             self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))

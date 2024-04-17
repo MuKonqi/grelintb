@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.3.6.2
-Release:        4
+Release:        5
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
@@ -73,7 +73,7 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Tue Apr 16 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+* Wed Apr 17 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
 - Reduced the minimum window size from 1200x600 to 960x540.
 - Added a button to refresh information in the "Start" section.
 - Added real-time outputs to "Store" section.
