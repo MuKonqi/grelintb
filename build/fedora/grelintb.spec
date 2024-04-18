@@ -37,6 +37,7 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/local/bin/grelintb/reset.sh
 /usr/local/bin/grelintb/uninstall.sh
 /usr/local/bin/grelintb/grelintb.py
+/usr/share/applications/grelintb.desktop
 /usr/bin/grelintb
 
 %changelog
