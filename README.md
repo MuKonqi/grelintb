@@ -1,11 +1,11 @@
-<p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true" alt="GrelinTB"></img></a></p>
-<p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://img.shields.io/badge/Great%20toolbox%20for%20some%20Linux%20distributions.-376296" alt="Great toolbox for some Linux distributions."></img></a></p>
+<p align="center"><a href="https://mukonqi.github.io/grelintb/index.html"><img src="https://github.com/mukonqi/grelintb/blob/main/app/icon.png?raw=true" alt="GrelinTB"></img></a></p>
+<p align="center"><a href="https://mukonqi.github.io/grelintb/index.html"><img src="https://img.shields.io/badge/Great%20toolbox%20for%20some%20Linux%20distributions.-376296" alt="Great toolbox for some Linux distributions."></img></a></p>
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://img.shields.io/github/downloads/mukonqi/grelintb/total?label=Downloads" alt="Downloads"></img></a></p>
-<p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=Latest Release" alt="GitHub Release"></a></p>
+<p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=Latest Release" alt="GitHub Release"></a></p>
 
 ## Features
 ### Sidebar
-- A button with hidden style for showing application's name for opening this repository.
+- A button with hidden style for showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).
 - A button with hidden style for showing version for opening current version's changelog.
 - A button with hidden style for opening [developer's website](https://mukonqi.github.io).
 - A button with hidden style for opening a window which showing license.
@@ -43,7 +43,7 @@
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm"><img src="https://img.shields.io/badge/Download%20RPM-A4A62A" alt="Download RPM"></a></p>
 
 - Warning: Install the following, although they usually come already installed: wget, sudo
-- For Fedora Linux based distributions, install the RPM package at the top with clicking to it or type the following into the terminal: ```wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm ; sudo dnf install grelintb.rpm -y ; rm grelintb.rpm```
+- For Fedora Linux based distributions, install the RPM package at the top with clicking to it.
 - For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
 ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; sudo ./install-grelintb.sh ; rm install-grelintb.sh```
 ## GrelinTB vs MetterXP

@@ -278,7 +278,7 @@ class Sidebar(ui.CTkFrame):
         super().__init__(master, **kwargs)
         global status
         self.grid_rowconfigure((5, 9, 13), weight=1)
-        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         if os.path.isfile(en):
             self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
@@ -1986,11 +1986,11 @@ class ComputerName(ui.CTkFrame):
             computername = file.read()
         if os.path.isfile(en):
             self.label = ui.CTkLabel(self, text="Computer's current name: "+computername)
-            self.entry = ui.CTkEntry(self, placeholder_text="Enter a new name for computer.")
+            self.entry = ui.CTkEntry(self, placeholder_text="New Name For Computer")
             self.button = ui.CTkButton(self, text="Apply", command=self.apply)
         elif os.path.isfile(tr):
             self.label = ui.CTkLabel(self, text="Bilgisayarın mevcut ismi: "+computername)
-            self.entry = ui.CTkEntry(self, placeholder_text="Bilgisayar için yeni bir isim girin.")
+            self.entry = ui.CTkEntry(self, placeholder_text="Bilgisayar İçin Yeni Ad")
             self.button = ui.CTkButton(self, text="Uygula", command=self.apply)
         self.label.grid(row=0, column=0, sticky="nsew", padx=10, pady=(10, 0))
         self.entry.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
@@ -2338,7 +2338,7 @@ if __name__ == "__main__":
             print("  kaldır:        GrelinTB'yı kaldır")
             exit("                 GrelinTB'yi normal olarak aç (varsayılan)")
     elif "grelintb" in sys.argv[1:]:
-        subprocess.Popen("xdg-open https://github.com/mukonqi/grelintb", shell=True)
+        subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
         exit()
     elif "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as cl_primary_file:

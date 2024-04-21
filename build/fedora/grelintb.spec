@@ -1,5 +1,5 @@
 Name:           grelintb
-Version:        1.4.0
+Version:        1.4.1
 Release:        1
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
@@ -41,14 +41,8 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Thu Apr 18 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
-- Removed the text for configuration in the sidebar and embedded it in the list elements.
-- Renewed changelog screen.
-- Renewed license screen.
-- Separated license and credit.
-- Added button for about credit.
-- Minor improvements to the list of all transactions section.
-- Fixed various bugs.
-- Created a new file for reset: reset.sh
-- Split changelogs into 3 and removed the Turkish changelog.
-- Changed version naming system. From now on, major (radical changes) will be the 1st digit of the version number, major (new features) releases will be the 2nd digit of the version number, and minor (bug fixes and very minor innovations) will be the 3rd digit of the version number. Release number will probably always be 1. There was no such order in the past.
+* Sun Apr 21 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+- Change GrelinTB's link to <https://mukonqi.github.io/grelintb/index.html>.
+- Change icon's background.
+- Change entry's placeholder text in change computer's name feature.
+- Improve major and primary changelog.

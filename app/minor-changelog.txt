@@ -1,1 +1,4 @@
-- There is no minor changelog for now.
+- Change GrelinTB's link to <https://mukonqi.github.io/grelintb/index.html>.
+- Change icon's background.
+- Change entry's placeholder text in change computer's name feature.
+- Improve major and primary changelog.

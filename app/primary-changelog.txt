@@ -1,1 +1,1 @@
-- First stable primary release.
+- Release first stable primary version.
