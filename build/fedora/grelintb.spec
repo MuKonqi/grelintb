@@ -1,5 +1,5 @@
 Name:           grelintb
-Version:        1.4.1
+Version:        1.4.2
 Release:        1
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
@@ -41,8 +41,9 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Sun Apr 21 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
-- Change GrelinTB's link to <https://mukonqi.github.io/grelintb/index.html>.
-- Change icon's background.
-- Change entry's placeholder text in change computer's name feature.
-- Improve major and primary changelog.
+* Sun Apr 28 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+- Disable writing in output in store when waiting for new line.
+- Check the exit code of the processes in the store section. If it is 0, show a information messagebox if not, show a error messagebox.
+- Increase f-strings instead of string with + operators.
+- Revisit commands in the store section.
+- Improve shell scripts.

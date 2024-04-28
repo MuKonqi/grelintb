@@ -25,7 +25,7 @@ fedora = "/etc/fedora-release"
 solus = "/etc/solus-release"
 arch = "/etc/arch-release"
 
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and not os.path.isfile(arch):
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and os.path.isfile(arch):
     exit("The distribution you are using is not supported from GrelinTB. Exiting...")
 
 import sys
@@ -56,26 +56,26 @@ try:
 except:
     print("Installing Tkinter...")
     if os.path.isfile(debian):
-        os.system("pkexec apt install python3-tk -y")
+        os.system("pkexec apt -y install python3-tk")
     elif os.path.isfile(fedora):
-        os.system("pkexec dnf install --nogpgcheck python3-tkinter -y")
+        os.system("pkexec dnf -y --nogpgcheck install python3-tkinter")
     elif os.path.isfile(solus):
-        os.system("pkexec eopkg install python3-tkinter -y")
+        os.system("pkexec eopkg -y install python3-tkinter")
     elif os.path.isfile(arch):
-        os.system("pkexec pacman -S tk --noconfirm")
+        os.system("pkexec pacman --noconfirm -S tk")
     from tkinter import messagebox as mb
     from tkinter import filedialog as fd
     from tkinter import PhotoImage as pi
 if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
     print("Installing Pip...")
     if os.path.isfile(debian):
-        os.system("pkexec apt install python3-pip -y")
+        os.system("pkexec apt -y install python3-pip")
     elif os.path.isfile(fedora):
-        os.system("pkexec dnf install --nogpgcheck python3-pip -y")
+        os.system("pkexec dnf -y --nogpgcheck install python3-pip")
     elif os.path.isfile(solus):
-        os.system("pkexec eopkg install pip -y")
+        os.system("pkexec eopkg -y install pip")
     elif os.path.isfile(arch):
-        os.system("pkexec pacman -S python-pip --noconfirm")
+        os.system("pkexec pacman --noconfirm -S python-pip")
 try:
     import customtkinter as ui
 except:
@@ -111,41 +111,41 @@ except:
         exit()
 
 username = getpass.getuser()
-config = "/home/"+username+"/.config/grelintb/"
-notes = "/home/"+username+"/Notes/"
-en = "/home/"+username+"/.config/grelintb/language/en.txt"
-tr = "/home/"+username+"/.config/grelintb/language/tr.txt"
-system = "/home/"+username+"/.config/grelintb/theme/system.txt"
-light = "/home/"+username+"/.config/grelintb/theme/light.txt"
-dark = "/home/"+username+"/.config/grelintb/theme/dark.txt"
-random = "/home/"+username+"/.config/grelintb/color/random.txt"
-dark_blue = "/home/"+username+"/.config/grelintb/color/dark_blue.txt"
-blue = "/home/"+username+"/.config/grelintb/color/blue.txt"
-green = "/home/"+username+"/.config/grelintb/color/green.txt"
+config = f"/home/{username}/.config/grelintb/"
+notes = f"/home/{username}/Notes/"
+en = f"/home/{username}/.config/grelintb/language/en.txt"
+tr = f"/home/{username}/.config/grelintb/language/tr.txt"
+system = f"/home/{username}/.config/grelintb/theme/system.txt"
+light = f"/home/{username}/.config/grelintb/theme/light.txt"
+dark = f"/home/{username}/.config/grelintb/theme/dark.txt"
+random = f"/home/{username}/.config/grelintb/color/random.txt"
+dark_blue = f"/home/{username}/.config/grelintb/color/dark_blue.txt"
+blue = f"/home/{username}/.config/grelintb/color/blue.txt"
+green = f"/home/{username}/.config/grelintb/color/green.txt"
 process_number = 0
 current_operations = []
 
 if not os.path.isdir(config):
-    os.system("cd /home/"+username+"/.config ; mkdir grelintb")
-if not os.path.isdir(config+"language/") or (not os.path.isfile(en) and not os.path.isfile(tr)):
+    os.system(f"cd /home/{username}/.config ; mkdir grelintb")
+if not os.path.isdir(f"{config}language/") or (not os.path.isfile(en) and not os.path.isfile(tr)):
     if locale.getlocale()[0] == "tr_TR":
-        os.system("cd "+config+" ; mkdir language ; cd language ; touch tr.txt")
+        os.system(f"cd {config} ; mkdir language ; cd language ; touch tr.txt")
     else:
-        os.system("cd "+config+" ; mkdir language ; cd language ; touch en.txt")
-if not os.path.isdir(config+"theme/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
-    os.system("cd "+config+" ; mkdir theme ; cd theme ; touch system.txt")
-if not os.path.isdir(config+"color/") or (not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
-    os.system("cd "+config+" ; mkdir color ; cd color ; touch random.txt")
+        os.system(f"cd {config} ; mkdir language ; cd language ; touch en.txt")
+if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
+    os.system(f"cd {config} ; mkdir theme ; cd theme ; touch system.txt")
+if not os.path.isdir(f"{config}color/") or (not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
+    os.system(f"cd {config} ; mkdir color ; cd color ; touch random.txt")
 if not os.path.isdir(notes):
-    os.system("cd /home/"+username+" ; mkdir Notes")
+    os.system(f"cd /home/{username} ; mkdir Notes")
 if not os.path.isfile(f"/home/{username}/.bashrc"):
-    os.system("cd /home/"+username+" ; touch .bashrc")
+    os.system(f"cd /home/{username} ; touch .bashrc")
 if not os.path.isfile(f"/home/{username}/.zshrc"):
-    os.system("cd /home/"+username+" ; touch .zshrc")
-if not os.path.isfile("/home/"+username+"/.bashrc-first-grelintb.bak"):
-    os.system("cd /home/"+username+" ; cp .bashrc .bashrc-first-grelintb.bak")
-if not os.path.isfile("/home/"+username+"/.zshrc-first-grelintb.bak"):
-    os.system("cd /home/"+username+" ; cp .zshrc .zshrc-first-grelintb.bak")
+    os.system(f"cd /home/{username} ; touch .zshrc")
+if not os.path.isfile(f"/home/{username}/.bashrc-first-grelintb.bak"):
+    os.system(f"cd /home/{username} ; cp .bashrc .bashrc-first-grelintb.bak")
+if not os.path.isfile(f"/home/{username}/.zshrc-first-grelintb.bak"):
+    os.system(f"cd /home/{username} ; cp .zshrc .zshrc-first-grelintb.bak")
 
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
@@ -197,9 +197,9 @@ def install_app(appname: str, packagename: str):
     global ask_a
     global process_number
     if os.path.isfile(en):
-        ask_a = mb.askyesno("Warning", appname+" can't found on your system.\nWe can try installing "+appname+" to your computer.\nDo you approve it?")
+        ask_a = mb.askyesno("Warning", f"{appname} can't found on your system.\nWe can try installing {appname} to your computer.\nDo you approve it?")
     elif os.path.isfile(tr):
-        ask_a = mb.askyesno("Uyarı", appname+" sisteminizde bulunamadı.\nBiz sisteminize "+appname+" yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+        ask_a = mb.askyesno("Uyarı", f"{appname} sisteminizde bulunamadı.\nBiz sisteminize {appname} yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
     if ask_a == True:
         time_process = str(time.strftime("%H:%M:%S", time.localtime()))
         if os.path.isfile(en):
@@ -207,22 +207,22 @@ def install_app(appname: str, packagename: str):
         elif os.path.isfile(tr):
             add_operation(f"{appname} Kuruluyor", time_process)
         if os.path.isfile(debian):
-            cmd = os.system('pkexec apt install '+packagename+' -y')
+            cmd = os.system(f'fkexec apt -y install {packagename}')
         elif os.path.isfile(fedora):
-            cmd = os.system('pkexec dnf install --nogpgcheck '+packagename+' -y')
+            cmd = os.system(f'pkexec dnf -y --nogpgcheck install {packagename}')
         elif os.path.isfile(solus):
-            cmd = os.system('pkexec eopkg install '+packagename+' -y')
+            cmd = os.system(f'pkexec eopkg -y install {packagename}')
         elif os.path.isfile(arch):
-            cmd = os.system('pkexec pacman -S '+packagename+' --noconfirm')
+            cmd = os.system(f'pkexec pacman --noconfirm -S  {packagename}')
         if os.path.isfile(en):
             delete_operation(f"Installing {appname}", time_process)
         elif os.path.isfile(tr):
             delete_operation(f"{appname} Kuruluyor", time_process)
     elif ask_a == False:
         if os.path.isfile(en):
-            mb.showerror("Error", appname+" installation ve process cancelled.")
+            mb.showerror("Error", f"{appname} installation ve process cancelled.")
         elif os.path.isfile(tr):
-            mb.showerror("Hata", appname+" kurulumu ve işlem iptal edildi.")
+            mb.showerror("Hata", f"{appname} kurulumu ve işlem iptal edildi.")
 def install_flatpak():
     global ask_f
     global process_number
@@ -237,17 +237,17 @@ def install_flatpak():
         elif os.path.isfile(tr):
             add_operation(f"Flatpak Kuruluyor", time_process)
         if os.path.isfile(debian):
-            cmd1 = os.system('pkexec apt install flatpak -y')
+            cmd1 = os.system('pkexec apt -y install flatpak')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
             restart_system()
         elif os.path.isfile(fedora):
             cmd1 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
         elif os.path.isfile(solus):
-            cmd1 = os.system('pkexec eopkg install flatpak -y')
+            cmd1 = os.system('pkexec eopkg -y install flatpak')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
             restart_system()
         elif os.path.isfile(arch):
-            cmd1 = os.system('pkexec pacman -S flatpak --noconfirm')
+            cmd1 = os.system('pkexec pacman --noconfirm -S flatpak')
             restart_system()
         if os.path.isfile(en):
             delete_operation(f"Installing Flatpak", time_process)
@@ -269,9 +269,14 @@ def ask_restart_for_grelintb_ui(mode: str):
         os.system("grelintb")
 def main_successful():
     if os.path.isfile(en):
-        mb.showinfo("Information","Process completed.")
+        mb.showinfo("Information","Process has been completed.")
     elif os.path.isfile(tr):
         mb.showinfo("Bilgilendirme","İşlem tamamlandı.")
+def main_error():
+    if os.path.isfile(en):
+        mb.showerror("Error", "Process has been completed with error.")
+    elif os.path.isfile(tr):
+        mb.showerror("Hata", "İşlem hatayla tamamlandı.")
 
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -487,14 +492,14 @@ class Sidebar(ui.CTkFrame):
         if os.path.isfile(en):
             self.reset_b.configure(text="Resetting", state="disabled")
             os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Successful", "GrelinTB has been reset.")
             self.reset_b.configure(text="Reset", state="disabled")
             ask_restart_for_grelintb_ui("en")
         elif os.path.isfile(tr):
             self.reset_b.configure(text="Sıfırlanıyor", state="disabled")
             os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Başarılı", "GrelinTB sıfırlandı.")
             self.reset_b.configure(text="Sıfırlandı", state="disabled")
             ask_restart_for_grelintb_ui("tr")
@@ -502,37 +507,37 @@ class Sidebar(ui.CTkFrame):
         root.destroy()
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Successful","GrelinTB has been uninstalled.")
         elif os.path.isfile(tr):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Bilgilendirme","GrelinTB kaldırıldı.")
         exit()
     def change_color(self, new_color: str):
         if new_color == "Color: Random" or new_color == "Renk: Rastgele":
-            os.system("rm "+config+"color/* ; touch "+config+"color/random.txt")
+            os.system(f"rm {config}color/* ; touch {config}color/random.txt")
         elif new_color == "Color: Dark Blue" or new_color == "Renk: Koyu Mavi":
-            os.system("rm "+config+"color/* ; touch "+config+"color/dark_blue.txt")
+            os.system(f"rm {config}color/* ; touch {config}color/dark_blue.txt")
         elif new_color == "Color: Blue" or new_color == "Renk: Mavi":
-            os.system("rm "+config+"color/* ; touch "+config+"color/blue.txt")
+            os.system(f"rm {config}color/* ; touch {config}color/blue.txt")
         elif new_color == "Color: Green" or new_color == "Renk: Yeşil":
-            os.system("rm "+config+"color/* ; touch "+config+"color/green.txt")
+            os.system(f"rm {config}color/* ; touch {config}color/green.txt")
         ask_restart_for_grelintb_ui("normal")
     def change_theme(self, new_theme: str):
         if new_theme == "Theme: System" or new_theme == "Tema: Sistem":
             ui.set_appearance_mode("System")
-            os.system("rm "+config+"theme/* ; touch "+config+"theme/system.txt")
+            os.system(f"rm {config}theme/* ; touch {config}theme/system.txt")
         elif new_theme == "Theme: Light" or new_theme == "Tema: Açık":
             ui.set_appearance_mode("Light")
-            os.system("rm "+config+"theme/* ; touch "+config+"theme/light.txt")
+            os.system(f"rm {config}theme/* ; touch {config}theme/light.txt")
         elif new_theme == "Theme: Dark" or new_theme == "Tema: Koyu":
             ui.set_appearance_mode("Dark")
-            os.system("rm "+config+"theme/* ; touch "+config+"theme/dark.txt")
+            os.system(f"rm {config}theme/* ; touch {config}theme/dark.txt")
     def change_language(self, new_language: str):
         if new_language == "Language: English" or new_language == "Dil: İngilizce":
-            os.system("rm "+config+"language/* ; touch "+config+"language/en.txt")
+            os.system(f"rm {config}language/* ; touch {config}language/en.txt")
         elif new_language == "Language: Turkish" or new_language == "Dil: Türkçe":
-            os.system("rm "+config+"language/* ; touch "+config+"language/tr.txt")
+            os.system(f"rm {config}language/* ; touch {config}language/tr.txt")
         ask_restart_for_grelintb_ui("normal")
     def show_operations(self):
         if current_operations != []:
@@ -960,9 +965,9 @@ class TraditionalPackages(ui.CTkFrame):
         self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(10, 0))
     def name_error(self):
         if os.path.isfile(en):
-            mb.showerror("Error", "Please select application from list or enter packages name below.")
+            mb.showerror("Error", "Please select application from list or enter packages name.")
         elif os.path.isfile(tr):
-            mb.showerror("Hata", "Lütfen listeden uygulama seçin ya da aşağıda paketlerin adını girin.")
+            mb.showerror("Hata", "Lütfen listeden uygulama seçin ya da paket adları girin.")
     def option(self, package: str):
         if package == "Application" or package == "Uygulama":
             self.name_error()
@@ -1006,54 +1011,58 @@ class TraditionalPackages(ui.CTkFrame):
                 add_operation(f"{self.entry.get()} Güncelleniyor", self.time)
         if os.path.isfile(debian):
             if operation == "search":
-                self.command = f"apt search {self.entry.get()}"
+                self.command = f"apt -y search {self.entry.get()}"
             elif operation == "install":
-                self.command = f"pkexec apt install -y {self.entry.get()}"
+                self.command = f"pkexec apt -y install {self.entry.get()}"
             elif operation == "reinstall":
-                self.command = f"pkexec apt reinstall -y {self.entry.get()}"
+                self.command = f"pkexec apt -y reinstall {self.entry.get()}"
             elif operation == "uninstall":
-                self.command = f"pkexec apt autoremove --purge -y {self.entry.get()}"
+                self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
             elif operation == "update":
-                self.command = f"pkexec apt update -y {self.entry.get()}"
+                self.command = f"pkexec apt -y update {self.entry.get()}"
         elif os.path.isfile(fedora):
             if operation == "search":
-                self.command = f"dnf search {self.entry.get()}"
+                self.command = f"dnf -y --nogpgcheck search {self.entry.get()}"
             elif operation == "install":
-                self.command = f"pkexec dnf install --nogpgcheck -y {self.entry.get()}"
+                self.command = f"pkexec dnf -y --nogpgcheck install {self.entry.get()}"
             elif operation == "reinstall":
-                self.command = f"pkexec dnf reinstall --nogpgcheck -y {self.entry.get()}"
+                self.command = f"pkexec dnf -y --nogpgcheck reinstall {self.entry.get()}"
             elif operation == "uninstall":
-                self.command = f"pkexec dnf remove --nogpgcheck -y {self.entry.get()}"
+                self.command = f"pkexec dnf -y --nogpgcheck remove {self.entry.get()}"
             elif operation == "update":
-                self.command = f"pkexec dnf update --nogpgcheck -y {self.entry.get()}"
+                self.command = f"pkexec dnf -y --nogpgcheck update {self.entry.get()}"
         elif os.path.isfile(solus):
             if operation == "search":
-                self.command = f"eopkg search {self.entry.get()}"
+                self.command = f"eopkg -y search {self.entry.get()}"
             elif operation == "install":
-                self.command = f"pkexec eopkg install -y {self.entry.get()}"
+                self.command = f"pkexec eopkg -y install {self.entry.get()}"
             elif operation == "reinstall":
-                self.command = f"pkexec eopkg install --reinstall -y {self.entry.get()}"
+                self.command = f"pkexec eopkg -y install --reinstall {self.entry.get()}"
             elif operation == "uninstall":
-                self.command = f"pkexec eopkg remove --purge -y {self.entry.get()}"
+                self.command = f"pkexec eopkg -y remove --purge {self.entry.get()}"
             elif operation == "update":
-                self.command = f"pkexec eopkg upgrade -y {self.entry.get()}"
+                self.command = f"pkexec eopkg -y upgrade {self.entry.get()}"
         elif os.path.isfile(arch):
             if operation == "search":
-                self.command = f"pacman -Ss {self.entry.get()}"
+                self.command = f"pacman --noconfirm -Ss {self.entry.get()}"
             elif operation == "install" or operation == "reinstall":
-                self.command = f"pkexec pacman -S --noconfirm {self.entry.get()}"
+                self.command = f"pkexec pacman --noconfirm -S {self.entry.get()}"
             elif operation == "uninstall":
-                self.command = f"pkexec pacman -Rns --noconfirm {self.entry.get()}"
+                self.command = f"pkexec pacman --noconfirm -Rns {self.entry.get()}"
             elif operation == "update":
-                self.command = f"pkexec pacman -Syu --noconfirm {self.entry.get()}"
+                self.command = f"pkexec pacman --noconfirm -Syu {self.entry.get()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
+        self.textbox.configure(state="disabled")
         with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
             for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
-        self.textbox.configure(state="disabled")
+                self.textbox.configure(state="disabled")            
         if os.path.isfile(en):
             if operation == "search":
                 delete_operation(f"Searching {self.entry.get()}", self.time)
@@ -1083,7 +1092,10 @@ class TraditionalPackages(ui.CTkFrame):
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
-        main_successful()
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1124,9 +1136,9 @@ class FlatpakPackages(ui.CTkFrame):
     def do_main(self, operation: str):
         if self.entry.get() == "":
             if os.path.isfile(en):
-                mb.showerror("Error", "Please enter packages name below.")
+                mb.showerror("Error", "Please enter packages name.")
             elif os.path.isfile(tr):
-                mb.showerror("Hata", "Lütfen paketlerin adını girin.")
+                mb.showerror("Hata", "Lütfen paket adları girin.")
             return
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
             install_flatpak()
@@ -1164,21 +1176,25 @@ class FlatpakPackages(ui.CTkFrame):
         if operation == "search":
             self.command = f"flatpak search {self.entry.get()}"
         elif operation == "install":
-            self.command = f"flatpak install -y {self.entry.get()}"
+            self.command = f"flatpak install {self.entry.get()}"
         elif operation == "reinstall":
-            self.command = f"flatpak install --reinstall -y '{self.entry.get()}"
+            self.command = f"flatpak install --reinstall '{self.entry.get()}"
         elif operation == "uninstall":
-            self.command = f"flatpak uninstall -y {self.entry.get()}"
+            self.command = f"flatpak uninstall {self.entry.get()}"
         elif operation == "update":
-            self.command = f"flatpak update -y '{self.entry.get()}"
+            self.command = f"flatpak update '{self.entry.get()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
+        self.textbox.configure(state="disabled")
         with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
             for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
-        self.textbox.configure(state="disabled")
+                self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "search":
                 delete_operation(f"Searching {self.entry.get()} (Flatpak)", self.time)
@@ -1207,7 +1223,10 @@ class FlatpakPackages(ui.CTkFrame):
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
-        main_successful()
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1279,86 +1298,111 @@ class DEWM(ui.CTkFrame):
         if os.path.isfile(debian):
             if self.dewm.get().lower() != "mate":
                 if operation == "install":
-                    self.command = f"pkexec apt install {self.dewm.get().lower()}"
+                    self.command = f"pkexec apt -y install {self.dewm.get().lower()}"
                 elif operation == "reinstall":
-                    self.command = f"pkexec apt install --reinstall {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec apt -y install --reinstall {self.dewm.get().lower()}"
                 elif operation == "uninstall":
-                    self.command = f"pkexec apt autoremove --purge {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec apt -y autoremove --purge {self.dewm.get().lower()}"
                 elif operation == "update":
-                    self.command = f"pkexec apt upgrade {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec apt -y upgrade {self.dewm.get().lower()}"
             elif self.dewm.get().lower() == "mate":
                 if operation == "install":
-                    self.command = f"pkexec apt install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
+                    self.command = f"pkexec apt -y install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
                 elif operation == "reinstall":
-                    self.command = f"pkexec apt install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
+                    self.command = f"pkexec apt -y install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
                 elif operation == "uninstall":
-                    self.command = f"pkexec apt autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
+                    self.command = f"pkexec apt -y autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
                 elif operation == "update":
-                    self.command = f"pkexec apt upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra -y"
+                    self.command = f"pkexec apt -y upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
         elif os.path.isfile(fedora):
             if self.dewm.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
                 if operation == "install":
-                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck install @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck reinstall @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck remove @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uodate":
-                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck @{self.dewm.get().lower()}-desktop-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck upgrade @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
                 if operation == "install":
-                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck install {self.dewm.get().lower()}-desktop ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck reinstall {self.dewm.get().lower()}-desktop ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck remove {self.dewm.get().lower()}-desktop ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "update":
-                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck {self.dewm.get().lower()}-desktop -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck upgrade {self.dewm.get().lower()}-desktop ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() == "GNOME":
                 if operation == "install":
-                    self.command = f"pkexec bash -c 'dnf install --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck install @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "reinstall":
-                    self.command = f"pkexec bash -c 'dnf reinstall --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck reinstall @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "uninstall":
-                    self.command = f"pkexec bash -c 'dnf remove --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck remove @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == "update":
-                    self.command = f"pkexec bash -c 'dnf upgrade --nogpgcheck @workstation-product-environment -y ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"             
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"             
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"             
         elif os.path.isfile(solus):
             if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == "install":
-                    self.command = f"pkexec eopkg install -c desktop.{self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
                 elif operation == "reinstall":
-                    self.command = f"pkexec eopkg install --reinstall -c desktop.{self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
                 elif operation == "uninstall":
-                    self.command = f"pkexec eopkg remove --purge -c desktop.{self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
                 elif operation == "update":
-                    self.command = f"pkexec eopkg upgrade -c desktop.{self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
             else:
                 if operation == "install":
-                    self.command = f"pkexec eopkg install {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
                 elif operation == "reinstall":
-                    self.command = f"pkexec eopkg install --reinstall {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
                 elif operation == "uninstall":
-                    self.command = f"pkexec eopkg remove --purge {self.dewm.get().lower()} -y"
+                    self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
                 elif operation == "update":
-                    self.command = f"pkexec eopkg upgrade {self.dewm.get().lower()} -y"        
+                    self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"        
+                    self.command = f"pkexec bash -c 'dnf -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"              
+        elif os.path.isfile(solus):
+            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
+                if operation == "install":
+                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
+                elif operation == "reinstall":
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
+                elif operation == "uninstall":
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
+                elif operation == "update":
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
+            else:
+                if operation == "install":
+                    self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
+                elif operation == "reinstall":
+                    self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
+                elif operation == "uninstall":
+                    self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
+                elif operation == "update":
+                    self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"        
         elif os.path.isfile(arch):
             if operation == "install":
-                self.command = f"pkexec pacman -S {self.dewm.get().lower()} --noconfirm"
+                self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
             elif operation == "reinstall":
-                self.command = f"pkexec pacman -S {self.dewm.get().lower()} --noconfirm"
+                self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
             elif operation == "uninstall":
-                self.command = f"pkexec pacman -Rns {self.dewm.get().lower()} --noconfirm"
+                self.command = f"pkexec pacman --noconfirm -Rns {self.dewm.get().lower()}"
             elif operation == "update":
-                self.command = f"pkexec pacman -Syu {self.dewm.get().lower()} --noconfirm"
+                self.command = f"pkexec pacman --noconfirm -Syu {self.dewm.get().lower()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
+        self.textbox.configure(state="disabled")
         with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
             for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
-        self.textbox.configure(state="disabled")
+                self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "install":
                 delete_operation(f"Installing {self.dewm.get()}", self.time)
@@ -1382,7 +1426,10 @@ class DEWM(ui.CTkFrame):
         self.button2.configure(state="normal")
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
-        main_successful()
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1415,7 +1462,7 @@ class TraditionalScripts(ui.CTkFrame):
             self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("remove"))
             self.button5 = ui.CTkButton(self.frame, text="Bozuk Bağımlılıkları Düzelt", command=lambda:self.go_main("fix"))
             self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
-            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))            
+            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))        
         if os.path.isfile(solus):
             self.button2.configure(state="disabled")
             self.button5.configure(state="disabled")
@@ -1467,68 +1514,72 @@ class TraditionalScripts(ui.CTkFrame):
                 add_operation(f"Kurulu Paketler Alınıyor", self.time)
         if os.path.isfile(debian):
             if operation == "update":
-                self.command = 'pkexec apt upgrade -y'
+                self.command = 'pkexec apt -y upgrade'
             elif operation == "dist_update":
-                self.command = 'pkexec apt dist-upgrade -y'
+                self.command = 'pkexec apt -y dist-upgrade'
             elif operation == "clean":
-                self.command = 'pkexec apt-get autoclean -y'
+                self.command = 'pkexec apt-get -y- autoclean'
             elif operation == "remove":
-                self.command = 'pkexec apt autoremove -y'
+                self.command = 'pkexec apt -y autoremove'
             elif operation == "fix":
-                self.command = 'pkexec bash -c "apt-get install -f -y ; dpkg --configure -a ; aptitude install -y"'
+                self.command = 'pkexec bash -c "apt-get -y install -f ; dpkg --configure -a ; aptitude -y install"'
             elif operation == "history":
                 self.command = 'cat /var/log/dpkg.log'
             elif operation == "list":
                 self.command = 'dpkg --list | grep ^i'
         elif os.path.isfile(fedora):
             if operation == "update":
-                self.command = 'pkexec dnf upgrade -y'
+                self.command = 'pkexec dnf -y --nogpgcheck upgrade'
             elif operation == "dist_update":
-                self.command = 'pkexec dnf distro-sync -y'
+                self.command = 'pkexec dnf -y --nogpgcheck distro-sync'
             elif operation == "clean":
-                self.command = 'pkexec dnf clean all -y'
+                self.command = 'pkexec dnf -y --nogpgcheck clean all'
             elif operation == "remove":
-                self.command = 'pkexec dnf autoremove -y'
+                self.command = 'pkexec dnf -y --nogpgcheck autoremove'
             elif operation == "fix":
-                self.command = 'pkexec dnf repoquery --unsatisfied -y'
+                self.command = 'pkexec dnf -y --nogpgcheck repoquery --unsatisfied'
             elif operation == "history":
-                self.command = 'dnf history'
+                self.command = 'dnf -y --nogpgcheck history'
             elif operation == "list":
-                self.command = 'dnf list installed'
+                self.command = 'dnf -y --nogpgcheck list installed'
         elif os.path.isfile(solus):
             if operation == "update":
-                self.command = 'pkexec eopkg upgrade -y'
+                self.command = 'pkexec eopkg -y upgrade'
             elif operation == "clean":
-                self.command = 'pkexec eopkg dc -y'
+                self.command = 'pkexec eopkg -y dc'
             elif operation == "remove":
-                self.command = 'pkexec eopkg rmf -y'
+                self.command = 'pkexec eopkg -y rmf'
             elif operation == "history":
-                self.command = 'eopkg history'
+                self.command = 'eopkg -y history'
             elif operation == "list":
-                self.command = 'eopkg list-installed'
+                self.command = 'eopkg -y list-installed'
         elif os.path.isfile(arch):
             if operation == "update":
-                self.command = 'pkexec pacman -Syu --noconfirm'
+                self.command = 'pkexec pacman --noconfirm -Syu'
             elif operation == "dist_update":
-                self.command = 'pkexec pacman -Syu --noconfirm'
+                self.command = 'pkexec pacman --noconfirm -Syu'
             elif operation == "clean":
-                self.command = 'pkexec pacman -Scc --noconfirm'
+                self.command = 'pkexec pacman --noconfirm -Scc'
             elif operation == "remove":
-                self.command = 'pacman -Qdtq | pacman -Rs - --noconfirm'
+                self.command = 'pacman --noconfirm -Qdtq | pacman --noconfirm -Rs -'
             elif operation == "fix":
-                self.command = 'pacman -Dk'
+                self.command = 'pacman --noconfirm -Dk'
             elif operation == "history":
                 self.command = 'cat /var/log/pacman.log'
             elif operation == "list":
-                self.command = 'pacman -Q'
+                self.command = 'pacman --noconfirm -Q'
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
+        self.textbox.configure(state="disabled")
         with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
             for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
-        self.textbox.configure(state="disabled")
+                self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "update":
                 delete_operation(f"Updating All Packages", self.time)
@@ -1566,7 +1617,10 @@ class TraditionalScripts(ui.CTkFrame):
         self.button5.configure(state="normal")
         self.button6.configure(state="normal")
         self.button7.configure(state="normal")
-        main_successful()
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1624,7 +1678,7 @@ class FlatpakScripts(ui.CTkFrame):
             elif operation == "list":
                 add_operation(f"Getting Installed Packages (Flatpak)", self.time)
         elif os.path.isfile(tr):
-            if operation == "updat -ye":
+            if operation == "update -y":
                 add_operation(f"Tüm Paketler Güncelleniyor (Flatpak)", self.time)
             elif operation == "uninstall --unused -y":
                 add_operation(f"Gereksiz Paketler Kaldırılıyor (Flatpak)", self.time)
@@ -1644,12 +1698,16 @@ class FlatpakScripts(ui.CTkFrame):
                 return
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
+        self.textbox.configure(state="disabled")
         with subprocess.Popen(f"flatpak {operation}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
             for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
-        self.textbox.configure(state="disabled")
+                self.textbox.configure(state="disabled")
         if os.path.isfile(en):
             if operation == "update -y":
                 delete_operation(f"Updating All Packages (Flatpak)", self.time)
@@ -1662,7 +1720,7 @@ class FlatpakScripts(ui.CTkFrame):
             elif operation == "list":
                 delete_operation(f"Getting Installed Packages (Flatpak)", self.time)
         elif os.path.isfile(tr):
-            if operation == "updat -ye":
+            if operation == "update -y":
                 delete_operation(f"Tüm Paketler Güncelleniyor (Flatpak)", self.time)
             elif operation == "uninstall --unused -y":
                 delete_operation(f"Gereksiz Paketler Kaldırılıyor (Flatpak)", self.time)
@@ -1677,7 +1735,10 @@ class FlatpakScripts(ui.CTkFrame):
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
-        main_successful()
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1697,18 +1758,18 @@ class SystemdServices(ui.CTkFrame):
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Service Name")
-            self.button1 = ui.CTkButton(self.frame, text="Status", command=lambda:self.go_main("status"))
-            self.button2 = ui.CTkButton(self.frame, text="Enable", command=lambda:self.go_main("enable"))
-            self.button3 = ui.CTkButton(self.frame, text="Disable", command=lambda:self.go_main("disable"))
-            self.button4 = ui.CTkButton(self.frame, text="Start", command=lambda:self.go_main("start"))
-            self.button5 = ui.CTkButton(self.frame, text="Stop", command=lambda:self.go_main("stop"))
+            self.button1 = ui.CTkButton(self.frame, text="Status", command=lambda:self.go_main(["", "status"]))
+            self.button2 = ui.CTkButton(self.frame, text="Enable", command=lambda:self.go_main(["pkexec", "enable"]))
+            self.button3 = ui.CTkButton(self.frame, text="Disable", command=lambda:self.go_main(["pkexec", "disable"]))
+            self.button4 = ui.CTkButton(self.frame, text="Start", command=lambda:self.go_main(["pkexec", "start"]))
+            self.button5 = ui.CTkButton(self.frame, text="Stop", command=lambda:self.go_main(["pkexec", "start"]))
         elif os.path.isfile(tr):
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Servis Adı")
-            self.button1 = ui.CTkButton(self.frame, text="Durum", command=lambda:self.go_main("status"))
-            self.button2 = ui.CTkButton(self.frame, text="Aktifleştir", command=lambda:self.go_main("enable"))
-            self.button3 = ui.CTkButton(self.frame, text="Devre Dışı Bırak", command=lambda:self.go_main("disable"))
-            self.button4 = ui.CTkButton(self.frame, text="Başlat", command=lambda:self.go_main("start"))
-            self.button5 = ui.CTkButton(self.frame, text="Durdur", command=lambda:self.go_main("stop"))
+            self.button1 = ui.CTkButton(self.frame, text="Durum", command=lambda:self.go_main(["", "status"]))
+            self.button2 = ui.CTkButton(self.frame, text="Aktifleştir", command=lambda:self.go_main(["pkexec", "enable"]))
+            self.button3 = ui.CTkButton(self.frame, text="Devre Dışı Bırak", command=lambda:self.go_main(["pkexec", "disable"]))
+            self.button4 = ui.CTkButton(self.frame, text="Başlat", command=lambda:self.go_main(["pkexec", "start"]))
+            self.button5 = ui.CTkButton(self.frame, text="Durdur", command=lambda:self.go_main(["pkexec", "start"]))
         self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button1.grid(row=1, column=0, sticky="nsew", pady=5, padx=(10, 0))
         self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
@@ -1718,20 +1779,26 @@ class SystemdServices(ui.CTkFrame):
     def do_main(self, operation: str):
         if self.entry.get() == "":
             if os.path.isfile(en):
-                mb.showerror("Error", "Please enter service name below.")
+                mb.showerror("Error", "Please enter service name.")
             elif os.path.isfile(tr):
                 mb.showerror("Hata", "Lütfen servis adı girin.")
             return
-        self.textbox.configure(state="disabled")
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
-        with subprocess.Popen(f"pkexec bash -c 'SYSTEMD_COLORS=0 systemctl {operation} {self.entry.get()}'", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.insert("end", self.out)
-            for self.err in self.run_command.stderr:
-                self.textbox.insert("end", self.err)
         self.textbox.configure(state="disabled")
-        main_successful()
+        with subprocess.Popen(f"{operation[0]} bash -c 'SYSTEMD_COLORS=0 systemctl {operation[1]} {self.entry.get()}'", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.textbox.configure(state="normal")
+                self.textbox.insert("end", self.out)
+                self.textbox.configure(state="disabled")
+            for self.err in self.run_command.stderr:
+                self.textbox.configure(state="normal")
+                self.textbox.insert("end", self.err)
+                self.textbox.configure(state="disabled")
+        if self.run_command.returncode == 0:
+            main_successful()
+        else:
+            main_error()
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1907,7 +1974,7 @@ class BashZshFile(ui.CTkFrame):
         self.var = ui.StringVar(value="bash")
         self.option = ui.CTkSwitch(self, text="Bash / Zsh", offvalue="bash", onvalue="zsh", command=self.switch, variable=self.var)
         self.option.grid(row=0, column=0, sticky="ns", padx=0, pady=2.5)
-        with open("/home/"+username+"/.bashrc", "r") as self.bashrc:
+        with open(f"/home/{username}/.bashrc", "r") as self.bashrc:
             self.content = self.bashrc.read()
         self.textbox.insert("0.0", self.content)
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
@@ -1920,27 +1987,27 @@ class BashZshFile(ui.CTkFrame):
         if self.var.get() == "bash":
             if not os.path.isfile("/usr/bin/bash") and not os.path.isfile("/bin/bash"):
                 install_app("Bash", "bash")
-            with open("/home/"+username+"/.bashrc", "r") as self.bashrc:
+            with open(f"/home/{username}/.bashrc", "r") as self.bashrc:
                 self.content = self.bashrc.read()
         elif self.var.get() == "zsh":
             if not os.path.isfile("/usr/bin/zsh") and not os.path.isfile("/bin/zsh"):
                 install_app("Zsh", "zsh")
-            with open("/home/"+username+"/.zshrc", "r") as self.zshrc:
+            with open(f"/home/{username}/.zshrc", "r") as self.zshrc:
                 self.content = self.zshrc.read()
         self.textbox.delete("0.0", 'end')
         self.textbox.insert("0.0", self.content)
     def save(self):
         if self.var.get() == "bash":
-            os.system("cp /home/"+username+"/.bashrc /home/"+username+"/.bashrc-grelintb.bak")
-            with open("/home/"+username+"/.bashrc", "w+") as self.file:
+            os.system(f"cp /home/{username}/.bashrc /home/{username}/.bashrc-grelintb.bak")
+            with open(f"/home/{username}/.bashrc", "w+") as self.file:
                 self.file.write(self.textbox.get("0.0", 'end'))
-            with open("/home/"+username+"/.bashrc") as self.file:
+            with open(f"/home/{username}/.bashrc") as self.file:
                 self.output = self.file.read()
         elif self.var.get() == "zsh":
-            os.system("cp /home/"+username+"/.zshrc /home/"+username+"/.zshrc-grelintb.bak")
-            with open("/home/"+username+"/.zshrc", "w+") as self.file:
+            os.system(f"cp /home/{username}/.zshrc /home/{username}/.zshrc-grelintb.bak")
+            with open(f"/home/{username}/.zshrc", "w+") as self.file:
                 self.file.write(self.textbox.get("0.0", 'end'))
-            with open("/home/"+username+"/.zshrc") as self.file:
+            with open(f"/home/{username}/.zshrc") as self.file:
                 self.output = self.file.read()
         if self.output == self.textbox.get("0.0", 'end'):
             if os.path.isfile(en):
@@ -1961,9 +2028,9 @@ class BashZsh(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, fg_color="transparent")
         self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         if os.path.isfile(f"/home/{username}/.bashrc"):
-            os.system("cd /home/"+username+" ; cp .bashrc .bashrc-session-grelintb.bak")
+            os.system(f"cd /home/{username} ; cp .bashrc .bashrc-session-grelintb.bak")
         if os.path.isfile(f"/home/{username}/.zshrc"):
-            os.system("cd /home/"+username+" ; cp .zshrc .zshrc-session-grelintb.bak")
+            os.system(f"cd /home/{username} ; cp .zshrc .zshrc-session-grelintb.bak")
         if os.path.isfile(en):
             self.buttons_tab = self.tabview.add("Options")
             self.file_tab = self.tabview.add("File")
@@ -2167,8 +2234,8 @@ class Calculator(ui.CTkFrame):
             self.button12 = ui.CTkButton(self, text="Temizle", command=lambda:self.entry.delete(0, "end")).grid(row=3, column=3, sticky="nsew", pady=2.5, padx=2.5)
         self.entry = ui.CTkEntry(self)
         self.history_text = ui.CTkTextbox(self, fg_color="transparent")
-        if os.path.isfile("/home/"+username+"/.calc-history-grelintb.txt"):
-            with open("/home/"+username+"/.calc-history-grelintb.txt", "r") as self.file:
+        if os.path.isfile(f"/home/{username}/.calc-history-grelintb.txt"):
+            with open(f"/home/{username}/.calc-history-grelintb.txt", "r") as self.file:
                 self.output = self.file.read()
             self.history_text.insert("0.0", self.output)
         self.history_text.configure(state="disabled")
@@ -2197,9 +2264,9 @@ class Calculator(ui.CTkFrame):
             self.result = str(eval(self.entry.get()))
             self.entry.delete(0, "end")
             self.entry.insert(0, self.result)
-            with open("/home/"+username+"/.calc-history-grelintb.txt", "a+") as self.file:
+            with open(f"/home/{username}/.calc-history-grelintb.txt", "a+") as self.file:
                 self.file.write(self.process+"="+self.result+"\n")
-            with open("/home/"+username+"/.calc-history-grelintb.txt", "r") as self.file:
+            with open(f"/home/{username}/.calc-history-grelintb.txt", "r") as self.file:
                 self.output = self.file.read()
             self.history_text.configure(state="normal")
             self.history_text.delete("0.0", "end")
@@ -2211,7 +2278,7 @@ class Calculator(ui.CTkFrame):
             elif os.path.isfile(tr):
                 mb.showerror("Hata", "Muhtemel sözdizimi hatası: "+str(e)+"\nLütfen tekrar deneyin.")
     def delete_history(self):
-        subprocess.Popen("rm /home/"+username+"/.calc-history-grelintb.txt", shell=True)
+        subprocess.Popen(f"rm /home/{username}/.calc-history-grelintb.txt", shell=True)
         self.history_text.configure(state="normal")
         self.history_text.delete("0.0", "end")
         self.history_text.configure(state="disabled")
@@ -2315,8 +2382,8 @@ if __name__ == "__main__":
             print("  developer:     Open website of GrelinTB developer")
             print("  license:       Show license text of GPLv3")
             print("  credit:        Open website of the credit")
-            print("  reset:         Reset GrelinTB")
             print("  update:        Update GrelinTB")
+            print("  reset:         Reset GrelinTB")
             print("  uninstall:     Uninstall GrelinTB")  
             exit("                 Start GrelinTB normally (default)")
         elif os.path.isfile(tr):
@@ -2333,8 +2400,8 @@ if __name__ == "__main__":
             print("  geliştirici:   GrelinTB geliştiricisinin internet sitesini aç")
             print("  lisans:        GPLv3 lisansının metnini göster")
             print("  kredi:         Kredinin internet sitesini aç")
-            print("  sıfırla:       GrelinTB'yı sıfırla")
             print("  güncelle:      GrelinTB'yı güncelle")
+            print("  sıfırla:       GrelinTB'yı sıfırla")
             print("  kaldır:        GrelinTB'yı kaldır")
             exit("                 GrelinTB'yi normal olarak aç (varsayılan)")
     elif "grelintb" in sys.argv[1:]:
@@ -2361,14 +2428,6 @@ if __name__ == "__main__":
     elif "credit" in sys.argv[1:] or "kredi" in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
         exit()
-    elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
-        os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-        if os.path.isfile(en):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
-            exit("GrelinTB has been reset.")
-        elif os.path.isfile(tr):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
-            exit("GrelinTB sıfırlandı.")
     elif "update" in sys.argv[1:] or "güncelle" in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -2394,13 +2453,21 @@ if __name__ == "__main__":
                 exit("GrelinTB is up to date.")
             elif os.path.isfile(tr):
                 exit("GrelinTB güncel.")
+    elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
+        os.system("pkexec /usr/local/bin/grelintb/reset.sh")
+        if os.path.isfile(en):
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
+            exit("GrelinTB has been reset.")
+        elif os.path.isfile(tr):
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
+            exit("GrelinTB sıfırlandı.")
     elif "uninstall" in sys.argv[1:] or "kaldır" in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             exit("GrelinTB has been uninstalled.")
         elif os.path.isfile(tr):
-            os.system("rm -rf /home/"+username+"/.config/grelintb")
+            os.system(f"rm -rf /home/{username}/.config/grelintb")
             exit("GrelinTB kaldırıldı.")
     else:
         root = Root(className="grelintb")
