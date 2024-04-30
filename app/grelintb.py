@@ -19,6 +19,7 @@ with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
     version_current = version_file.readline()
 
 import os
+import sys
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -29,11 +30,10 @@ if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isf
     print("The distribution you are using is not supported from GrelinTB.\nPlease use Debian GNU/Linux, Fedora Linux, Solus and Arch Linux based distributions for GrelinTB. (1)")
     sys.exit(1)
 
-import sys
-
 if "root" in sys.argv[1:]:
     if os.getuid() != 0:
-        exit("Root rights are required for this feature.")
+        print("Root rights are required for this feature. (3)")
+        sys.exit(3)
     if "pcrename" in sys.argv[2:]:
         with open("/etc/hostname", "w") as pcname:
             pcname.write(str(sys.argv[3]))
@@ -2389,7 +2389,7 @@ if __name__ == "__main__":
             print("  update:        Update GrelinTB")
             print("  reset:         Reset GrelinTB")
             print("  uninstall:     Uninstall GrelinTB")  
-            exit("                 Start GrelinTB normally (default)")
+            print("                 Start GrelinTB normally (default)")
         elif os.path.isfile(tr):
             print(" Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)")
             print("Bu GrelinTB'nin yardım sayfasıdır.")
@@ -2407,7 +2407,8 @@ if __name__ == "__main__":
             print("  güncelle:      GrelinTB'yı güncelle")
             print("  sıfırla:       GrelinTB'yı sıfırla")
             print("  kaldır:        GrelinTB'yı kaldır")
-            exit("                 GrelinTB'yi normal olarak aç (varsayılan)")
+            print("                 GrelinTB'yi normal olarak aç (varsayılan)")
+        sys.exit(0)
     elif "grelintb" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
         sys.exit(0)
@@ -2419,16 +2420,18 @@ if __name__ == "__main__":
         with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as cl_minor_file:
             cl_minor_text = cl_minor_file.read()
         if os.path.isfile(en):
-            exit(f" Primary Changelog For {version_current}\n{cl_primary_text}\n\n Major Changelog For {version_current}\n{cl_major_text}\n\n Minor Changelog For {version_current}\n{cl_minor_text}")
+            print(f" Primary Changelog For {version_current}\n{cl_primary_text}\n\n Major Changelog For {version_current}\n{cl_major_text}\n\n Minor Changelog For {version_current}\n{cl_minor_text}")
         elif os.path.isfile(tr):
-            exit(f" {version_current} İçin Birincil Değişiklik Günlüğü\n{cl_primary_text}\n\n {version_current} İçin Major Değişiklik Günlüğü\n{cl_major_text}\n\n {version_current} İçin Minor Değişiklik Günlüğü\n{cl_minor_text}")
+            print(f" {version_current} İçin Birincil Değişiklik Günlüğü\n{cl_primary_text}\n\n {version_current} İçin Major Değişiklik Günlüğü\n{cl_major_text}\n\n {version_current} İçin Minor Değişiklik Günlüğü\n{cl_minor_text}")
+        sys.exit(0)
     elif "developer" in sys.argv[1:] or "geliştirici" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
         sys.exit(0)
     elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
-        exit(f"\n{l_text}")
+        print(f"\n{l_text}")
+        sys.exit(0)
     elif "credit" in sys.argv[1:] or "kredi" in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
         sys.exit(0)
@@ -2444,35 +2447,38 @@ if __name__ == "__main__":
             if question.lower() == "y" or question.lower() == "e":
                 os.system("pkexec /usr/local/bin/grelintb/update.sh")
                 if os.path.isfile(en):
-                    exit("GrelinTB updated.")
+                    print("GrelinTB updated.")
                 elif os.path.isfile(tr):
-                    exit("GrelinTB güncellendi.")
+                    print("GrelinTB güncellendi.")
             elif question.lower() == "n" or question.lower() == "h":
                 if os.path.isfile(en):
-                    exit("Update cancelled.")
+                    print("Update cancelled.")
                 elif os.path.isfile(tr):
-                    exit("Güncelleme iptal edildi.")                
+                    print("Güncelleme iptal edildi.")                
         else:
             if os.path.isfile(en):
-                exit("GrelinTB is up to date.")
+                print("GrelinTB is up to date.")
             elif os.path.isfile(tr):
-                exit("GrelinTB güncel.")
+                print("GrelinTB güncel.")
+        sys.exit(0)
     elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB reset.")
+            print("GrelinTB reset.")
         elif os.path.isfile(tr):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB sıfırlandı.")
+            print("GrelinTB sıfırlandı.")
+        sys.exit(0)
     elif "uninstall" in sys.argv[1:] or "kaldır" in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB uninstalled.")
+            print("GrelinTB uninstalled.")
         elif os.path.isfile(tr):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB kaldırıldı.")
+            print("GrelinTB kaldırıldı.")
+        sys.exit(0)
     else:
         root = Root(className="grelintb")
         root.mainloop()

@@ -7,4 +7,4 @@
 - Fix various bugs.
 - Create a new file for reset: reset.sh
 - Seperate changelogs into 3 and removed the Turkish changelog.
-- Change version naming system. From now on, primary (radical changes) will be the 1st digit of the version number, major (new features) releases will be the 2nd digit of the version number, and minor (bug fixes and very minor innovations) will be the 3rd digit of the version number. Release number will probably always be 1. There was no such order in the past.
+- Change version naming system. From now on, primary (radical changes) will be the 1st digit of the version number, major (new features) releases will be the 2nd digit of the version number, and minor (major bug fixes and very minor innovations) will be the 3rd digit of the version number. Release number will probably always be 1. There was no such order in the past.
