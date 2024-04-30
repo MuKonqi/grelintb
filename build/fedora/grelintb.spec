@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.4.2
-Release:        1
+Release:        2
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
@@ -41,9 +41,8 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Sun Apr 28 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
-- Disable writing in output in store when waiting for new line.
-- Check the exit code of the processes in the store section. If it is 0, show a information messagebox if not, show a error messagebox.
-- Increase f-strings instead of string with + operators.
-- Revisit commands in the store section.
-- Improve shell scripts.
+* Tue Apr 30 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+- Improve note saving experience in "Notes and Documents".
+- Change exit()'s to sys.exit()'s.
+- Fix some errors in "Store" for Debian GNU/Linux based distributions.
+- Fix some grammer errors.

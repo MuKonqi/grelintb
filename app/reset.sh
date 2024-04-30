@@ -87,7 +87,7 @@ function update {
     cp grelintb/app/grelintb.desktop /usr/share/applications/
     cp grelintb/app/* /usr/local/bin/grelintb/
     rm -rf grelintb
-    echo -e "GrelinTB has been updated."
+    echo -e "GrelinTB updated."
     exit 0
 }
 if [ -f /etc/debian_version ]; then
@@ -99,7 +99,7 @@ elif [ -f /etc/fedora-release ]; then
     dnf -y --nogpgcheck update grelintb.rpm
     dnf -y --nogpgcheck reinstall grelintb.rpm
     rm grelintb.rpm
-    echo -e "GrelinTB has been updated."
+    echo -e "GrelinTB updated."
     exit 0
 elif [ -f /etc/solus-release ]; then
     eopkg -y install python3 python3-tkinter pip git curl xdg-utils

@@ -26,7 +26,8 @@ solus = "/etc/solus-release"
 arch = "/etc/arch-release"
 
 if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and os.path.isfile(arch):
-    exit("The distribution you are using is not supported from GrelinTB. Exiting...")
+    print("The distribution you are using is not supported from GrelinTB.\nPlease use Debian GNU/Linux, Fedora Linux, Solus and Arch Linux based distributions for GrelinTB. (1)")
+    sys.exit(1)
 
 import sys
 
@@ -36,9 +37,10 @@ if "root" in sys.argv[1:]:
     if "pcrename" in sys.argv[2:]:
         with open("/etc/hostname", "w") as pcname:
             pcname.write(str(sys.argv[3]))
-    exit()
+    sys.exit(0)
 elif os.getuid() == 0:
-    exit("GrelinTB already asks you for root rights when the need arises. Exiting...") 
+    print("GrelinTB already asks you for root rights when the need arises. (2)")
+    sys.exit(2)
 
 import locale
 import getpass
@@ -86,7 +88,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install customtkinter --break-system-packages ; grelintb")
-        exit()
+        sys.exit(0)
 try:
     import psutil
 except:
@@ -97,7 +99,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install psutil --break-system-packages ; grelintb")
-        exit()
+        sys.exit(0)
 try:
     import distro
 except:
@@ -108,7 +110,7 @@ except:
     except:
         print("Installing CustomTkinter with --break-system-packages parameter...")
         os.system("pip install distro --break-system-packages ; grelintb")
-        exit()
+        sys.exit(0)
 
 username = getpass.getuser()
 config = f"/home/{username}/.config/grelintb/"
@@ -269,12 +271,12 @@ def ask_restart_for_grelintb_ui(mode: str):
         os.system("grelintb")
 def main_successful():
     if os.path.isfile(en):
-        mb.showinfo("Information","Process has been completed.")
+        mb.showinfo("Information","Process completed.")
     elif os.path.isfile(tr):
         mb.showinfo("Bilgilendirme","İşlem tamamlandı.")
 def main_error():
     if os.path.isfile(en):
-        mb.showerror("Error", "Process has been completed with error.")
+        mb.showerror("Error", "Process completed with error.")
     elif os.path.isfile(tr):
         mb.showerror("Hata", "İşlem hatayla tamamlandı.")
 
@@ -421,7 +423,7 @@ class Sidebar(ui.CTkFrame):
             if string == "sidebar":
                 self.update_b.configure(text="Updating", state="disabled")
             os.system("pkexec /usr/local/bin/grelintb/update.sh")
-            mb.showinfo("Successful", "GrelinTB has been updated.")
+            mb.showinfo("Successful", "GrelinTB updated.")
             if string == "sidebar":
                 self.update_b.configure(text="Updated", state="disabled")
         elif os.path.isfile(tr):
@@ -493,7 +495,7 @@ class Sidebar(ui.CTkFrame):
             self.reset_b.configure(text="Resetting", state="disabled")
             os.system("pkexec /usr/local/bin/grelintb/reset.sh")
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Successful", "GrelinTB has been reset.")
+            mb.showinfo("Successful", "GrelinTB reset.")
             self.reset_b.configure(text="Reset", state="disabled")
             ask_restart_for_grelintb_ui("en")
         elif os.path.isfile(tr):
@@ -508,11 +510,11 @@ class Sidebar(ui.CTkFrame):
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Successful","GrelinTB has been uninstalled.")
+            mb.showinfo("Successful","GrelinTB uninstalled.")
         elif os.path.isfile(tr):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Bilgilendirme","GrelinTB kaldırıldı.")
-        exit()
+        sys.exit(0)
     def change_color(self, new_color: str):
         if new_color == "Color: Random" or new_color == "Renk: Rastgele":
             os.system(f"rm {config}color/* ; touch {config}color/random.txt")
@@ -826,7 +828,7 @@ class NotesAndDocuments(ui.CTkFrame):
         self.entry.insert(0, f"{notes}{self.new_name}")
         self.notes = os.listdir(notes)
         if os.path.isfile(en):
-            mb.showinfo("Information", f"The note was created.")
+            mb.showinfo("Information", f"The note created.")
             self.list.configure(values=["List Of Your Notes"] + self.notes)
         elif os.path.isfile(tr):
             mb.showinfo("Bilgilendirme", f"Not oluşturuldu.")
@@ -879,6 +881,8 @@ class NotesAndDocuments(ui.CTkFrame):
             mb.showinfo("Bilgilendirme", f"Not ya da belge {self.new_name} olarak yeniden adlandırıldı.")
             self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
     def save(self):
+        if self.entry.get() == "":
+            self.new_note()
         with open(self.entry.get(), "w+") as self.file:
             self.file.write(self.content.get("0.0", 'end'))
         with open(self.entry.get()) as self.file:
@@ -1015,11 +1019,11 @@ class TraditionalPackages(ui.CTkFrame):
             elif operation == "install":
                 self.command = f"pkexec apt -y install {self.entry.get()}"
             elif operation == "reinstall":
-                self.command = f"pkexec apt -y reinstall {self.entry.get()}"
+                self.command = f"pkexec apt -y install --reinstall {self.entry.get()}"
             elif operation == "uninstall":
                 self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
             elif operation == "update":
-                self.command = f"pkexec apt -y update {self.entry.get()}"
+                self.command = f"pkexec apt -y upgrade {self.entry.get()}"
         elif os.path.isfile(fedora):
             if operation == "search":
                 self.command = f"dnf -y --nogpgcheck search {self.entry.get()}"
@@ -2406,7 +2410,7 @@ if __name__ == "__main__":
             exit("                 GrelinTB'yi normal olarak aç (varsayılan)")
     elif "grelintb" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
-        exit()
+        sys.exit(0)
     elif "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as cl_primary_file:
             cl_primary_text = cl_primary_file.read()
@@ -2420,14 +2424,14 @@ if __name__ == "__main__":
             exit(f" {version_current} İçin Birincil Değişiklik Günlüğü\n{cl_primary_text}\n\n {version_current} İçin Major Değişiklik Günlüğü\n{cl_major_text}\n\n {version_current} İçin Minor Değişiklik Günlüğü\n{cl_minor_text}")
     elif "developer" in sys.argv[1:] or "geliştirici" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
-        exit()
+        sys.exit(0)
     elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
         exit(f"\n{l_text}")
     elif "credit" in sys.argv[1:] or "kredi" in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
-        exit()
+        sys.exit(0)
     elif "update" in sys.argv[1:] or "güncelle" in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -2440,12 +2444,12 @@ if __name__ == "__main__":
             if question.lower() == "y" or question.lower() == "e":
                 os.system("pkexec /usr/local/bin/grelintb/update.sh")
                 if os.path.isfile(en):
-                    exit("GrelinTB has been updated.")
+                    exit("GrelinTB updated.")
                 elif os.path.isfile(tr):
                     exit("GrelinTB güncellendi.")
             elif question.lower() == "n" or question.lower() == "h":
                 if os.path.isfile(en):
-                    exit("Update has been cancelled.")
+                    exit("Update cancelled.")
                 elif os.path.isfile(tr):
                     exit("Güncelleme iptal edildi.")                
         else:
@@ -2457,7 +2461,7 @@ if __name__ == "__main__":
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB has been reset.")
+            exit("GrelinTB reset.")
         elif os.path.isfile(tr):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
             exit("GrelinTB sıfırlandı.")
@@ -2465,7 +2469,7 @@ if __name__ == "__main__":
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
-            exit("GrelinTB has been uninstalled.")
+            exit("GrelinTB uninstalled.")
         elif os.path.isfile(tr):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
             exit("GrelinTB kaldırıldı.")
