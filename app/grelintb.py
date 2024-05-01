@@ -819,7 +819,7 @@ class NotesAndDocuments(ui.CTkFrame):
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             if os.path.isfile(en) and mode == "new-note":
-                mb.showwarning("Uyarı", "Taking a new note canceled.")
+                mb.showwarning("Warning", "Taking a new note canceled.")
             elif os.path.isfile(tr) and mode == "new-note":
                 mb.showwarning("Uyarı", "Yeni bir not alma iptal edildi.")
             return
