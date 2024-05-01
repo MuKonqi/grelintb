@@ -2355,7 +2355,7 @@ class Root(ui.CTk):
                 self.title(f"GrelinTB says at {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}: Today is developer's (MuKonqi) birthday!")
             elif os.path.isfile(tr):
                 self.title(f'Vakit {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}, GrelinTB söyler: Bugün geliştiricinin (MuKonqi) doğum günü!')
-        if dt.datetime.now().weekday() == 2:
+        if dt.datetime.now().weekday() == 0:
             self.check_update_thread = threading.Thread(target=lambda:Sidebar.check_update(self, "startup"), daemon=True)
             self.check_update_thread.start()
         if os.path.isfile(en):
