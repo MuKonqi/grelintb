@@ -785,7 +785,7 @@ class NotesAndDocuments(ui.CTkFrame):
         if os.path.isfile(en):
             self.list = ui.CTkOptionMenu(self.options, values=["List Of Your Notes"]+ self.notes, command=self.option)
             self.entry = ui.CTkEntry(self.options, placeholder_text="Name")
-            self.button1 = ui.CTkButton(self.options, text="Take A New Note", command=self.new_note)
+            self.button1 = ui.CTkButton(self.options, text="Take A New Note", command=lambda:self.new_note("new-note"))
             self.button2 = ui.CTkButton(self.options, text="Open", command=self.open)
             self.button3 = ui.CTkButton(self.options, text="Rename", command=self.rename)
             self.button4 = ui.CTkButton(self.options, text="Save", command=self.save)
@@ -793,7 +793,7 @@ class NotesAndDocuments(ui.CTkFrame):
         elif os.path.isfile(tr):
             self.list = ui.CTkOptionMenu(self.options, values=["Notlarınızın Listesi"] + self.notes, command=self.option)
             self.entry = ui.CTkEntry(self.options, placeholder_text="Ad")
-            self.button1 = ui.CTkButton(self.options, text="Yeni Bir Not Al", command=self.new_note)
+            self.button1 = ui.CTkButton(self.options, text="Yeni Bir Not Al", command=lambda:self.new_note("new-note"))
             self.button2 = ui.CTkButton(self.options, text="Aç", command=self.open)
             self.button3 = ui.CTkButton(self.options, text="Yeniden Adlandır", command=self.rename)
             self.button4 = ui.CTkButton(self.options, text="Kaydet", command=self.save)
@@ -811,27 +811,35 @@ class NotesAndDocuments(ui.CTkFrame):
             self.entry.insert(0, f"{notes}{note_name}")
         else:
             self.entry.delete(0, "end")
-    def new_note(self):
+    def new_note(self, mode: str):
         if os.path.isfile(en):
             self.dialog = ui.CTkInputDialog(text=f"Type a new note name.", title="Type New Name")
         elif os.path.isfile(tr):
             self.dialog = ui.CTkInputDialog(text=f"Yeni bir not adı girin.", title="Yeni Ad Girin")
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
-            if os.path.isfile(en):
-                mb.showerror("Error", "Taking a new note was canceled.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata", "Yeni bir not alma iptal edildi.")
+            if os.path.isfile(en) and mode == "new-note":
+                mb.showwarning("Uyarı", "Taking a new note canceled.")
+            elif os.path.isfile(tr) and mode == "new-note":
+                mb.showwarning("Uyarı", "Yeni bir not alma iptal edildi.")
             return
         os.system(f"touch {notes}{self.new_name}")
+        if not os.path.isfile(f"{notes}{self.new_name}"):
+            if os.path.isfile(en):
+                mb.showerror("Error", "The note could not be created.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata", "Not oluşturulamadı.")
+            return
         self.entry.delete(0, "end")
         self.entry.insert(0, f"{notes}{self.new_name}")
         self.notes = os.listdir(notes)
         if os.path.isfile(en):
-            mb.showinfo("Information", f"The note created.")
+            if mode == "new-note":
+                mb.showinfo("Information", f"The note created.")
             self.list.configure(values=["List Of Your Notes"] + self.notes)
         elif os.path.isfile(tr):
-            mb.showinfo("Bilgilendirme", f"Not oluşturuldu.")
+            if mode == "new-note":
+                mb.showinfo("Bilgilendirme", f"Not oluşturuldu.")
             self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
     def open(self):
         try:
@@ -875,16 +883,23 @@ class NotesAndDocuments(ui.CTkFrame):
         self.entry.insert(0, f"{notes}{self.new_name}")
         self.notes = os.listdir(notes)
         if os.path.isfile(en):
-            mb.showinfo("Information", f"The note or document was renamed as {self.new_name}.")
+            mb.showinfo("Information", f"The note or document renamed as {self.new_name}.")
             self.list.configure(values=["List Of Your Notes"] + self.notes)
         elif os.path.isfile(tr):
             mb.showinfo("Bilgilendirme", f"Not ya da belge {self.new_name} olarak yeniden adlandırıldı.")
             self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
     def save(self):
         if self.entry.get() == "":
-            self.new_note()
-        with open(self.entry.get(), "w+") as self.file:
-            self.file.write(self.content.get("0.0", 'end'))
+            self.new_note("save-note")
+        try:
+            with open(self.entry.get(), "w+") as self.file:
+                self.file.write(self.content.get("0.0", 'end'))
+        except:
+            if os.path.isfile(en):
+                mb.showerror("Error","The note or document could not be saved.")
+            elif os.path.isfile(tr):
+                mb.showerror("Hata","Not ya da belge kaydedilemedi.")
+            return
         with open(self.entry.get()) as self.file:
             self.output = self.file.read()
         self.notes = os.listdir(notes)

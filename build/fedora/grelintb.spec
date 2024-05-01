@@ -1,6 +1,6 @@
 Name:           grelintb
-Version:        1.4.3
-Release:        3
+Version:        1.4.4
+Release:        1
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
@@ -41,8 +41,6 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Tue Apr 30 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
-- Improve note saving experience in "Notes and Documents".
-- Change exit()'s to sys.exit()'s.
-- Fix some errors in "Store" for Debian GNU/Linux based distributions.
-- Fix some grammer errors.
+* Wed May 1 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+- Improve note saving and creating experience in "Notes and Documents".
+- Update major changelog.

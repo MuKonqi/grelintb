@@ -1,4 +1,2 @@
-- Improve note saving experience in "Notes and Documents".
-- Change exit()'s to sys.exit()'s.
-- Fix some errors in "Store" for Debian GNU/Linux based distributions.
-- Fix some grammer errors.
+- Improve note saving and creating experience in "Notes and Documents".
+- Update major changelog.
