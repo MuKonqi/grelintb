@@ -60,7 +60,7 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/fedora-release ]; then
     cd /tmp
     wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
-    dnf -y --nogpgcheck install grelintb.rpm
+    dnf5 -y --nogpgcheck install grelintb.rpm
     rm grelintb.rpm
     echo -e "GrelinTB installed."
     exit 0

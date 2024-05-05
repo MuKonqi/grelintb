@@ -96,8 +96,8 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/fedora-release ]; then
     cd /tmp
     wget https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm
-    dnf -y --nogpgcheck update grelintb.rpm
-    dnf -y --nogpgcheck reinstall grelintb.rpm
+    dnf5 -y --nogpgcheck update grelintb.rpm
+    dnf5 -y --nogpgcheck reinstall grelintb.rpm
     rm grelintb.rpm
     echo -e "GrelinTB updated."
     exit 0

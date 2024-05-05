@@ -45,7 +45,7 @@ function uninstall {
 if  [ -f /etc/debian_version ]; then
     uninstall
 elif [ -f /etc/fedora-release ]; then
-    dnf -y --nogpgcheck remove grelintb
+    dnf5 -y --nogpgcheck remove grelintb
     if [ -f /usr/bin/grelintb/ ] ; then
         rm /usr/bin/grelintb
     fi
