@@ -43,9 +43,9 @@
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm"><img src="https://img.shields.io/badge/Download%20RPM-A4A62A" alt="Download RPM"></a></p>
 
 - Warning: Install the following, although they usually come already installed: wget, sudo
-- For Debian GNU/Linux based distributions, install the DEB package at the top with clicking to it.
 - For Fedora Linux based distributions, install the RPM package at the top with clicking to it.
-- For Arch Linux based distributions, install GrelinTB with your favorite AUR helper. Here's an example with yay: ```yay -S grelintb```
+- - For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
+```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; sudo ./install-grelintb.sh ; rm install-grelintb.sh```
 ## GrelinTB vs MetterXP
 - GrelinTB's UI is good and simpler. MetterXP has very bad UI and it is buggy.
 - GrelinTB's window's size isn't fixed, it can flow any value bigger than 960x540.
