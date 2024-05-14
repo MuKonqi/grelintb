@@ -44,7 +44,7 @@
 
 - Warning: Install the following, although they usually come already installed: wget, sudo
 - For Fedora Linux based distributions, install the RPM package at the top with clicking to it.
-- - For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
+- For Debian GNU/Linux, Solus and Arch Linux based distributions, type the following into the terminal: 
 ```wget https://raw.githubusercontent.com/MuKonqi/grelintb/main/install-grelintb.sh ; chmod +x install-grelintb.sh ; sudo ./install-grelintb.sh ; rm install-grelintb.sh```
 ## GrelinTB vs MetterXP
 - GrelinTB's UI is good and simpler. MetterXP has very bad UI and it is buggy.
