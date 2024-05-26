@@ -1216,13 +1216,13 @@ class FlatpakPackages(ui.CTkFrame):
         if operation == "search":
             self.command = f"flatpak search {self.entry.get()}"
         elif operation == "install":
-            self.command = f"flatpak install {self.entry.get()}"
+            self.command = f"flatpak install {self.entry.get()} -y"
         elif operation == "reinstall":
-            self.command = f"flatpak install --reinstall '{self.entry.get()}"
+            self.command = f"flatpak install --reinstall '{self.entry.get()} -y"
         elif operation == "uninstall":
-            self.command = f"flatpak uninstall {self.entry.get()}"
+            self.command = f"flatpak uninstall {self.entry.get()} -y"
         elif operation == "update":
-            self.command = f"flatpak update '{self.entry.get()}"
+            self.command = f"flatpak update '{self.entry.get()} -y"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.configure(state="disabled")
