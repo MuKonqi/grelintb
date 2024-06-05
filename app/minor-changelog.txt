@@ -1,1 +1,5 @@
-- Add the missing option in the Flatpak commands.
+- Renamed color as theme (this will reset your theme configuration)
+- Renamed theme as appearance (this will reset your appearance configuration).
+- Added a new theme.
+- Added labels for theme, appearance and language.
+- Removed backward compatibility for .bashrc/.zshrc backups.

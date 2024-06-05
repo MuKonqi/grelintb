@@ -1,10 +1,10 @@
 Name:           grelintb
-Version:        1.4.6
-Release:        1
+Version:        1.4.7
+Release:        2
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{name}-1.tar.gz
 
 Requires:       dnf5 python3 python3-tkinter python3-pip git curl xdg-utils
 
@@ -33,6 +33,7 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/local/bin/grelintb/version.txt
 /usr/local/bin/grelintb/grelintb.desktop
 /usr/local/bin/grelintb/icon.png
+/usr/local/bin/grelintb/theme.json
 /usr/local/bin/grelintb/update.sh
 /usr/local/bin/grelintb/reset.sh
 /usr/local/bin/grelintb/uninstall.sh
@@ -41,5 +42,9 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/bin/grelintb
 
 %changelog
-* Sun May 26 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
-- Add the missing option in the Flatpak commands.
+* Thu Jun 06 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
+- Renamed color as theme (this will reset your theme configuration)
+- Renamed theme as appearance (this will reset your appearance configuration).
+- Added a new theme.
+- Added labels for theme, appearance and language.
+- Removed backward compatibility for .bashrc/.zshrc backups.

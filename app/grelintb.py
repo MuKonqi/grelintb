@@ -118,13 +118,14 @@ local = f"/home/{username}/.local/share/grelintb/"
 notes = f"/home/{username}/Notes/"
 en = f"/home/{username}/.config/grelintb/language/en.txt"
 tr = f"/home/{username}/.config/grelintb/language/tr.txt"
-system = f"/home/{username}/.config/grelintb/theme/system.txt"
-light = f"/home/{username}/.config/grelintb/theme/light.txt"
-dark = f"/home/{username}/.config/grelintb/theme/dark.txt"
-random = f"/home/{username}/.config/grelintb/color/random.txt"
-dark_blue = f"/home/{username}/.config/grelintb/color/dark_blue.txt"
-blue = f"/home/{username}/.config/grelintb/color/blue.txt"
-green = f"/home/{username}/.config/grelintb/color/green.txt"
+system = f"/home/{username}/.config/grelintb/appearance/system.txt"
+light = f"/home/{username}/.config/grelintb/appearance/light.txt"
+dark = f"/home/{username}/.config/grelintb/appearance/dark.txt"
+grelintb = f"/home/{username}/.config/grelintb/theme/grelintb.txt"
+random = f"/home/{username}/.config/grelintb/theme/random.txt"
+dark_blue = f"/home/{username}/.config/grelintb/theme/dark_blue.txt"
+blue = f"/home/{username}/.config/grelintb/theme/blue.txt"
+green = f"/home/{username}/.config/grelintb/theme/green.txt"
 process_number = 0
 current_operations = []
 
@@ -137,30 +138,16 @@ if not os.path.isdir(f"{config}language/") or (not os.path.isfile(en) and not os
         os.system(f"cd {config} ; mkdir language ; cd language ; touch tr.txt")
     else:
         os.system(f"cd {config} ; mkdir language ; cd language ; touch en.txt")
-if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
-    os.system(f"cd {config} ; mkdir theme ; cd theme ; touch system.txt")
-if not os.path.isdir(f"{config}color/") or (not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
-    os.system(f"cd {config} ; mkdir color ; cd color ; touch random.txt")
+if not os.path.isdir(f"{config}appearance/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
+    os.system(f"cd {config} ; mkdir appearance ; cd appearance ; touch system.txt")
+if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(grelintb) and not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
+    os.system(f"cd {config} ; mkdir theme ; cd theme ; touch grelintb.txt")
 if not os.path.isdir(notes):
     os.system(f"mkdir {notes}")
 if not os.path.isfile(f"/home/{username}/.bashrc"):
     os.system(f"cd /home/{username} ; touch .bashrc")
 if not os.path.isfile(f"/home/{username}/.zshrc"):
     os.system(f"cd /home/{username} ; touch .zshrc")
-if os.path.isfile(f"/home/{username}/.bashrc-first-grelintb.bak"):
-    os.system(f"mv /home/{username}/.bashrc-first-grelintb.bak {local}bashrc-first")
-if os.path.isfile(f"/home/{username}/.bashrc-session-grelintb.bak"):
-    os.system(f"mv /home/{username}/.bashrc-session-grelintb.bak {local}bashrc-session")
-if os.path.isfile(f"/home/{username}/.bashrc-grelintb.bak"):
-    os.system(f"mv /home/{username}/.bashrc-grelintb.bak {local}bashrc-latest")
-if os.path.isfile(f"/home/{username}/.zshrc-first-grelintb.bak"):
-    os.system(f"mv /home/{username}/.zshrc-first-grelintb.bak {local}zshrc-first")
-if os.path.isfile(f"/home/{username}/.zshrc-session-grelintb.bak"):
-    os.system(f"mv /home/{username}/.zshrc-session-grelintb.bak {local}zshrc-session")
-if os.path.isfile(f"/home/{username}/.zshrc-grelintb.bak"):
-    os.system(f"mv /home/{username}/.zshrc-grelintb.bak {local}zshrc-latest")
-if os.path.isfile(f"/home/{username}/.calc-history-grelintb.txt"):
-    os.system(f"mv /home/{username}/.calc-history-grelintb.txt {local}calc-history")
 if not os.path.isfile(f"{local}bashrc-first"):
     os.system(f"cp /home/{username}/.bashrc {local}bashrc-first")
 if not os.path.isfile(f"{local}bashrc-session"):
@@ -176,16 +163,20 @@ elif os.path.isfile(light):
     ui.set_appearance_mode("Light")
 elif os.path.isfile(dark):
     ui.set_appearance_mode("Dark")
-if os.path.isfile(dark_blue):
+if os.path.isfile(grelintb):
+    ui.set_default_color_theme("/usr/local/bin/grelintb/theme.json")
+elif os.path.isfile(random):
+    ui.set_default_color_theme(rd.choice(["blue", "dark-blue", "green", "/usr/local/bin/grelintb/theme.json"]))
+elif os.path.isfile(dark_blue):
     ui.set_default_color_theme("dark-blue")
 elif os.path.isfile(blue):
     ui.set_default_color_theme("blue")
 elif os.path.isfile(green):
     ui.set_default_color_theme("green")
-elif os.path.isfile(random):
-    ui.set_default_color_theme(rd.choice(["blue", "dark-blue", "green"]))
-if "set-version" in sys.argv[1:]:
+if "sv" in sys.argv[1:]:
     version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
+if "stg" in sys.argv[1:]:
+    ui.set_default_color_theme("/home/mukonqi/works/grelintb/app/theme.json")
 
 def update_status():
     if process_number <= 0:
@@ -305,7 +296,7 @@ class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         global status
-        self.grid_rowconfigure((5, 9, 13), weight=1)
+        self.grid_rowconfigure((5, 9, 16), weight=1)
         self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
         if os.path.isfile(en):
             self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
@@ -315,25 +306,30 @@ class Sidebar(ui.CTkFrame):
             self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
-            self.color_menu = ui.CTkOptionMenu(self, values=["Color: Random", "Color: Dark Blue", "Color: Blue", "Color: Green"], command=self.change_color)
-            self.theme_menu = ui.CTkOptionMenu(self, values=["Theme: System", "Theme: Light", "Theme: Dark"], command=self.change_theme)
-            self.language_menu = ui.CTkOptionMenu(self, values=["Language: English", "Language: Turkish"], command=self.change_language)
+            self.theme_label = ui.CTkLabel(self, text="Theme")
+            self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", "Random", "Dark Blue", "Blue", "Green"], command=self.change_theme)
+            self.appearance_label = ui.CTkLabel(self, text="Appearance")
+            self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
+            self.language_label = ui.CTkLabel(self, text="Language")
+            self.language_menu = ui.CTkOptionMenu(self, values=["English", "Turkish"], command=self.change_language)
             status = ui.CTkButton(self, text="Status: Ready", command=self.show_operations, font=ui.CTkFont(size=12, weight="bold"))
             if os.path.isfile(random):
-                self.color_menu.set("Color: Random")
+                self.theme_menu.set("Random")
+            elif os.path.isfile(grelintb):
+                self.theme_menu.set("GrelinTB")
             elif os.path.isfile(dark_blue):
-                self.color_menu.set("Color: Dark Blue")
+                self.theme_menu.set("Dark Blue")
             elif os.path.isfile(blue):
-                self.color_menu.set("Color: Blue")
+                self.theme_menu.set("Blue")
             elif os.path.isfile(green):
-                self.color_menu.set("Color: Green")
+                self.theme_menu.set("Green")
             if os.path.isfile(system):
-                self.theme_menu.set("Theme: System")
+                self.appearance_menu.set("System")
             elif os.path.isfile(light):
-                self.theme_menu.set("Theme: Light")
+                self.appearance_menu.set("Light")
             elif os.path.isfile(dark):
-                self.theme_menu.set("Theme: Dark")
-            self.language_menu.set("Language: English")
+                self.appearance_menu.set("Dark")
+            self.language_menu.set("English")
         elif os.path.isfile(tr):
             self.version_b = ui.CTkButton(self, text=f"Sürüm: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
             self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
@@ -342,25 +338,30 @@ class Sidebar(ui.CTkFrame):
             self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
             self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
             self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.color_menu = ui.CTkOptionMenu(self, values=["Renk: Rastgele", "Renk: Koyu Mavi", "Renk: Mavi", "Renk: Yeşil"], command=self.change_color)
-            self.theme_menu = ui.CTkOptionMenu(self, values=["Tema: Sistem", "Tema: Açık", "Tema: Koyu"], command=self.change_theme)
-            self.language_menu = ui.CTkOptionMenu(self, values=["Dil: Türkçe", "Dil: İngilizce"], command=self.change_language)
+            self.theme_label = ui.CTkLabel(self, text="Tema")
+            self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", "Rastgele", "Koyu Mavi", "Mavi", "Yeşil"], command=self.change_theme)
+            self.appearance_label = ui.CTkLabel(self, text="Görünüm")
+            self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
+            self.language_label = ui.CTkLabel(self, text="Dil")
+            self.language_menu = ui.CTkOptionMenu(self, values=["Türkçe", "İngilizce"], command=self.change_language)
             status = ui.CTkButton(self, text="Durum: Hazır", command=self.show_operations, font=ui.CTkFont(size=12, weight="bold"))
             if os.path.isfile(random):
-                self.color_menu.set("Renk: Rastgele")
+                self.theme_menu.set("Rastgele")
+            elif os.path.isfile(grelintb):
+                self.theme_menu.set("GrelinTB")
             elif os.path.isfile(dark_blue):
-                self.color_menu.set("Renk: Koyu Mavi")
+                self.theme_menu.set("Koyu Mavi")
             elif os.path.isfile(blue):
-                self.color_menu.set("Renk: Mavi")
+                self.theme_menu.set("Mavi")
             elif os.path.isfile(green):
-                self.color_menu.set("Renk: Yeşil")
+                self.theme_menu.set("Yeşil")
             if os.path.isfile(system):
-                self.theme_menu.set("Tema: Sistem")
+                self.appearance_menu.set("Sistem")
             elif os.path.isfile(light):
-                self.theme_menu.set("Tema: Açık")
+                self.appearance_menu.set("Açık")
             elif os.path.isfile(dark):
-                self.theme_menu.set("Tema: Koyu")
-            self.language_menu.set("Dil: Türkçe")
+                self.appearance_menu.set("Koyu")
+            self.language_menu.set("Türkçe")
         self.text.grid(row=0, column=0, sticky="nsew", padx=10, pady=(10, 0))
         self.version_b.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
         self.mukonqi_b.grid(row=2, column=0, sticky="nsew", padx=10, pady=0)
@@ -369,10 +370,13 @@ class Sidebar(ui.CTkFrame):
         self.update_b.grid(row=6, column=0, sticky="nsew", padx=10, pady=5)
         self.reset_b.grid(row=7, column=0, sticky="nsew", padx=10, pady=5)
         self.uninstall_b.grid(row=8, column=0, sticky="nsew", padx=10, pady=5)
-        self.color_menu.grid(row=10, column=0, sticky="nsew", padx=10, pady=(0, 5))
+        self.theme_label.grid(row=10, column=0, sticky="nsew", padx=10, pady=0)
         self.theme_menu.grid(row=11, column=0, sticky="nsew", padx=10, pady=(0, 5))
-        self.language_menu.grid(row=12, column=0, sticky="nsew", padx=10, pady=(0, 5))
-        status.grid(row=14, column=0, sticky="nsew", padx=10, pady=(0, 5))
+        self.appearance_label.grid(row=12, column=0, sticky="nsew", padx=10, pady=0)
+        self.appearance_menu.grid(row=13, column=0, sticky="nsew", padx=10, pady=(0, 5))
+        self.language_label.grid(row=14, column=0, sticky="nsew", padx=10, pady=0)
+        self.language_menu.grid(row=15, column=0, sticky="nsew", padx=10, pady=(0, 5))
+        status.grid(row=17, column=0, sticky="nsew", padx=10, pady=(0, 5))
     def changelog(self):
         self.window = ui.CTkToplevel()
         self.window.geometry("540x540")
@@ -536,30 +540,32 @@ class Sidebar(ui.CTkFrame):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
             mb.showinfo("Bilgilendirme","GrelinTB kaldırıldı.")
         sys.exit(0)
-    def change_color(self, new_color: str):
-        if new_color == "Color: Random" or new_color == "Renk: Rastgele":
-            os.system(f"rm {config}color/* ; touch {config}color/random.txt")
-        elif new_color == "Color: Dark Blue" or new_color == "Renk: Koyu Mavi":
-            os.system(f"rm {config}color/* ; touch {config}color/dark_blue.txt")
-        elif new_color == "Color: Blue" or new_color == "Renk: Mavi":
-            os.system(f"rm {config}color/* ; touch {config}color/blue.txt")
-        elif new_color == "Color: Green" or new_color == "Renk: Yeşil":
-            os.system(f"rm {config}color/* ; touch {config}color/green.txt")
-        ask_restart_for_grelintb_ui("normal")
     def change_theme(self, new_theme: str):
-        if new_theme == "Theme: System" or new_theme == "Tema: Sistem":
+        if new_theme == "GrelinTB" or new_theme == "GrelinTB":
+            os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
+        elif new_theme == "Random" or new_theme == "Rastgele":
+            os.system(f"rm {config}theme/* ; touch {config}theme/random.txt")
+        elif new_theme == "Dark Blue" or new_theme == "Koyu Mavi":
+            os.system(f"rm {config}theme/* ; touch {config}theme/dark_blue.txt")
+        elif new_theme == "Blue" or new_theme == "Mavi":
+            os.system(f"rm {config}theme/* ; touch {config}theme/blue.txt")
+        elif new_theme == "Green" or new_theme == "Yeşil":
+            os.system(f"rm {config}theme/* ; touch {config}theme/green.txt")
+        ask_restart_for_grelintb_ui("normal")
+    def change_appearance(self, new_appearance: str):
+        if new_appearance == "System" or new_appearance == "Sistem":
             ui.set_appearance_mode("System")
-            os.system(f"rm {config}theme/* ; touch {config}theme/system.txt")
-        elif new_theme == "Theme: Light" or new_theme == "Tema: Açık":
+            os.system(f"rm {config}appearance/* ; touch {config}appearance/system.txt")
+        elif new_appearance == "Light" or new_appearance == "Açık":
             ui.set_appearance_mode("Light")
-            os.system(f"rm {config}theme/* ; touch {config}theme/light.txt")
-        elif new_theme == "Theme: Dark" or new_theme == "Tema: Koyu":
+            os.system(f"rm {config}appearance/* ; touch {config}appearance/light.txt")
+        elif new_appearance == "Dark" or new_appearance == "Koyu":
             ui.set_appearance_mode("Dark")
-            os.system(f"rm {config}theme/* ; touch {config}theme/dark.txt")
+            os.system(f"rm {config}appearance/* ; touch {config}appearance/dark.txt")
     def change_language(self, new_language: str):
-        if new_language == "Language: English" or new_language == "Dil: İngilizce":
+        if new_language == "English" or new_language == "İngilizce":
             os.system(f"rm {config}language/* ; touch {config}language/en.txt")
-        elif new_language == "Language: Turkish" or new_language == "Dil: Türkçe":
+        elif new_language == "Turkish" or new_language == "Türkçe":
             os.system(f"rm {config}language/* ; touch {config}language/tr.txt")
         ask_restart_for_grelintb_ui("normal")
     def show_operations(self):
@@ -647,9 +653,9 @@ class Startup(ui.CTkFrame):
         self.other_def("startup")
     def weather_def(self):
         if os.path.isfile(en):
-            self.weather.configure(text="Weather Forecast: "+str(subprocess.Popen('curl -H "Accept-Language: en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
+            self.weather.configure(text="Weather Forecast: "+str(subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
         elif os.path.isfile(tr):
-            self.weather.configure(text="Hava Durumu: "+str(subprocess.Popen('curl -H "Accept-Language: tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
+            self.weather.configure(text="Hava Durumu: "+str(subprocess.Popen('curl -H "Accept-tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
     def cpu_usage_def(self):
         self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
     def other_def(self, mode: str):
@@ -1984,11 +1990,11 @@ class BashZshButtons(ui.CTkFrame):
             self.button8 = ui.CTkButton(self, text="Changes In This Session", command=self.undo2)
             self.button9 = ui.CTkButton(self, text="All Changes", command=self.undo3)
         elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self, text="Renkler Olmadan Ekle")
+            self.label1 = ui.CTkLabel(self, text="Temaler Olmadan Ekle")
             self.button1 = ui.CTkButton(self, text="Kullanıcı Adım", command=self.username1)
             self.button2 = ui.CTkButton(self, text="Sistem Bilgisi", command=self.systeminfo1)
             self.button3 = ui.CTkButton(self, text="RAM Tüketimi", command=self.memory1)
-            self.label2 = ui.CTkLabel(self, text="Renklerle Ekle")
+            self.label2 = ui.CTkLabel(self, text="Temalerle Ekle")
             self.button4 = ui.CTkButton(self, text="Kullanıcı Adım", command=self.username2)
             self.button5 = ui.CTkButton(self, text="Sistem Bilgisi", command=self.systeminfo2)
             self.button6 = ui.CTkButton(self, text="RAM Tüketimi", command=self.memory2)
