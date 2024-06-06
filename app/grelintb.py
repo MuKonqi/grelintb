@@ -15,61 +15,73 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
-    version_current = version_file.readline()
-
 import os
 import sys
-
-debian = "/etc/debian_version"
-fedora = "/etc/fedora-release"
-solus = "/etc/solus-release"
-arch = "/etc/arch-release"
-
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and os.path.isfile(arch):
-    print("The distribution you are using is not supported from GrelinTB.\nPlease use Debian GNU/Linux, Fedora Linux, Solus and Arch Linux based distributions for GrelinTB. (1)")
-    sys.exit(1)
-
-if "root" in sys.argv[1:]:
-    if os.getuid() != 0:
-        print("Root rights are required for this feature. (3)")
-        sys.exit(3)
-    if "pcrename" in sys.argv[2:]:
-        with open("/etc/hostname", "w") as pcname:
-            pcname.write(str(sys.argv[3]))
-    sys.exit(0)
-elif os.getuid() == 0:
-    print("GrelinTB already asks you for root rights when the need arises. (2)")
-    sys.exit(2)
-
 import locale
 import getpass
 import random as rd
 import threading
 import subprocess
-import datetime as dt
 import socket
 import platform
 import time
+import json
+
+debian = "/etc/debian_version"
+fedora = "/etc/fedora-release"
+solus = "/etc/solus-release"
+arch = "/etc/arch-release"
+requirements = "/home/mukonqi/works/grelintb/app/requirements.txt"
+process_number = 0
+current_operations = []
+
+if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and os.path.isfile(arch):
+    print("The distribution you are using is not supported from GrelinTB. Please use Debian GNU/Linux, Fedora Linux, Solus and Arch Linux based distributions for GrelinTB. (1)")
+    sys.exit(1)
+try:
+    with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
+        version_current = version_file.readline()
+except:
+    print("Version file not found. (2)")
+    sys.exit(2)
+if not os.path.isfile(requirements):
+    print("Requirements file not found. (3)")
+    sys.exit(3)
+if "root" in sys.argv[1:]:
+    if os.getuid() != 0:
+        print("Root rights are required for this feature. (4)")
+        sys.exit(4)
+    if "pcrename" in sys.argv[2:]:
+        with open("/etc/hostname", "w") as pcname:
+            pcname.write(str(sys.argv[3]))
+    sys.exit(0)
+elif os.getuid() == 0:
+    print("GrelinTB already asks you for root rights when the need arises. (5)")
+    sys.exit(5)
+
 try:
     from tkinter import messagebox as mb
     from tkinter import filedialog as fd
     from tkinter import PhotoImage as pi
 except:
-    print("Installing Tkinter...")
-    if os.path.isfile(debian):
-        os.system("pkexec apt -y install python3-tk")
-    elif os.path.isfile(fedora):
-        os.system("pkexec dnf5 -y --nogpgcheck install python3-tkinter")
-    elif os.path.isfile(solus):
-        os.system("pkexec eopkg -y install python3-tkinter")
-    elif os.path.isfile(arch):
-        os.system("pkexec pacman --noconfirm -S tk")
-    from tkinter import messagebox as mb
-    from tkinter import filedialog as fd
-    from tkinter import PhotoImage as pi
+    try:
+        print("Installing Tkinter...")
+        if os.path.isfile(debian):
+            os.system("pkexec apt -y install python3-tk")
+        elif os.path.isfile(fedora):
+            os.system("pkexec dnf5 -y --nogpgcheck install python3-tkinter")
+        elif os.path.isfile(solus):
+            os.system("pkexec eopkg -y install python3-tkinter")
+        elif os.path.isfile(arch):
+            os.system("pkexec pacman --noconfirm -S tk")
+        from tkinter import messagebox as mb
+        from tkinter import filedialog as fd
+        from tkinter import PhotoImage as pi
+    except:
+        os.system(__file__)
+        sys.exit(0)
 if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
-    print("Installing Pip...")
+    print("Installing pip...")
     if os.path.isfile(debian):
         os.system("pkexec apt -y install python3-pip")
     elif os.path.isfile(fedora):
@@ -80,38 +92,22 @@ if not os.path.isfile("/bin/pip") and not os.path.isfile("/usr/bin/pip"):
         os.system("pkexec pacman --noconfirm -S python-pip")
 try:
     import customtkinter as ui
-except:
-    try:
-        print("Installing CustomTkinter...")
-        os.system("pip install customtkinter")
-        import customtkinter as ui
-    except:
-        print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install customtkinter --break-system-packages ; grelintb")
-        sys.exit(0)
-try:
+    import datetime as dt
     import psutil
-except:
-    try:
-        print("Installing psutil...")
-        os.system("pip install psutil")
-        import psutil
-    except:
-        print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install psutil --break-system-packages ; grelintb")
-        sys.exit(0)
-try:
     import distro
 except:
     try:
-        print("Installing distro...")
-        os.system("pip install distro")
+        print("Installing other requirements...")
+        os.system(f"pip install -r {requirements}")
+        import customtkinter as ui
+        import datetime as dt
+        import psutil
         import distro
     except:
-        print("Installing CustomTkinter with --break-system-packages parameter...")
-        os.system("pip install distro --break-system-packages ; grelintb")
+        print("Installing other requirements with --break-system-packages parameter...")
+        os.system(f"pip install -r {requirements} ; {__file__}")
         sys.exit(0)
-
+        
 username = getpass.getuser()
 config = f"/home/{username}/.config/grelintb/"
 local = f"/home/{username}/.local/share/grelintb/"
@@ -126,8 +122,6 @@ random = f"/home/{username}/.config/grelintb/theme/random.txt"
 dark_blue = f"/home/{username}/.config/grelintb/theme/dark_blue.txt"
 blue = f"/home/{username}/.config/grelintb/theme/blue.txt"
 green = f"/home/{username}/.config/grelintb/theme/green.txt"
-process_number = 0
-current_operations = []
 
 if not os.path.isdir(config):
     os.system(f"mkdir {config}")
@@ -157,6 +151,17 @@ if not os.path.isfile(f"{local}zshrc-first"):
 if not os.path.isfile(f"{local}zshrc-session"):
     os.system(f"cp /home/{username}/.zshrc {local}zshrc-session")
 
+if os.path.isfile(en):
+    lang_ = 0
+elif os.path.isfile(tr):
+    lang_ = 1
+try:
+    with open("/home/mukonqi/works/grelintb/app/language.json", "r") as language_file:
+        language = language_file.read()
+    lang = json.loads(language, object_pairs_hook=dict)
+except:
+    print("Language file not found. (6)")
+    sys.exit(6)
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -166,13 +171,13 @@ elif os.path.isfile(dark):
 if os.path.isfile(grelintb):
     ui.set_default_color_theme("/usr/local/bin/grelintb/theme.json")
 elif os.path.isfile(random):
-    ui.set_default_color_theme(rd.choice(["blue", "dark-blue", "green", "/usr/local/bin/grelintb/theme.json"]))
+    ui.set_default_color_theme(rd.choice(['blue', 'dark-blue', 'green', '/usr/local/bin/grelintb/theme.json']))
 elif os.path.isfile(dark_blue):
-    ui.set_default_color_theme("dark-blue")
+    ui.set_default_color_theme('dark-blue')
 elif os.path.isfile(blue):
-    ui.set_default_color_theme("blue")
+    ui.set_default_color_theme('blue')
 elif os.path.isfile(green):
-    ui.set_default_color_theme("green")
+    ui.set_default_color_theme('green')
 if "sv" in sys.argv[1:]:
     version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
 if "stg" in sys.argv[1:]:
@@ -180,15 +185,9 @@ if "stg" in sys.argv[1:]:
 
 def update_status():
     if process_number <= 0:
-        if os.path.isfile(en):
-            status.configure(text="Status: Ready")
-        elif os.path.isfile(tr):
-            status.configure(text="Durum: Hazır")
+        status.configure(text=lang['sidebar']['idle'][lang_])
     else:
-        if os.path.isfile(en):
-            status.configure(text="Status: Running")
-        elif os.path.isfile(tr):
-            status.configure(text="Durum: Çalışıyor")
+        status.configure(text=f"{lang['sidebar']['running'][lang_]} ({process_number})")
 def add_operation(operation: str, time: str):
     global current_operations, process_number
     process_number = process_number + 1
@@ -200,22 +199,16 @@ def delete_operation(operation: str, time: str):
     update_status()
     current_operations.remove([operation, time])
 def restart_system():
-    global ask_r
-    if os.path.isfile(en):
-        ask_r = mb.askyesno("Warning", "Your system needs to be restarted for the changes to be completed.\nDo you want to reboot immediately?")
-    elif os.path.isfile(tr):
-        ask_r = mb.askyesno("Uyarı", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nHemen yeniden başlatmak ister misiniz?")
+    ask_r = mb.askyesno(lang['globals']['warning'][lang_], lang['questions']['reboot'][lang_])
     if ask_r == True:
         os.system("pkexec reboot")
 def install_app(appname: str, packagename: str):
     global ask_a
     global process_number
-    if os.path.isfile(en):
-        ask_a = mb.askyesno("Warning", f"{appname} can't found on your system.\nWe can try installing {appname} to your computer.\nDo you approve it?")
-    elif os.path.isfile(tr):
-        ask_a = mb.askyesno("Uyarı", f"{appname} sisteminizde bulunamadı.\nBiz sisteminize {appname} yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+    ask_a = mb.askyesno(lang['globals']['warning'][lang_], f"{appname} {lang['questions']['install'][lang_]}")
     if ask_a == True:
         time_process = str(time.strftime("%H:%M:%S", time.localtime()))
+        add_operation(f"{lang['operations']['install'][lang_]}: {appname}", time_process)
         if os.path.isfile(en):
             add_operation(f"Installing {appname}", time_process)
         elif os.path.isfile(tr):
@@ -228,28 +221,16 @@ def install_app(appname: str, packagename: str):
             cmd = os.system(f'pkexec eopkg -y install {packagename}')
         elif os.path.isfile(arch):
             cmd = os.system(f'pkexec pacman --noconfirm -S  {packagename}')
-        if os.path.isfile(en):
-            delete_operation(f"Installing {appname}", time_process)
-        elif os.path.isfile(tr):
-            delete_operation(f"{appname} Kuruluyor", time_process)
+        delete_operation(f"{lang['operations']['install'][lang_]}: {appname}", time_process)
     elif ask_a == False:
-        if os.path.isfile(en):
-            mb.showerror("Error", f"{appname} installation ve process cancelled.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata", f"{appname} kurulumu ve işlem iptal edildi.")
+        mb.showerror(lang['globals']['error'][lang_], lang['globals']['cancelled'][lang_])
 def install_flatpak():
     global ask_f
     global process_number
-    if os.path.isfile(en):
-        ask_f = mb.askyesno("Warning", "Flatpak package manager can't found on your system.\nWe can try installing Flatpak package manager to your computer.\nDo you approve it?")
-    elif os.path.isfile(tr):
-        ask_f = mb.askyesno("Uyarı", "Flatpak paket yöneticisi sisteminizde bulunamadı.\nBiz sisteminize Flatpak paket yöneticisi yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?")
+    ask_f = mb.askyesno(lang['globals']['warning'][lang_], f"Flatpak {lang['questions']['install'][lang_]}")
     if ask_f == True:
         time_process = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            add_operation(f"Installing Flatpak", time_process)
-        elif os.path.isfile(tr):
-            add_operation(f"Flatpak Kuruluyor", time_process)
+        add_operation(f"{lang['operations']['install'][lang_]}: Flatpak", time_process)
         if os.path.isfile(debian):
             cmd1 = os.system('pkexec apt -y install flatpak')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
@@ -263,105 +244,56 @@ def install_flatpak():
         elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman --noconfirm -S flatpak')
             restart_system()
-        if os.path.isfile(en):
-            delete_operation(f"Installing Flatpak", time_process)
-        elif os.path.isfile(tr):
-            delete_operation(f"Flatpak Kuruluyor", time_process)
+        delete_operation(f"{lang['operations']['install'][lang_]}: Flatpak", time_process)
     elif ask_f == False:
-        if os.path.isfile(en):
-            mb.showerror("Error", "Flatpak package manager installation ve process cancelled.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata", "Flatpak paket yöneticisi kurulumu ve işlem iptal edildi.")
-def ask_restart_for_grelintb_ui(mode: str):
+        mb.showerror(lang['globals']['error'][lang_], lang['globals']['cancelled'][lang_])
+def restart_grelintb(lang__: int):
     global ask_g
-    if os.path.isfile(en) or mode == "en":
-        ask_g = mb.askyesno("Warning", "GrelinTB's user interface needs restarting.\nDo you want to restart the GrelinTB user interface?")
-    elif os.path.isfile(tr) or mode == "tr":
-        ask_g = mb.askyesno("Uyarı", "GrelinTB'nin kullanıcı arayüzü yeniden başlatılmaya ihtiyaç duyuyor.\nGrelinTB kullanıcı arayüzünü yeniden başlatmak istiyor musunuz?")
+    ask_g = mb.askyesno(lang['globals']['warning'][lang__], lang['questions']['grelintb'][lang__])
     if ask_g == True:
         root.destroy()
-        os.system("grelintb")
-def main_successful():
-    if os.path.isfile(en):
-        mb.showinfo("Information","Process completed.")
-    elif os.path.isfile(tr):
-        mb.showinfo("Bilgilendirme","İşlem tamamlandı.")
-def main_error():
-    if os.path.isfile(en):
-        mb.showerror("Error", "Process completed with error.")
-    elif os.path.isfile(tr):
-        mb.showerror("Hata", "İşlem hatayla tamamlandı.")
+        os.system(__file__)
 
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         global status
         self.grid_rowconfigure((5, 9, 16), weight=1)
-        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent", text_color=("gray14", "gray84"))
+        self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent")
+        self.version_b = ui.CTkButton(self, text=f"{lang['sidebar']['version'][lang_]}{version_current}", command=self.changelog, fg_color="transparent")
+        self.mukonqi_b = ui.CTkButton(self, text=f"{lang['sidebar']['developer'][lang_]}MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent")
+        self.license_b = ui.CTkButton(self, text=f"{lang['sidebar']['license'][lang_]}GPLv3+", command=self.license, fg_color="transparent")
+        self.credit_b = ui.CTkButton(self, text=f"{lang['sidebar']['credit'][lang_]}G. M. Icons", command=self.credit, fg_color="transparent")
+        self.update_b = ui.CTkButton(self, text=lang['operations']['update'][lang_], command=lambda:self.check_update('sidebar'))
+        self.reset_b = ui.CTkButton(self, text=lang['operations']['reset'][lang_], command=self.reset)
+        self.uninstall_b = ui.CTkButton(self, text=lang['operations']['uninstall'][lang_], command=self.uninstall)
+        self.theme_label = ui.CTkLabel(self, text=lang['sidebar']['theme'][lang_])
+        self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", lang['sidebar']['random'][lang_], lang['sidebar']['dark-blue'][lang_], lang['sidebar']['blue'][lang_], lang['sidebar']['green'][lang_]], command=self.change_theme)
+        self.appearance_label = ui.CTkLabel(self, text=lang['sidebar']['appearance'][lang_])
+        self.appearance_menu = ui.CTkOptionMenu(self, values=[lang['sidebar']['system'][lang_], lang['sidebar']['light'][lang_], lang['sidebar']['dark'][lang_]], command=self.change_appearance)
+        self.language_label = ui.CTkLabel(self, text=lang['sidebar']['language'][lang_])
+        self.language_menu = ui.CTkOptionMenu(self, values=["English (İngilizce)", "Türkçe (Turkish)"], command=self.change_language)
+        status = ui.CTkButton(self, text=lang['sidebar']['idle'][lang_], command=self.running_processes, font=ui.CTkFont(size=12, weight="bold"))
+        if os.path.isfile(random):
+            self.theme_menu.set(lang['sidebar']['random'][lang_])
+        elif os.path.isfile(grelintb):
+            self.theme_menu.set("GrelinTB")
+        elif os.path.isfile(dark_blue):
+            self.theme_menu.set(lang['sidebar']['dark-blue'][lang_])
+        elif os.path.isfile(blue):
+            self.theme_menu.set(lang['sidebar']['blue'][lang_])
+        elif os.path.isfile(green):
+            self.theme_menu.set(lang['sidebar']['green'][lang_])
+        if os.path.isfile(system):
+            self.appearance_menu.set(lang['sidebar']['system'][lang_])
+        elif os.path.isfile(light):
+            self.appearance_menu.set(lang['sidebar']['light'][lang_])
+        elif os.path.isfile(dark):
+            self.appearance_menu.set(lang['sidebar']['dark'][lang_])
         if os.path.isfile(en):
-            self.version_b = ui.CTkButton(self, text=f"Version: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Developer: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.license_b = ui.CTkButton(self, text="License: GPLv3+", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.credit_b = ui.CTkButton(self, text="Credit: G. M. Icons", command=self.credit, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.update_b = ui.CTkButton(self, text="Update", command=lambda:self.check_update("sidebar"))
-            self.reset_b = ui.CTkButton(self, text="Reset", command=self.reset)
-            self.uninstall_b = ui.CTkButton(self, text="Uninstall", command=self.uninstall)
-            self.theme_label = ui.CTkLabel(self, text="Theme")
-            self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", "Random", "Dark Blue", "Blue", "Green"], command=self.change_theme)
-            self.appearance_label = ui.CTkLabel(self, text="Appearance")
-            self.appearance_menu = ui.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_appearance)
-            self.language_label = ui.CTkLabel(self, text="Language")
-            self.language_menu = ui.CTkOptionMenu(self, values=["English", "Turkish"], command=self.change_language)
-            status = ui.CTkButton(self, text="Status: Ready", command=self.show_operations, font=ui.CTkFont(size=12, weight="bold"))
-            if os.path.isfile(random):
-                self.theme_menu.set("Random")
-            elif os.path.isfile(grelintb):
-                self.theme_menu.set("GrelinTB")
-            elif os.path.isfile(dark_blue):
-                self.theme_menu.set("Dark Blue")
-            elif os.path.isfile(blue):
-                self.theme_menu.set("Blue")
-            elif os.path.isfile(green):
-                self.theme_menu.set("Green")
-            if os.path.isfile(system):
-                self.appearance_menu.set("System")
-            elif os.path.isfile(light):
-                self.appearance_menu.set("Light")
-            elif os.path.isfile(dark):
-                self.appearance_menu.set("Dark")
-            self.language_menu.set("English")
+            self.language_menu.set("English (İngilizce)")
         elif os.path.isfile(tr):
-            self.version_b = ui.CTkButton(self, text=f"Sürüm: {version_current}", command=self.changelog, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.mukonqi_b = ui.CTkButton(self, text="Geliştirici: MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent", text_color=("gray14", "gray84"))
-            self.license_b = ui.CTkButton(self, text="Lisans: GPLv3+", command=self.license, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.credit_b = ui.CTkButton(self, text="Kredi: G. M. Icons", command=self.credit, fg_color="transparent", text_color=("gray14", "gray84"))
-            self.update_b = ui.CTkButton(self, text="Güncelle", command=lambda:self.check_update("sidebar"))
-            self.reset_b = ui.CTkButton(self, text="Sıfırla", command=self.reset)
-            self.uninstall_b = ui.CTkButton(self, text="Kaldır", command=self.uninstall)
-            self.theme_label = ui.CTkLabel(self, text="Tema")
-            self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", "Rastgele", "Koyu Mavi", "Mavi", "Yeşil"], command=self.change_theme)
-            self.appearance_label = ui.CTkLabel(self, text="Görünüm")
-            self.appearance_menu = ui.CTkOptionMenu(self, values=["Sistem", "Açık", "Koyu"], command=self.change_appearance)
-            self.language_label = ui.CTkLabel(self, text="Dil")
-            self.language_menu = ui.CTkOptionMenu(self, values=["Türkçe", "İngilizce"], command=self.change_language)
-            status = ui.CTkButton(self, text="Durum: Hazır", command=self.show_operations, font=ui.CTkFont(size=12, weight="bold"))
-            if os.path.isfile(random):
-                self.theme_menu.set("Rastgele")
-            elif os.path.isfile(grelintb):
-                self.theme_menu.set("GrelinTB")
-            elif os.path.isfile(dark_blue):
-                self.theme_menu.set("Koyu Mavi")
-            elif os.path.isfile(blue):
-                self.theme_menu.set("Mavi")
-            elif os.path.isfile(green):
-                self.theme_menu.set("Yeşil")
-            if os.path.isfile(system):
-                self.appearance_menu.set("Sistem")
-            elif os.path.isfile(light):
-                self.appearance_menu.set("Açık")
-            elif os.path.isfile(dark):
-                self.appearance_menu.set("Koyu")
-            self.language_menu.set("Türkçe")
+            self.language_menu.set("Türkçe (Turkish)")
         self.text.grid(row=0, column=0, sticky="nsew", padx=10, pady=(10, 0))
         self.version_b.grid(row=1, column=0, sticky="nsew", padx=10, pady=0)
         self.mukonqi_b.grid(row=2, column=0, sticky="nsew", padx=10, pady=0)
@@ -386,49 +318,31 @@ class Sidebar(ui.CTkFrame):
         self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
         self.frame.grid_columnconfigure(0, weight=1)
         self.frame.grid(row=0, column=0, sticky="nsew")
-        if os.path.isfile(en):
-            self.window.title("Changelogs For "+version_current)
-            self.label1 = ui.CTkLabel(self.frame, text=f"Primary Changelog For {version_current}", font=ui.CTkFont(size=14, weight="bold"))
-            self.label2 = ui.CTkLabel(self.frame, text=f"Major Changelog For {version_current}", font=ui.CTkFont(size=14, weight="bold"))
-            self.label3 = ui.CTkLabel(self.frame, text=f"Minor Changelog For {version_current}", font=ui.CTkFont(size=14, weight="bold"))
-        elif os.path.isfile(tr):
-            self.window.title(version_current+" için Değişiklik Günlükleri")
-            self.label1 = ui.CTkLabel(self.frame, text=f"{version_current} İçin Birincil Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-            self.label2 = ui.CTkLabel(self.frame, text=f"{version_current} İçin Major Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-            self.label3 = ui.CTkLabel(self.frame, text=f"{version_current} İçin Minor Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-        with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as self.cl_primary_file:
-            self.cl_primary_text = self.cl_primary_file.read()
+        self.window.title(f"{lang['changelog']['changelogs'][lang_]}{version_current}")
+        self.label1 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['major'][lang_]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
+        self.label2 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['minor'][lang_]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
         with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
             self.cl_major_text = self.cl_major_file.read()
         with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
             self.cl_minor_text = self.cl_minor_file.read()
         self.textbox1 = ui.CTkTextbox(self.frame)
-        self.textbox1.insert("0.0", self.cl_primary_text)
+        self.textbox1.insert("0.0", self.cl_major_text)
         self.textbox1.configure(state="disabled")
         self.textbox2 = ui.CTkTextbox(self.frame)
-        self.textbox2.insert("0.0", self.cl_major_text)
+        self.textbox2.insert("0.0", self.cl_minor_text)
         self.textbox2.configure(state="disabled")
-        self.textbox3 = ui.CTkTextbox(self.frame)
-        self.textbox3.insert("0.0", self.cl_minor_text)
-        self.textbox3.configure(state="disabled")
         self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
         self.textbox1.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
         self.label2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
         self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
-        self.label3.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
-        self.textbox3.grid(row=5, column=0, sticky="nsew", padx=10, pady=(0, 10))
     def license(self):
         self.window = ui.CTkToplevel()
         self.window.geometry("540x540")
         self.window.minsize(540, 540)
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.window.title("License")
-            self.label = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.")
-        elif os.path.isfile(tr):
-            self.window.title("Lisans")
-            self.label = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text="Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır.")
+        self.window.title(lang['license']['license'][lang_])
+        self.label = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text=lang['license']['label'][lang_])
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as self.license_file:
             self.license_text = self.license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -437,29 +351,14 @@ class Sidebar(ui.CTkFrame):
         self.label.grid(row=0, column=0, sticky="nsew", pady=10)
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
     def credit(self):
-        if os.path.isfile(en):
-            self.credit_mb = mb.askyesno("About Credit", "The credit is Google Material Symbols for application icon.\nDo you want visit the credit's website?")
-        elif os.path.isfile(tr):
-            self.credit_mb = mb.askyesno("Kredi Hakkında", "Kredi, uygulama ikonu için Google Material Symbols idir.\nKredinin internet sitesini ziyaret etmek ister misiniz?")
+        self.credit_mb = mb.askyesno(lang['credit']['credit'][lang_], lang['credit']['label'][lang_])
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
     def update(self, string: str):
-        if os.path.isfile(en):
-            if string == "sidebar":
-                self.update_b.configure(text="Updating", state="disabled")
-            os.system("pkexec /usr/local/bin/grelintb/update.sh")
-            mb.showinfo("Successful", "GrelinTB updated.")
-            if string == "sidebar":
-                self.update_b.configure(text="Updated", state="disabled")
-        elif os.path.isfile(tr):
-            if string == "sidebar":
-                self.update_b.configure(text="Güncelleniyor", state="disabled")
-            os.system("pkexec /usr/local/bin/grelintb/update.sh")
-            mb.showinfo("Başarılı", "GrelinTB güncellendi.")
-            if string == "sidebar":
-                self.update_b.configure(text="Güncellendi", state="disabled")
-        ask_restart_for_grelintb_ui("normal")
-    def check_update(self, string: str):
+        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["updated"][lang_])
+        restart_grelintb(lang_)
+    def check_update(self, caller: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
             self.window = ui.CTkToplevel()
@@ -470,105 +369,70 @@ class Sidebar(ui.CTkFrame):
             self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
             self.frame.grid_columnconfigure(0, weight=1)
             self.frame.grid(row=0, column=0, sticky="nsew")
-            if os.path.isfile(en):
-                self.window.title("Changelogs For "+version_latest)
-                self.label1 = ui.CTkLabel(self.frame, text=f"Primary Changelog For {version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-                self.label2 = ui.CTkLabel(self.frame, text=f"Major Changelog For {version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-                self.label3 = ui.CTkLabel(self.frame, text=f"Minor Changelog For {version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-                if string == "sidebar":
-                    self.button = ui.CTkButton(self.window, text="Update To "+version_latest, command=lambda:Sidebar.update(self, "sidebar"))
-                elif string == "startup":
-                    self.button = ui.CTkButton(self.window, text="Update To "+version_latest, command=lambda:Sidebar.update(self, "startup"))
-            elif os.path.isfile(tr):
-                self.window.title(version_latest+" için Değişiklik Günlükleri")
-                self.label1 = ui.CTkLabel(self.frame, text=f"{version_latest} İçin Birincil Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-                self.label2 = ui.CTkLabel(self.frame, text=f"{version_latest} İçin Major Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-                self.label3 = ui.CTkLabel(self.frame, text=f"{version_latest} İçin Minor Değişik Günlüğü", font=ui.CTkFont(size=14, weight="bold"))
-                if string == "sidebar": 
-                    self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=lambda:Sidebar.update(self, "sidebar"))
-                elif string == "startup":
-                    self.button = ui.CTkButton(self.window, text=version_latest+" Sürümüne Güncelle", command=lambda:Sidebar.update(self, "startup"))
-            with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as self.cl_primary_file:
-                self.cl_primary_text = self.cl_primary_file.read()
+            self.window.title(f"{lang['changelog']['changelogs'][lang_]}{version_latest}")
+            self.label1 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['major'][lang_]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
+            self.label2 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['minor'][lang_]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
+            if caller == 'sidebar':
+                self.button = ui.CTkButton(self.window, text=lang["operations"]["update"][lang_], command=lambda:Sidebar.update(self, 'sidebar'))
+            elif caller == "startup":
+                self.button = ui.CTkButton(self.window, text=lang["operations"]["update"][lang_], command=lambda:Sidebar.update(self, "startup"))
             with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
                 self.cl_major_text = self.cl_major_file.read()
             with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
                 self.cl_minor_text = self.cl_minor_file.read()
             self.textbox1 = ui.CTkTextbox(self.frame)
-            self.textbox1.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/primary-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
+            self.textbox1.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
             self.textbox1.configure(state="disabled")
             self.textbox2 = ui.CTkTextbox(self.frame)
-            self.textbox2.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
+            self.textbox2.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
             self.textbox2.configure(state="disabled")
-            self.textbox3 = ui.CTkTextbox(self.frame)
-            self.textbox3.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
-            self.textbox3.configure(state="disabled")
             self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
             self.textbox1.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.label2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
             self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
-            self.label3.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
-            self.textbox3.grid(row=5, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.button.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
-        elif string != "startup":
-            if os.path.isfile(en):
-                mb.showinfo("Information","GrelinTB is up to date.")
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","GrelinTB güncel.")
+        elif caller != "startup":
+            mb.showinfo(lang['globals']['information'][lang_], f"GrelinTB{lang['changelog']['up-to-date'][lang_]}")
     def reset(self):
-        if os.path.isfile(en):
-            self.reset_b.configure(text="Resetting", state="disabled")
-            os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Successful", "GrelinTB reset.")
-            self.reset_b.configure(text="Reset", state="disabled")
-            ask_restart_for_grelintb_ui("en")
-        elif os.path.isfile(tr):
-            self.reset_b.configure(text="Sıfırlanıyor", state="disabled")
-            os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Başarılı", "GrelinTB sıfırlandı.")
-            self.reset_b.configure(text="Sıfırlandı", state="disabled")
-            ask_restart_for_grelintb_ui("tr")
+        os.system("pkexec /usr/local/bin/grelintb/reset.sh")
+        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["reset"][lang_])
+        restart_grelintb(lang_)
     def uninstall(self):
         root.destroy()
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
-        if os.path.isfile(en):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Successful","GrelinTB uninstalled.")
-        elif os.path.isfile(tr):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            mb.showinfo("Bilgilendirme","GrelinTB kaldırıldı.")
+        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']['uninstalled'][lang_])
         sys.exit(0)
     def change_theme(self, new_theme: str):
-        if new_theme == "GrelinTB" or new_theme == "GrelinTB":
+        if new_theme == "GrelinTB":
             os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
-        elif new_theme == "Random" or new_theme == "Rastgele":
+        elif new_theme == lang['sidebar']['random'][lang_]:
             os.system(f"rm {config}theme/* ; touch {config}theme/random.txt")
-        elif new_theme == "Dark Blue" or new_theme == "Koyu Mavi":
+        elif new_theme == lang['sidebar']['dark-blue'][lang_]:
             os.system(f"rm {config}theme/* ; touch {config}theme/dark_blue.txt")
-        elif new_theme == "Blue" or new_theme == "Mavi":
+        elif new_theme == lang['sidebar']['blue'][lang_]:
             os.system(f"rm {config}theme/* ; touch {config}theme/blue.txt")
-        elif new_theme == "Green" or new_theme == "Yeşil":
+        elif new_theme == lang['sidebar']['green'][lang_]:
             os.system(f"rm {config}theme/* ; touch {config}theme/green.txt")
-        ask_restart_for_grelintb_ui("normal")
+        restart_grelintb(lang_)
     def change_appearance(self, new_appearance: str):
-        if new_appearance == "System" or new_appearance == "Sistem":
+        if new_appearance == lang['sidebar']['system'][lang_]:
             ui.set_appearance_mode("System")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/system.txt")
-        elif new_appearance == "Light" or new_appearance == "Açık":
+        elif new_appearance == lang['sidebar']['light'][lang_]:
             ui.set_appearance_mode("Light")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/light.txt")
-        elif new_appearance == "Dark" or new_appearance == "Koyu":
+        elif new_appearance == lang['sidebar']['dark'][lang_]:
             ui.set_appearance_mode("Dark")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/dark.txt")
     def change_language(self, new_language: str):
-        if new_language == "English" or new_language == "İngilizce":
+        if new_language == "English (İngilizce)":
             os.system(f"rm {config}language/* ; touch {config}language/en.txt")
-        elif new_language == "Turkish" or new_language == "Türkçe":
+        elif new_language == "Türkçe (Turkish)":
             os.system(f"rm {config}language/* ; touch {config}language/tr.txt")
-        ask_restart_for_grelintb_ui("normal")
-    def show_operations(self):
+        restart_grelintb(lang_)
+    def running_processes(self):
         if current_operations != []:
             self.number = 0
             self.window = ui.CTkToplevel()
@@ -579,21 +443,15 @@ class Sidebar(ui.CTkFrame):
             self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
             self.frame.grid(row=0, column=0, sticky="nsew")
             self.frame.grid_columnconfigure(0, weight=1)
-            if os.path.isfile(en):
-                self.window.title("List Of All Operations")
-            elif os.path.isfile(tr):
-                self.window.title("Tüm İşlemlerin Listesi")
+            self.window.title(lang['running_processes']['running-processes'][lang_])
             for self.progress in current_operations:
                 self.number = self.number + 1
                 if os.path.isfile(en):
-                    ui.CTkLabel(self.frame, fg_color=["gray100", "gray20"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
+                    ui.CTkLabel(self.frame, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
                 elif os.path.isfile(tr):
-                    ui.CTkLabel(self.frame, fg_color=["gray100", "gray20"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
+                    ui.CTkLabel(self.frame, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
         else:
-            if os.path.isfile(en):
-                mb.showwarning("Warning", "There are no processes running at the moment.")
-            elif os.path.isfile(tr):
-                mb.showwarning("Uyarı", "Şu anda çalışan hiçbir işlem yok.")
+            mb.showwarning(lang['globals']['warning'][lang_], lang['running-processes']['no-process'][lang_])
 
 class Startup(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -603,59 +461,53 @@ class Startup(ui.CTkFrame):
         self.scrollable = ui.CTkScrollableFrame(self, fg_color="transparent")
         self.scrollable.grid(row=0, column=0, sticky="nsew")
         self.scrollable.grid_columnconfigure((0, 1, 2, 3), weight=1)
-        if os.path.isfile(en):
-            self.scrollable.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-            self.weather = ui.CTkLabel(self.scrollable, text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
-            self.system = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname = ui.CTkLabel(self.scrollable, text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro = ui.CTkLabel(self.scrollable, text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel = ui.CTkLabel(self.scrollable, text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime = ui.CTkLabel(self.scrollable, text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time = ui.CTkLabel(self.scrollable, text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage = ui.CTkLabel(self.scrollable, text=f"Swap: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.refresh_button = ui.CTkButton(self, text="Refresh", command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
-        elif os.path.isfile(tr):
-            self.scrollable.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-            self.weather = ui.CTkLabel(self.scrollable, text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
-            self.system = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname = ui.CTkLabel(self.scrollable, text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro = ui.CTkLabel(self.scrollable, text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel = ui.CTkLabel(self.scrollable, text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime = ui.CTkLabel(self.scrollable, text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time = ui.CTkLabel(self.scrollable, text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage = ui.CTkLabel(self.scrollable, text=f"Takas: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.refresh_button = ui.CTkButton(self, text="Yenile", command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
+        self.scrollable.configure(label_text=f"{lang['startup']['welcome'][lang_]}{username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+        self.weather = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['weather'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold")) 
+        self.system = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['system'][lang_], font=ui.CTkFont(size=15, weight="bold")) 
+        self.hostname = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['hostname'][lang_]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+        self.distro = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['distro'][lang_]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+        self.kernel = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['kernel'][lang_]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+        self.packages = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['packages'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.uptime = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['uptime'][lang_]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+        self.boot_time = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['boot-time'][lang_]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+        self.usages = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['usages'][lang_], font=ui.CTkFont(size=15, weight="bold"))
+        self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: {lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.swap_usage = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['swap'][lang_]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.refresh_button = ui.CTkButton(self, text=lang['startup']['refresh'][lang_], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
         self.weather.grid(row=0, column=0, pady=(0, 10), columnspan=4)
         self.system.grid(row=1, column=0, pady=(0, 7.5), columnspan=4)
         self.hostname.grid(row=2, column=0, pady=(0, 7.5), columnspan=4)
         self.distro.grid(row=3, column=0, pady=(0, 7.5), columnspan=4)
         self.kernel.grid(row=4, column=0, pady=(0, 7.5), columnspan=4)
-        self.uptime.grid(row=5, column=0, pady=(0, 7.5), columnspan=4)
-        self.boot_time.grid(row=6, column=0, pady=(0, 10), columnspan=4)
-        self.usages.grid(row=7, column=0, pady=(0, 7.5), columnspan=4)
-        self.cpu_usage.grid(row=8, column=0, pady=(0, 10))
-        self.disk_usage.grid(row=8, column=1, pady=(0, 10))
-        self.ram_usage.grid(row=8, column=2, pady=(0, 10))
-        self.swap_usage.grid(row=8, column=3, pady=(0, 10))
+        self.packages.grid(row=5, column=0, pady=(0, 7.5), columnspan=4)
+        self.uptime.grid(row=6, column=0, pady=(0, 7.5), columnspan=4)
+        self.boot_time.grid(row=7, column=0, pady=(0, 10), columnspan=4)
+        self.usages.grid(row=8, column=0, pady=(0, 7.5), columnspan=4)
+        self.cpu_usage.grid(row=9, column=0, pady=(0, 10))
+        self.disk_usage.grid(row=9, column=1, pady=(0, 10))
+        self.ram_usage.grid(row=9, column=2, pady=(0, 10))
+        self.swap_usage.grid(row=9, column=3, pady=(0, 10))
         self.refresh_button.grid(row=1, column=0, pady=(10, 0), sticky="nsew")
         self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
         self.weather_thread.start()
+        self.packages_thread = threading.Thread(target=lambda:self.packages_def(), daemon=True)
+        self.packages_thread.start()
         self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
         self.cpu_usage_thread.start()
         self.other_def("startup")
     def weather_def(self):
-        if os.path.isfile(en):
-            self.weather.configure(text="Weather Forecast: "+str(subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
-        elif os.path.isfile(tr):
-            self.weather.configure(text="Hava Durumu: "+str(subprocess.Popen('curl -H "Accept-tr" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
+        self.weather.configure(text=lang['startup']['weather'][lang_]+subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])
+    def packages_def(self):
+        if os.path.isfile(debian):
+            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('dpkg --list | grep ^i | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (DEB), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+        elif os.path.isfile(fedora):
+            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('dnf5 list --installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (RPM), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+        elif os.path.isfile(solus):
+            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('eopkg --list-installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (EOPKG), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+        elif os.path.isfile(arch):
+            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('pacman -Q | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (PACMAN), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
     def cpu_usage_def(self):
         self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
     def other_def(self, mode: str):
@@ -663,41 +515,26 @@ class Startup(ui.CTkFrame):
         self.fans_ok = False
         if hasattr (psutil, "sensors_temperatures") and psutil.sensors_temperatures():
             self.temps_ok = True
-            self.temps_number = 9
+            self.temps_number = 10
             self.temps = psutil.sensors_temperatures()
-            if os.path.isfile(en):
-                self.temps_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Temperatures", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
-            elif os.path.isfile(tr):
-                self.temps_header= ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sıcaklıklar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+            self.temps_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['temperatures'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
             for self.temps_name, self.temps_entries in self.temps.items():
                 self.temps_number = self.temps_number + 1
-                if os.path.isfile(en):
-                    self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
-                elif os.path.isfile(tr):
-                    self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{lang['startup']['hardware'][lang_]}{self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.temps_entry in self.temps_entries:
                     self.temps_number = self.temps_number + 1
-                    if os.path.isfile(en): 
-                        ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, High = {self.temps_entry.high} °C, Critical = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
-                    elif os.path.isfile(tr): 
-                        ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: Current = {self.temps_entry.current} °C, Yüksek = {self.temps_entry.high} °C, Kritik = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: {lang['startup']['current'][lang_]} = {self.temps_entry.current} °C, {lang['startup']['high'][lang_]} = {self.temps_entry.high} °C, {lang['startup']['critical'][lang_]} = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
         if hasattr (psutil, "sensors_fans") and psutil.sensors_fans():
             self.fans_ok = True
             if self.temps_ok == True:
                 self.fans_number = self.temps_number + 1
             else:
-                self.fans_number = 9
-            if os.path.isfile(en):
-                self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fans", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
-            elif os.path.isfile(tr):
-                self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Fanlar", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
+                self.fans_number = 10
             self.fans = psutil.sensors_fans()
+            self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['fans'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
             for self.fans_name, self.fans_entries in self.fans.items():
                 self.fans_number = self.fans_number + 1
-                if os.path.isfile(en):
-                    self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Hardware: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
-                elif os.path.isfile(tr):
-                    self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Donanım: {self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{lang['startup']['hardware'][lang_]}{self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.fans_entry in self.fans_entries:
                     self.fans_number = self.fans_number + 1
                     ui.CTkLabel(self.scrollable, text=f"{self.fans_entry.label or self.fans_name}: {self.fans_entry.current} RPM", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 5), columnspan=4)
@@ -707,71 +544,44 @@ class Startup(ui.CTkFrame):
             elif self.temps_ok == True:
                 self.batt_number = self.temps_number + 1
             else:
-                self.batt_number = 9
+                self.batt_number = 10
             self.batt = psutil.sensors_battery()
             if mode == "startup":
-                if os.path.isfile(en):
-                    self.header_text = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Battery", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
-                    self.charge_text = ui.CTkLabel(self.scrollable, text=f"Charge: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
-                elif os.path.isfile(tr):
-                    self.header_text = ui.CTkLabel(self.scrollable, fg_color=["gray100", "gray20"], corner_radius=20, text=f"Batarya", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
-                    self.charge_text = ui.CTkLabel(self.scrollable, text=f"Şarj: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                self.header_text = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['battery'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+                self.charge_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['charge'][lang_]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 if self.batt.power_plugged:
-                    if os.path.isfile(en):
-                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Status: {str('Charging' if self.batt.percent < 100 else 'Fully Charged')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Plugged In: Yes", font=ui.CTkFont(size=13, weight="bold"))
-                    elif os.path.isfile(tr):
-                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Durum: {str('Şarj Oluyor' if self.batt.percent < 100 else 'Şarj Oldu')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Şarja Takılı: Evet", font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['status'][lang_]}{str(lang['startup']['charging'][lang_] if self.batt.percent < 100 else lang['startup']['charged'][lang_])}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text = ui.CTkLabel(self.scrollable, text=lang['startup']['plugged-yes'][lang_], font=ui.CTkFont(size=13, weight="bold"))
                 else:
-                    if os.path.isfile(en):
-                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Status: Discharging", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Plugged In: No", font=ui.CTkFont(size=13, weight="bold"))
-                    elif os.path.isfile(tr):
-                        self.remaining_text = ui.CTkLabel(self.scrollable, text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text = ui.CTkLabel(self.scrollable, text=f"Durum: Şarj Azalıyor", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text = ui.CTkLabel(self.scrollable, text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['status'][lang_]}{lang['startup']['discharging'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text = ui.CTkLabel(self.scrollable, text=lang['startup']['plugged-no'][lang_], font=ui.CTkFont(size=13, weight="bold"))
                 self.charge_text.grid(row=self.batt_number + 1, column=0, pady=(0, 5), columnspan=4)
                 self.remaining_text.grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
                 self.status_text.grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
                 self.plugged_text.grid(row=self.batt_number + 4, column=0, pady=(0, 5), columnspan=4)
             elif mode == "refresh":
-                if os.path.isfile(en):
-                    self.charge_text.configure(text=f"Charge: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
-                elif os.path.isfile(tr):
-                    self.charge_text.configure(text=f"Şarj: {str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                self.charge_text.configure(text=f"{lang['startup']['charge'][lang_]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 if self.batt.power_plugged:
-                    if os.path.isfile(en):
-                        self.remaining_text.configure(text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text.configure(text=f"Status: {str('Charging' if self.batt.percent < 100 else 'Fully Charged')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text.configure(text=f"Plugged In: Yes", font=ui.CTkFont(size=13, weight="bold"))
-                    elif os.path.isfile(tr):
-                        self.remaining_text.configure(text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text.configure(text=f"Durum: {str('Şarj Oluyor' if self.batt.percent < 100 else 'Şarj Oldu')}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text.configure(text=f"Şarja Takılı: Evet", font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text.configure(text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text.configure(text=f"{lang['startup']['status'][lang_]}{str(lang['startup']['charging'][lang_] if self.batt.percent < 100 else lang['startup']['charged'][lang_])}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text.configure(text=lang['startup']['plugged-yes'][lang_], font=ui.CTkFont(size=13, weight="bold"))
                 else:
-                    if os.path.isfile(en):
-                        self.remaining_text.configure(text=f"Remaining: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text.configure(text=f"Status: Discharging", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text.configure(text=f"Plugged In: No", font=ui.CTkFont(size=13, weight="bold"))
-                    elif os.path.isfile(tr):
-                        self.remaining_text.configure(text=f"Kalan: {str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                        self.status_text.configure(text=f"Durum: Şarj Azalıyor", font=ui.CTkFont(size=13, weight="bold"))
-                        self.plugged_text.configure(text=f"Şarja Takılı: Hayır", font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text.configure(text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text.configure(text=f"{lang['startup']['status'][lang_]}{lang['startup']['discharging'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text.configure(text=lang['startup']['plugged-no'][lang_], font=ui.CTkFont(size=13, weight="bold"))
     def refresh(self):
         if os.path.isfile(en):
             self.scrollable.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
             self.weather.configure(text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
-            self.system.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
+            self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
             self.hostname.configure(text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
             self.distro.configure(text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
             self.kernel.configure(text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
             self.uptime.configure(text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
             self.boot_time.configure(text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
+            self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
             self.cpu_usage.configure(text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
             self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
             self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
@@ -779,13 +589,13 @@ class Startup(ui.CTkFrame):
         elif os.path.isfile(tr):
             self.scrollable.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
             self.weather.configure(text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
-            self.system.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
+            self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
             self.hostname.configure(text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
             self.distro.configure(text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
             self.kernel.configure(text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
             self.uptime.configure(text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
             self.boot_time.configure(text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages.configure(fg_color=["gray100", "gray20"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
+            self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
             self.cpu_usage.configure(text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
             self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
             self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
@@ -981,19 +791,19 @@ class TraditionalPackages(ui.CTkFrame):
         if os.path.isfile(en):
             self.app_text = "Application"
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Packages")
-            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main("search"))
-            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
-            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
-            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main('search'))
+            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
+            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
+            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
         elif os.path.isfile(tr):
             self.app_text = "Uygulama"
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Paketler")
-            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main("search"))
-            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
-            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
-            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main('search'))
+            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
+            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
+            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
         if os.path.isfile(debian):
             self.app = ui.CTkOptionMenu(self.frame, values=[self.app_text, "Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"], command=self.option)
         elif os.path.isfile(fedora):
@@ -1034,68 +844,68 @@ class TraditionalPackages(ui.CTkFrame):
         self.button5.configure(state="disabled")
         self.time = str(time.strftime("%H:%M:%S", time.localtime()))
         if os.path.isfile(en):
-            if operation == "search":
+            if operation == 'search':
                 add_operation(f"Searching {self.entry.get()}", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 add_operation(f"Installing {self.entry.get()}", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"Reinstalling {self.entry.get()}", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"Uninstalling {self.entry.get()}", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"Updating {self.entry.get()}", self.time)
         elif os.path.isfile(tr):
-            if operation == "search":
+            if operation == 'search':
                 add_operation(f"{self.entry.get()} Aranıyor", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 add_operation(f"{self.entry.get()} Kuruluyor", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"{self.entry.get()} Yeniden Kuruluyor", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"{self.entry.get()} Kaldırılıyor", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"{self.entry.get()} Güncelleniyor", self.time)
         if os.path.isfile(debian):
-            if operation == "search":
+            if operation == 'search':
                 self.command = f"apt -y search {self.entry.get()}"
-            elif operation == "install":
+            elif operation == 'install':
                 self.command = f"pkexec apt -y install {self.entry.get()}"
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 self.command = f"pkexec apt -y install --reinstall {self.entry.get()}"
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
-            elif operation == "update":
+            elif operation == 'update':
                 self.command = f"pkexec apt -y upgrade {self.entry.get()}"
         elif os.path.isfile(fedora):
-            if operation == "search":
+            if operation == 'search':
                 self.command = f"dnf5 -y --nogpgcheck search {self.entry.get()}"
-            elif operation == "install":
+            elif operation == 'install':
                 self.command = f"pkexec dnf5 -y --nogpgcheck install {self.entry.get()}"
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 self.command = f"pkexec dnf5 -y --nogpgcheck reinstall {self.entry.get()}"
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 self.command = f"pkexec dnf5 -y --nogpgcheck remove {self.entry.get()}"
-            elif operation == "update":
+            elif operation == 'update':
                 self.command = f"pkexec dnf5 -y --nogpgcheck update {self.entry.get()}"
         elif os.path.isfile(solus):
-            if operation == "search":
+            if operation == 'search':
                 self.command = f"eopkg -y search {self.entry.get()}"
-            elif operation == "install":
+            elif operation == 'install':
                 self.command = f"pkexec eopkg -y install {self.entry.get()}"
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 self.command = f"pkexec eopkg -y install --reinstall {self.entry.get()}"
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 self.command = f"pkexec eopkg -y remove --purge {self.entry.get()}"
-            elif operation == "update":
+            elif operation == 'update':
                 self.command = f"pkexec eopkg -y upgrade {self.entry.get()}"
         elif os.path.isfile(arch):
-            if operation == "search":
+            if operation == 'search':
                 self.command = f"pacman --noconfirm -Ss {self.entry.get()}"
-            elif operation == "install" or operation == "reinstall":
+            elif operation == 'install' or operation == 'reinstall':
                 self.command = f"pkexec pacman --noconfirm -S {self.entry.get()}"
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 self.command = f"pkexec pacman --noconfirm -Rns {self.entry.get()}"
-            elif operation == "update":
+            elif operation == 'update':
                 self.command = f"pkexec pacman --noconfirm -Syu {self.entry.get()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -1110,26 +920,26 @@ class TraditionalPackages(ui.CTkFrame):
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")            
         if os.path.isfile(en):
-            if operation == "search":
+            if operation == 'search':
                 delete_operation(f"Searching {self.entry.get()}", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 delete_operation(f"Installing {self.entry.get()}", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"Reinstalling {self.entry.get()}", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"Uninstalling {self.entry.get()}", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"Updating {self.entry.get()}", self.time)
         elif os.path.isfile(tr):
-            if operation == "search":
+            if operation == 'search':
                 delete_operation(f"{self.entry.get()} Aranıyor", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 delete_operation(f"{self.entry.get()} Kuruluyor", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"{self.entry.get()} Yeniden Kuruluyor", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"{self.entry.get()} Kaldırılıyor", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"{self.entry.get()} Güncelleniyor", self.time)
         self.app.configure(state="normal")
         self.entry.configure(state="normal")
@@ -1139,9 +949,9 @@ class TraditionalPackages(ui.CTkFrame):
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1161,18 +971,18 @@ class FlatpakPackages(ui.CTkFrame):
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Packages")
-            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main("search"))
-            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
-            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
-            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main('search'))
+            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
+            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
+            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
         elif os.path.isfile(tr):
             self.entry = ui.CTkEntry(self.frame, placeholder_text="Paketler")
-            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main("search"))
-            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
-            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
-            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main('search'))
+            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
+            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
+            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
         self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
@@ -1198,36 +1008,36 @@ class FlatpakPackages(ui.CTkFrame):
         self.button5.configure(state="disabled")
         self.time = str(time.strftime("%H:%M:%S", time.localtime()))
         if os.path.isfile(en):
-            if operation == "search":
+            if operation == 'search':
                 add_operation(f"Searching {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 add_operation(f"Installing {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"Reinstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"Uninstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"Updating {self.entry.get()} (Flatpak)", self.time)
         elif os.path.isfile(tr):
-            if operation == "search":
+            if operation == 'search':
                 add_operation(f"{self.entry.get()} Aranıyor (Flatpak)", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 add_operation(f"{self.entry.get()} Kuruluyor (Flatpak)", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"{self.entry.get()} Yeniden Kuruluyor (Flatpak)", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"{self.entry.get()} Kaldırılıyor (Flatpak)", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
-        if operation == "search":
+        if operation == 'search':
             self.command = f"flatpak search {self.entry.get()}"
-        elif operation == "install":
+        elif operation == 'install':
             self.command = f"flatpak install {self.entry.get()} -y"
-        elif operation == "reinstall":
+        elif operation == 'reinstall':
             self.command = f"flatpak install --reinstall '{self.entry.get()} -y"
-        elif operation == "uninstall":
+        elif operation == 'uninstall':
             self.command = f"flatpak uninstall {self.entry.get()} -y"
-        elif operation == "update":
+        elif operation == 'update':
             self.command = f"flatpak update '{self.entry.get()} -y"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -1242,26 +1052,26 @@ class FlatpakPackages(ui.CTkFrame):
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")
         if os.path.isfile(en):
-            if operation == "search":
+            if operation == 'search':
                 delete_operation(f"Searching {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 delete_operation(f"Installing {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"Reinstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"Uninstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"Updating {self.entry.get()} (Flatpak)", self.time)
         elif os.path.isfile(tr):
-            if operation == "search":
+            if operation == 'search':
                 delete_operation(f"{self.entry.get()} Aranıyor (Flatpak)", self.time)
-            elif operation == "install":
+            elif operation == 'install':
                 delete_operation(f"{self.entry.get()} Kuruluyor (Flatpak)", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"{self.entry.get()} Yeniden Kuruluyor (Flatpak)", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"{self.entry.get()} Kaldırılıyor (Flatpak)", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
         self.entry.configure(state="normal")
         self.button1.configure(state="normal")
@@ -1270,9 +1080,9 @@ class FlatpakPackages(ui.CTkFrame):
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1292,16 +1102,16 @@ class DEWM(ui.CTkFrame):
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
             self.text = ui.CTkLabel(self.frame, text="Desktop Environment\nWindow Manager")
-            self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main("install"))
-            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main("reinstall"))
-            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main("uninstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
+            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
+            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
         elif os.path.isfile(tr):
             self.text = ui.CTkLabel(self.frame, text="Masaüstü Ortamı\nPencere Yöneticisi")
-            self.button1 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main("install"))
-            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main("reinstall"))
-            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main("uninstall"))
-            self.button4 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
+            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
+            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
+            self.button4 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
         if os.path.isfile(debian):
             self.dewm = ui.CTkOptionMenu(self.frame, values=["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"])
         elif os.path.isfile(fedora):
@@ -1324,47 +1134,47 @@ class DEWM(ui.CTkFrame):
         self.button4.configure(state="disabled")
         self.time = str(time.strftime("%H:%M:%S", time.localtime()))
         if os.path.isfile(en):
-            if operation == "install":
+            if operation == 'install':
                 add_operation(f"Installing {self.dewm.get()}", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"Reinstalling {self.dewm.get()}", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"Uninstalling {self.dewm.get()}", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"Updating {self.dewm.get()}", self.time)
         elif os.path.isfile(tr):
-            if operation == "install":
+            if operation == 'install':
                 add_operation(f"{self.dewm.get()} Kuruluyor", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 add_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 add_operation(f"{self.dewm.get()} Kaldırılıyor", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 add_operation(f"{self.dewm.get()} Güncelleniyor", self.time)
         if os.path.isfile(debian):
             if self.dewm.get().lower() != "mate":
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec apt -y install {self.dewm.get().lower()}"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec apt -y install --reinstall {self.dewm.get().lower()}"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec apt -y autoremove --purge {self.dewm.get().lower()}"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec apt -y upgrade {self.dewm.get().lower()}"
             elif self.dewm.get().lower() == "mate":
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec apt -y install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec apt -y install --reinstall mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec apt -y autoremove --purge mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec apt -y upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
         elif os.path.isfile(fedora):
             if self.dewm.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     if os.path.isfile(en):
                         mb.showerror("Error", f"DNF doesn't support reinstalling {self.dewm.get()} group.")
                     elif os.path.isfile(tr):
@@ -1379,23 +1189,23 @@ class DEWM(ui.CTkFrame):
                     self.button3.configure(state="normal")
                     self.button4.configure(state="normal")
                     return
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck reinstall {self.dewm.get().lower()}; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
             elif self.dewm.get() == "GNOME":
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     if os.path.isfile(en):
                         mb.showerror("Error", f"DNF doesn't support reinstalling {self.dewm.get()} group.")
                     elif os.path.isfile(tr):
@@ -1410,56 +1220,56 @@ class DEWM(ui.CTkFrame):
                     self.button3.configure(state="normal")
                     self.button4.configure(state="normal")
                     return
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"                        
         elif os.path.isfile(solus):
             if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
             else:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"           
         elif os.path.isfile(solus):
             if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
             else:
-                if operation == "install":
+                if operation == 'install':
                     self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
-                elif operation == "reinstall":
+                elif operation == 'reinstall':
                     self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
-                elif operation == "uninstall":
+                elif operation == 'uninstall':
                     self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
-                elif operation == "update":
+                elif operation == 'update':
                     self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"        
         elif os.path.isfile(arch):
-            if operation == "install":
+            if operation == 'install':
                 self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 self.command = f"pkexec pacman --noconfirm -Rns {self.dewm.get().lower()}"
-            elif operation == "update":
+            elif operation == 'update':
                 self.command = f"pkexec pacman --noconfirm -Syu {self.dewm.get().lower()}"
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
@@ -1474,22 +1284,22 @@ class DEWM(ui.CTkFrame):
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")
         if os.path.isfile(en):
-            if operation == "install":
+            if operation == 'install':
                 delete_operation(f"Installing {self.dewm.get()}", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"Reinstalling {self.dewm.get()}", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"Uninstalling {self.dewm.get()}", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"Updating {self.dewm.get()}", self.time)
         elif os.path.isfile(tr):
-            if operation == "install":
+            if operation == 'install':
                 delete_operation(f"{self.dewm.get()} Kuruluyor", self.time)
-            elif operation == "reinstall":
+            elif operation == 'reinstall':
                 delete_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-            elif operation == "uninstall":
+            elif operation == 'uninstall':
                 delete_operation(f"{self.dewm.get()} Kaldırılıyor", self.time)
-            elif operation == "update":
+            elif operation == 'update':
                 delete_operation(f"{self.dewm.get()} Güncelleniyor", self.time)
         self.dewm.configure(state="normal")
         self.button1.configure(state="normal")
@@ -1497,9 +1307,9 @@ class DEWM(ui.CTkFrame):
         self.button3.configure(state="normal")
         self.button4.configure(state="normal")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1518,7 +1328,7 @@ class TraditionalScripts(ui.CTkFrame):
         self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self.frame, text="Upgrade All Packages", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Upgrade All Packages", command=lambda:self.go_main('update'))
             self.button2 = ui.CTkButton(self.frame, text="Synchronize Distribution", command=lambda:self.go_main("dist_sync"))
             self.button3 = ui.CTkButton(self.frame, text="Clean Package Cache", command=lambda:self.go_main("clean"))
             self.button4 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go_main("remove"))
@@ -1527,7 +1337,7 @@ class TraditionalScripts(ui.CTkFrame):
             self.button7 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go_main("list"))
             self.button8 = ui.CTkButton(self.frame, text="List Installed Leaves", command=lambda:self.go_main("list2"))
         elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main("update"))
+            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main('update'))
             self.button2 = ui.CTkButton(self.frame, text="Dağıtımı Senkronize Et", command=lambda:self.go_main("dist_sync"))
             self.button3 = ui.CTkButton(self.frame, text="Paket Önbelleğini Temizle", command=lambda:self.go_main("clean"))
             self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("remove"))
@@ -1564,7 +1374,7 @@ class TraditionalScripts(ui.CTkFrame):
             self.button8.configure(state="disabled")
         self.time = str(time.strftime("%H:%M:%S", time.localtime()))
         if os.path.isfile(en):
-            if operation == "update":
+            if operation == 'update':
                 add_operation(f"Updating All Packages", self.time)
             elif operation == "dist_sync":
                 add_operation(f"Synchronizing Distribution", self.time)
@@ -1581,7 +1391,7 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "list2":
                 add_operation(f"Listing Installed Leaves", self.time)
         elif os.path.isfile(tr):
-            if operation == "update":
+            if operation == 'update':
                 add_operation(f"Tüm Paketler Güncelleniyor", self.time)
             elif operation == "dist_sync":
                 add_operation(f"Dağıtım Senkronize Ediliyor", self.time)
@@ -1598,7 +1408,7 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "list2":
                 add_operation(f"Kurulu Yapraklar Listeleniyor", self.time)
         if os.path.isfile(debian):
-            if operation == "update":
+            if operation == 'update':
                 self.command = 'pkexec apt -y upgrade'
             elif operation == "dist_sync":
                 self.command = 'pkexec apt -y dist-upgrade'
@@ -1613,7 +1423,7 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "list":
                 self.command = 'dpkg --list | grep ^i'
         elif os.path.isfile(fedora):
-            if operation == "update":
+            if operation == 'update':
                 self.command = 'pkexec dnf5 -y --nogpgcheck upgrade'
             elif operation == "dist_sync":
                 self.command = 'pkexec dnf5 -y --nogpgcheck distro-sync'
@@ -1622,24 +1432,24 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "remove":
                 self.command = 'pkexec dnf5 -y --nogpgcheck autoremove'
             elif operation == "history":
-                self.command = 'dnf5 -y --nogpgcheck history list'
+                self.command = 'dnf5 history list'
             elif operation == "list":
-                self.command = 'dnf5 -y --nogpgcheck list --installed'
+                self.command = 'dnf5 list --installed'
             elif operation == "list2":
-                self.command = 'dnf5 -y --nogpgcheck leaves'
+                self.command = 'dnf5 leaves'
         elif os.path.isfile(solus):
-            if operation == "update":
+            if operation == 'update':
                 self.command = 'pkexec eopkg -y upgrade'
             elif operation == "clean":
                 self.command = 'pkexec eopkg -y dc'
             elif operation == "remove":
                 self.command = 'pkexec eopkg -y rmf'
             elif operation == "history":
-                self.command = 'eopkg -y history'
+                self.command = 'eopkg history'
             elif operation == "list":
-                self.command = 'eopkg -y list-installed'
+                self.command = 'eopkg list-installed'
         elif os.path.isfile(arch):
-            if operation == "update":
+            if operation == 'update':
                 self.command = 'pkexec pacman --noconfirm -Syu'
             elif operation == "clean":
                 self.command = 'pkexec pacman --noconfirm -Scc'
@@ -1650,7 +1460,7 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "history":
                 self.command = 'cat /var/log/pacman.log'
             elif operation == "list":
-                self.command = 'pacman --noconfirm -Q'
+                self.command = 'pacman -Q'
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.configure(state="disabled")
@@ -1664,7 +1474,7 @@ class TraditionalScripts(ui.CTkFrame):
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")
         if os.path.isfile(en):
-            if operation == "update":
+            if operation == 'update':
                 delete_operation(f"Updating All Packages", self.time)
             elif operation == "dist_sync":
                 delete_operation(f"Synchronizing Distribution", self.time)
@@ -1681,7 +1491,7 @@ class TraditionalScripts(ui.CTkFrame):
             elif operation == "list2":
                 delete_operation(f"Listing Installed Leaves", self.time)
         elif os.path.isfile(tr):
-            if operation == "update":
+            if operation == 'update':
                 delete_operation(f"Tüm Paketler Güncelleniyor", self.time)
             elif operation == "dist_sync":
                 delete_operation(f"Dağıtım Senkronize Ediliyor", self.time)
@@ -1709,9 +1519,9 @@ class TraditionalScripts(ui.CTkFrame):
         if os.path.isfile(fedora):
             self.button8.configure(state="normal")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1827,9 +1637,9 @@ class FlatpakScripts(ui.CTkFrame):
         self.button4.configure(state="normal")
         self.button5.configure(state="normal")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1887,9 +1697,9 @@ class SystemdServices(ui.CTkFrame):
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")
         if self.run_command.returncode == 0:
-            main_successful()
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
-            main_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
     def go_main(self, process: str):
         t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
         t.start()
@@ -1968,13 +1778,13 @@ class Store(ui.CTkFrame):
         self.systemd_frame=SystemdServices(self.systemd)
         self.systemd_frame.grid(row=0, column=0, sticky="nsew")
 
-class BashZshButtons(ui.CTkFrame):
+class BashrcZshrcButtons(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure((1, 2, 3, 4), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
         self.var = ui.StringVar(value="bashrc")
-        self.option = ui.CTkSwitch(self, text="Bash / Zsh", offvalue="bashrc", onvalue="zshrc", command=self.switch, variable=self.var)
+        self.option = ui.CTkSwitch(self, text="Bashrc / Zshrc", offvalue="bashrc", onvalue="zshrc", command=self.switch, variable=self.var)
         self.option.grid(row=0, column=0, sticky="ns", padx=0, pady=2.5, columnspan=3)
         if os.path.isfile(en):
             self.label1 = ui.CTkLabel(self, text="Add Without Colors")
@@ -1990,11 +1800,11 @@ class BashZshButtons(ui.CTkFrame):
             self.button8 = ui.CTkButton(self, text="Changes In This Session", command=self.undo2)
             self.button9 = ui.CTkButton(self, text="All Changes", command=self.undo3)
         elif os.path.isfile(tr):
-            self.label1 = ui.CTkLabel(self, text="Temaler Olmadan Ekle")
+            self.label1 = ui.CTkLabel(self, text="Renkler Olmadan Ekle")
             self.button1 = ui.CTkButton(self, text="Kullanıcı Adım", command=self.username1)
             self.button2 = ui.CTkButton(self, text="Sistem Bilgisi", command=self.systeminfo1)
             self.button3 = ui.CTkButton(self, text="RAM Tüketimi", command=self.memory1)
-            self.label2 = ui.CTkLabel(self, text="Temalerle Ekle")
+            self.label2 = ui.CTkLabel(self, text="Renklerle Ekle")
             self.button4 = ui.CTkButton(self, text="Kullanıcı Adım", command=self.username2)
             self.button5 = ui.CTkButton(self, text="Sistem Bilgisi", command=self.systeminfo2)
             self.button6 = ui.CTkButton(self, text="RAM Tüketimi", command=self.memory2)
@@ -2084,7 +1894,7 @@ class BashZshButtons(ui.CTkFrame):
         os.system(f"cp {local}{self.var.get()}-first /home/{username}/.{self.var.get()}")
         self.successful()
 
-class BashZshFile(ui.CTkFrame):
+class BashrcZshrcFile(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(1, weight=1)
@@ -2139,7 +1949,7 @@ class BashZshFile(ui.CTkFrame):
             elif os.path.isfile(tr):
                 mb.showerror("Hata","Yapılandırma kaydedilemedi.")
 
-class BashZsh(ui.CTkFrame):
+class BashrcZshrc(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_rowconfigure(0, weight=1)
@@ -2156,8 +1966,8 @@ class BashZsh(ui.CTkFrame):
         self.buttons_tab.grid_rowconfigure(0, weight=1)
         self.file_tab.grid_columnconfigure(0, weight=1)
         self.file_tab.grid_rowconfigure(0, weight=1)
-        self.buttons_frame = BashZshButtons(self.buttons_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
-        self.file_frame = BashZshFile(self.file_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        self.buttons_frame = BashrcZshrcButtons(self.buttons_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        self.file_frame = BashrcZshrcFile(self.file_tab, fg_color="transparent").grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
 
 class ComputerName(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -2333,7 +2143,7 @@ class Distros(ui.CTkFrame):
         self.text10.grid(row=0, column=0, sticky="nsew")
         self.button10.grid(row=1, column=0, sticky="nsew")
 
-class Calculator(ui.CTkFrame):
+class Calcer(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.configure(fg_color="transparent")
@@ -2406,18 +2216,18 @@ class Tools(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
         if os.path.isfile(en):
-            self.bashzsh = self.tabview.add("Configure Bash and Zsh")
+            self.bashzsh = self.tabview.add("Configure Bashrc and Zshrc")
             self.computername = self.tabview.add("Change Computer's Name")
             self.distros = self.tabview.add("About Some Distributions")
-            self.calculator = self.tabview.add("Calculator")
+            self.calculator = self.tabview.add("Calcer")
         elif os.path.isfile(tr):
-            self.bashzsh = self.tabview.add("Bash'ı ve Zsh'ı Yapılandır")
+            self.bashzsh = self.tabview.add("Bashrc ve Zshrc'yi Yapılandır")
             self.computername = self.tabview.add("Bilgisayarın Adını Değiştir")
             self.distros = self.tabview.add("Bazı Dağıtımlar Hakkında")
-            self.calculator = self.tabview.add("Hesaplayıcı")
+            self.calculator = self.tabview.add("Hesapçı")
         self.bashzsh.grid_columnconfigure(0, weight=1)
         self.bashzsh.grid_rowconfigure(0, weight=1)
-        self.bashzsh_frame=BashZsh(self.bashzsh, fg_color="transparent")
+        self.bashzsh_frame=BashrcZshrc(self.bashzsh, fg_color="transparent")
         self.bashzsh_frame.grid(row=0, column=0, sticky="nsew")
         self.computername.grid_columnconfigure(0, weight=1)
         self.computername.grid_rowconfigure(0, weight=1)
@@ -2429,7 +2239,7 @@ class Tools(ui.CTkFrame):
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
         self.calculator.grid_columnconfigure(0, weight=1)
         self.calculator.grid_rowconfigure(0, weight=1)
-        self.distros_frame=Calculator(self.calculator)
+        self.distros_frame=Calcer(self.calculator)
         self.distros_frame.grid(row=0, column=0, sticky="nsew")
 
 class Root(ui.CTk):
@@ -2482,7 +2292,7 @@ class Root(ui.CTk):
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
-    if "help" in sys.argv[1:] or "yardım" in sys.argv[1:]:
+    if "help" in sys.argv[1:] or 'yardım' in sys.argv[1:]:
         if os.path.isfile(en):
             print(" Copyright (C) 2024 MuKonqi (Muhammed S.)")
             print("This is GrelinTB's help page.")
@@ -2520,10 +2330,10 @@ if __name__ == "__main__":
             print("  kaldır:        GrelinTB'yı kaldır")
             print("                 GrelinTB'yi normal olarak aç (varsayılan)")
         sys.exit(0)
-    elif "grelintb" in sys.argv[1:]:
+    elif __file__ in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
         sys.exit(0)
-    elif "version" in sys.argv[1:] or "sürüm" in sys.argv[1:]:
+    elif 'version' in sys.argv[1:] or 'sürüm' in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as cl_primary_file:
             cl_primary_text = cl_primary_file.read()
         with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as cl_major_file:
@@ -2535,18 +2345,18 @@ if __name__ == "__main__":
         elif os.path.isfile(tr):
             print(f" {version_current} İçin Birincil Değişiklik Günlüğü\n{cl_primary_text}\n\n {version_current} İçin Major Değişiklik Günlüğü\n{cl_major_text}\n\n {version_current} İçin Minor Değişiklik Günlüğü\n{cl_minor_text}")
         sys.exit(0)
-    elif "developer" in sys.argv[1:] or "geliştirici" in sys.argv[1:]:
+    elif 'developer' in sys.argv[1:] or 'geliştirici' in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
         sys.exit(0)
-    elif "license" in sys.argv[1:] or "lisans" in sys.argv[1:]:
+    elif 'license' in sys.argv[1:] or "lisans" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
         print(f"\n{l_text}")
         sys.exit(0)
-    elif "credit" in sys.argv[1:] or "kredi" in sys.argv[1:]:
+    elif 'credit' in sys.argv[1:] or 'kredi' in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
         sys.exit(0)
-    elif "update" in sys.argv[1:] or "güncelle" in sys.argv[1:]:
+    elif 'update' in sys.argv[1:] or 'güncelle' in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
             if os.path.isfile(en):
@@ -2572,7 +2382,7 @@ if __name__ == "__main__":
             elif os.path.isfile(tr):
                 print("GrelinTB güncel.")
         sys.exit(0)
-    elif "reset" in sys.argv[1:] or "sıfırla" in sys.argv[1:]:
+    elif 'reset' in sys.argv[1:] or 'sıfırla' in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")
@@ -2581,7 +2391,7 @@ if __name__ == "__main__":
             os.system(f"rm -rf /home/{username}/.config/grelintb")
             print("GrelinTB sıfırlandı.")
         sys.exit(0)
-    elif "uninstall" in sys.argv[1:] or "kaldır" in sys.argv[1:]:
+    elif 'uninstall' in sys.argv[1:] or 'kaldır' in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         if os.path.isfile(en):
             os.system(f"rm -rf /home/{username}/.config/grelintb")

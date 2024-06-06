@@ -1,0 +1,110 @@
+{
+    "globals": {
+        "information": ["Information", "Bilgilendirme"],
+        "warning": ["Warning", "Uyarı"],
+        "error": ["Error", "Hata"],
+        "completed": ["Process completed.", "İşlem tamamlandı."],
+        "failed": ["Process failed.", "İşlem başarısız oldu."],
+        "cancelled": ["Process cancelled.", "İşlem iptal edildi."]
+    },
+    "questions": {
+        "reboot": ["Your system needs to be restarted for the changes to be completed.\nDo you want to reboot immediately?", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nHemen yeniden başlatmak ister misiniz?"],
+        "install": [" can't found on your system.\nWe can try installing it.\nDo you approve it?", " sisteminizde bulunamadı.\nBiz sisteminize onu yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?"],
+        "grelintb": ["GrelinTB's user interface needs restarting.\nDo you want to restart the GrelinTB user interface?", "GrelinTB'nin kullanıcı arayüzü yeniden başlatılmaya ihtiyaç duyuyor.\nGrelinTB kullanıcı arayüzünü yeniden başlatmak istiyor musunuz?"]
+    },
+    "operations": {
+        "search": ["Search", "Ara"],
+        "install": ["Install", "Kur"],
+        "reinstall": ["Reinstall", "Yeniden Kur"],
+        "uninstall": ["Uninstall", "Kaldır"],
+        "update": ["Update", "Güncelle"],
+        "reset": ["Reset", "Sıfırla"]
+    },
+    "sidebar": {
+        "version": ["Version: ", "Sürüm: "],
+        "developer": ["Developer: ", "Geliştirici: "],
+        "license": ["License: ", "Lisans: "],
+        "credit": ["Credit: ", "Kredi: "],
+        "theme": ["Theme", "Tema"],
+        "random": ["Random", "Rastgele"],
+        "dark-blue": ["Dark Blue", "Koyu Mavi"],
+        "blue": ["Blue", "Mavi"],
+        "green": ["Green", "Yeşil"],
+        "appearance": ["Appearance", "Görünüm"],
+        "system": ["System", "Sistem"],
+        "light": ["Light", "Açık"],
+        "dark": ["Dark", "Koyu"],
+        "language": ["Language", "Dil"],
+        "idle": ["Status: Idle", "Durum: Boşta"],
+        "running": ["Status: Running", "Durum: Çalışıyor"],
+        "updated": ["GrelinTB updated.", "GrelinTB güncellendi."],
+        "reset": ["GrelinTB reset.", "GrelinTB sıfırlandı."],
+        "uninstalled": ["GrelinTB uninstalled.", "GrelinTB kaldırıldı."]
+    },
+    "changelog": {
+        "changelogs": ["Changelogs: ", "Değişiklik Günlükleri: "],
+        "major": ["Major Changelog: ", "Büyük Değişiklik Günlüğü: "],
+        "minor": ["Mijor Changelog: ", "Küçük Değişiklik Günlüğü: "],
+        "up-to-date": [" is up to date.", " zaten güncel."]
+    },
+    "license": {
+        "license": ["License", "Lisans"],
+        "label": ["Copyright (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB licensed under GPLv3 or later.", "Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)\nGrelinTB GPLv3 veya sonrası altında lisanslanmıştır."]
+    },
+    "credit": {
+        "credit": ["Credit", "Kredi"],
+        "label": ["The credit is Google Material Symbols for application icon.\nDo you want visit the credit's website?", "Kredi, uygulama ikonu için Google Material Symbols idir.\nKredinin internet sitesini ziyaret etmek ister misiniz?"]
+    },
+    "running-processes": {
+        "running-processes": ["Running Processses", "Çalışan İşlemler"],
+        "no-process": ["There are no processes running at the moment.", "Şu anda çalışan hiç bir işlem yok."]
+    },
+    "startup": {
+        "welcome": ["Welcome ", "Merhaba "],
+        "weather": ["Weather forecast: ", "Hava durumu: "],
+        "getting": ["Getting", "Alınıyor"],
+        "system": ["System", "Sistem"],
+        "hostname": ["Hostname: ", "Ana bilgisayar adı: "],
+        "distro": ["Distribution: ", "Dağıtım: "],
+        "kernel": ["Kernel: ", "Çekirdek: "],
+        "packages": ["Packages: ", "Paketler: "],
+        "uptime": ["Uptime: ", "Çalışma süresi: "],
+        "boot-time": ["Boot time: ", "Önyüklenme zamanı: "],
+        "usages": ["Usages", "Kullanımlar"],
+        "swap": ["Swap: ", "Takas: "],
+        "refresh": ["Refresh", "Yenile"],
+        "hardware": ["Hardware", "Donanım"],
+        "temperatures": ["Temperatures", "Sıcaklıklar"],
+        "current": ["Current", "Anlık"],
+        "high": ["High", "Yüksek"],
+        "critical": ["Critical", "Kritik"],
+        "fans": ["Fans", "Fanlar"],
+        "battery": ["Battery", "Batarya"],
+        "charge": ["Charge: ", "Şarj: "],
+        "remaining": ["Remaining: ", "Kalan: "],
+        "status": ["Status: ", "Durum: "],
+        "charging": ["Charging", "Şarj oluyor"],
+        "charged": ["Charged", "Şarj oldu"],
+        "discharging": ["Discharging", "Deşarj oluyor"],
+        "plugged-yes": ["Plugged in: Yes", "Şarja bağlandı: Evet"],
+        "plugged-no": ["Plugged in: No", "Şarja bağlandı: Hayır"]
+    },
+    "notes-and-documents": {
+
+    },
+    "store": {
+
+    },
+    "configure-bashrc-and-zshrc": {
+
+    },
+    "change-pc-name": {
+
+    },
+    "about-some-distributions": {
+
+    },
+    "calcer": {
+
+    }
+}
