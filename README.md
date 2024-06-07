@@ -3,6 +3,8 @@
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://img.shields.io/github/downloads/mukonqi/grelintb/total?label=Downloads" alt="Downloads"></img></a></p>
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=Latest Release" alt="GitHub Release"></a></p>
 
+- Warning. This branch is for development.
+
 ## Features
 ### Sidebar
 - A button with hidden style for showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).

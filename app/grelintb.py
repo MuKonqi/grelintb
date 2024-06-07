@@ -138,6 +138,8 @@ if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(grelintb) and not
     os.system(f"cd {config} ; mkdir theme ; cd theme ; touch grelintb.txt")
 if not os.path.isdir(notes):
     os.system(f"mkdir {notes}")
+if not os.path.isdir(f"{notes}.backups"):
+    os.system(f"mkdir {notes}.backups")
 if not os.path.isfile(f"/home/{username}/.bashrc"):
     os.system(f"cd /home/{username} ; touch .bashrc")
 if not os.path.isfile(f"/home/{username}/.zshrc"):
@@ -593,175 +595,169 @@ class Startup(ui.CTkFrame):
         self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
         self.cpu_usage_thread.start()
         self.other_def("refresh")
-        
+
 class NotesAndDocuments(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.topbar = ui.CTkFrame(self, fg_color="transparent")
+        self.topbar.grid(row=0, column=0, sticky="nsew", columnspan=2)
+        self.topbar.grid_rowconfigure(0, weight=1)
+        self.topbar.grid_columnconfigure((0, 1, 2), weight=1)
+        self.sidebar = ui.CTkFrame(self, fg_color="transparent")
+        self.sidebar.grid(row=1, column=1, sticky="nsew")
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.sidebar.grid_columnconfigure(0, weight=1)
         self.content = ui.CTkTextbox(self)
-        self.content.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-        self.options = ui.CTkFrame(self, fg_color="transparent")
-        self.options.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
-        self.options.grid_rowconfigure((2, 3, 4, 5, 6), weight=1)
-        self.options.grid_columnconfigure(0, weight=1)
+        self.content.grid(row=1, column=0, sticky="nsew")
         self.notes = os.listdir(notes)
-        if os.path.isfile(en):
-            self.list = ui.CTkOptionMenu(self.options, values=["List Of Your Notes"]+ self.notes, command=self.option)
-            self.entry = ui.CTkEntry(self.options, placeholder_text="Name")
-            self.button1 = ui.CTkButton(self.options, text="Take A New Note", command=lambda:self.new_note("new-note"))
-            self.button2 = ui.CTkButton(self.options, text="Open", command=self.open)
-            self.button3 = ui.CTkButton(self.options, text="Rename", command=self.rename)
-            self.button4 = ui.CTkButton(self.options, text="Save", command=self.save)
-            self.button5 = ui.CTkButton(self.options, text="Delete", command=self.delete)
-        elif os.path.isfile(tr):
-            self.list = ui.CTkOptionMenu(self.options, values=["Notlarınızın Listesi"] + self.notes, command=self.option)
-            self.entry = ui.CTkEntry(self.options, placeholder_text="Ad")
-            self.button1 = ui.CTkButton(self.options, text="Yeni Bir Not Al", command=lambda:self.new_note("new-note"))
-            self.button2 = ui.CTkButton(self.options, text="Aç", command=self.open)
-            self.button3 = ui.CTkButton(self.options, text="Yeniden Adlandır", command=self.rename)
-            self.button4 = ui.CTkButton(self.options, text="Kaydet", command=self.save)
-            self.button5 = ui.CTkButton(self.options, text="Sil", command=self.delete)
-        self.list.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=(15, 0))
-        self.entry.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button4.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(15, 0))
-    def option(self, note_name: str):
-        if note_name != "List Of Your Notes" and note_name != "Notlarınızın Listesi":
+        self.notes.remove(".backups")
+        self.backups = os.listdir(f"{notes}.backups")
+        self.notes_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['notes'][lang_]]+ self.notes, command=self.check_note)
+        self.entry = ui.CTkEntry(self.topbar, placeholder_text=lang['nad']['file'][lang_])
+        self.backups_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['backups'][lang_]]+ self.backups, command=self.check_backup)
+        self.button1 = ui.CTkButton(self.sidebar, text=lang['nad']['create'][lang_], command=lambda:self.create("new"))
+        self.button2 = ui.CTkButton(self.sidebar, text=lang['nad']['open'][lang_], command=self.open)
+        self.button3 = ui.CTkButton(self.sidebar, text=lang['nad']['save'][lang_], command=self.save)
+        self.button4 = ui.CTkButton(self.sidebar, text=lang['nad']['rename'][lang_], command=self.rename)
+        self.button5 = ui.CTkButton(self.sidebar, text=lang['nad']['restore'][lang_], command=self.restore)
+        self.button6 = ui.CTkButton(self.sidebar, text=lang['nad']['delete'][lang_], command=self.delete)
+        self.notes_list.grid(row=0, column=0, sticky="nsew", pady=(0, 15))
+        self.entry.grid(row=0, column=1, sticky="nsew", pady=(0, 15), padx=(5, 0))
+        self.backups_list.grid(row=0, column=2, sticky="nsew", pady=(0, 15), padx=(5, 0))
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
+        self.button6.grid(row=5, column=0, sticky="nsew", pady=0, padx=(15, 0))
+    def check_note(self, note_name: str):
+        if note_name != lang['nad']['notes'][lang_] and note_name != "":
             self.entry.delete(0, "end")
             self.entry.insert(0, f"{notes}{note_name}")
+            self.button3.configure(state="normal")
+            self.button4.configure(state="normal")
         else:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['note-name-error'][lang_])
+    def check_backup(self, backup_name: str):
+        if backup_name != lang['nad']['backups'][lang_] and backup_name != "":
             self.entry.delete(0, "end")
-    def new_note(self, mode: str):
-        if os.path.isfile(en):
-            self.dialog = ui.CTkInputDialog(text=f"Type a new note name.", title="Type New Name")
-        elif os.path.isfile(tr):
-            self.dialog = ui.CTkInputDialog(text=f"Yeni bir not adı girin.", title="Yeni Ad Girin")
+            self.entry.insert(0, f"{notes}.backups/{backup_name}")
+            self.button3.configure(state="disabled")
+            self.button4.configure(state="disabled")
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['backup-name-error'][lang_])
+    def create(self, mode: str):
+        self.dialog = ui.CTkInputDialog(text=lang['nad']['type'][lang_], title=lang['nad']['create-title'][lang_])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
-            if os.path.isfile(en) and mode == "new-note":
-                mb.showwarning("Warning", "Taking a new note canceled.")
-            elif os.path.isfile(tr) and mode == "new-note":
-                mb.showwarning("Uyarı", "Yeni bir not alma iptal edildi.")
             return
         os.system(f"touch {notes}{self.new_name}")
         if not os.path.isfile(f"{notes}{self.new_name}"):
-            if os.path.isfile(en):
-                mb.showerror("Error", "The note could not be created.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata", "Not oluşturulamadı.")
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['create-error'][lang_])
             return
         self.entry.delete(0, "end")
         self.entry.insert(0, f"{notes}{self.new_name}")
         self.notes = os.listdir(notes)
-        if os.path.isfile(en):
-            if mode == "new-note":
-                mb.showinfo("Information", f"The note created.")
-            self.list.configure(values=["List Of Your Notes"] + self.notes)
-        elif os.path.isfile(tr):
-            if mode == "new-note":
-                mb.showinfo("Bilgilendirme", f"Not oluşturuldu.")
-            self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
+        self.notes.remove(".backups")
+        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+        self.backups = os.listdir(f"{notes}.backups")
+        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+        if mode == "new" and os.path.isfile(self.new_name):
+            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['create-successful'][lang_])
+        elif not os.path.isfile(self.new_name):
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['create-error'][lang_])
+    def save(self):
+        try:
+            if self.entry.get() == "":
+                self.create("save")
+            with open(self.entry.get(), "w+") as self.file_save:
+                self.file_save.write(self.content.get("0.0", 'end'))
+            with open(self.entry.get()) as self.file_control:
+                self.control = self.file_control.read()
+            if self.control == self.content.get("0.0", 'end'):
+                self.notes = os.listdir(notes)
+                self.notes.remove(".backups")
+                self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+                mb.showinfo(lang['globals']['information'][lang_], lang['nad']['save-successful'][lang_])
+            else:
+                mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
+        except:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
     def open(self):
         try:
-            if self.entry.get() != "List Of Your Notes" and self.entry.get() != "Notlarınızın Listesi" and self.entry.get() != "" :
-                with open(self.entry.get(), "r") as self.file_lo:
-                    self.text = self.file_lo.read()
+            if self.entry.get() != "" or self.entry.get() != None:
+                with open(self.name, "r") as self.file_entry:
+                    self.text = self.file_entry.read()
             else:
-                self.file_a = fd.askopenfilename()
-                with open(self.file_a, "r") as self.file_ao:
-                    self.text = self.file_ao.read()
+                self.name = fd.askopenfilename()
+                with open(self.name, "r") as self.file_fd:
+                    self.text = self.file_fd.read()
                 self.entry.delete(0, "end")
-                self.entry.insert(0, self.file_a)
+                self.entry.insert(0, self.name)
+                if os.path.dirname(self.name) == f"{notes}.backups":
+                    self.button3.configure(state="disabled")
+                    self.button4.configure(state="disabled")
+                else:
+                    self.button3.configure(state="normal")
+                    self.button4.configure(state="normal")   
+            self.content.delete("0.0", 'end')
+            self.content.insert("0.0", self.text)
         except:
-            if os.path.isfile(en):
-                mb.showerror("Error","The note or document could not be opened.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not ya da belge açılamadı.")
-            return
-        self.content.delete("0.0", 'end')
-        self.content.insert("0.0", self.text)
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['open-error'][lang_])
     def rename(self):
         if not os.path.isfile(self.entry.get()):
-            if os.path.isfile(en):
-                mb.showerror("Error","There is no such note or document.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Öyle bir not ya da belge yok.")
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
             return
-        if os.path.isfile(en):
-            self.dialog = ui.CTkInputDialog(text=f"Type a new file name for {self.entry.get()}.", title="Type New Name")
-        elif os.path.isfile(tr):
-            self.dialog = ui.CTkInputDialog(text=f"{self.entry.get()} için yeni bir ad girin.", title="Yeni Ad Girin")
+        self.dialog = ui.CTkInputDialog(text=lang['nad']['type'][lang_], title=lang['nad']['create-title'][lang_])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
-            if os.path.isfile(en):
-                mb.showerror("Error", f"Renaming {self.entry.get()} was canceled.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata", f"{self.entry.get()} notunu ya da belgesini yeniden adlandırmadan vazgeçildi.")
             return
         os.system(f"mv {self.entry.get()} {os.path.dirname(self.entry.get())}/{self.new_name}")
         self.entry.delete(0, "end")
-        self.entry.insert(0, f"{notes}{self.new_name}")
+        self.entry.insert(0, f"{self.new_name}")
         self.notes = os.listdir(notes)
-        if os.path.isfile(en):
-            mb.showinfo("Information", f"The note or document renamed as {self.new_name}.")
-            self.list.configure(values=["List Of Your Notes"] + self.notes)
-        elif os.path.isfile(tr):
-            mb.showinfo("Bilgilendirme", f"Not ya da belge {self.new_name} olarak yeniden adlandırıldı.")
-            self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
-    def save(self):
-        if self.entry.get() == "":
-            self.new_note("save-note")
-        try:
-            with open(self.entry.get(), "w+") as self.file:
-                self.file.write(self.content.get("0.0", 'end'))
-        except:
-            if os.path.isfile(en):
-                mb.showerror("Error","The note or document could not be saved.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not ya da belge kaydedilemedi.")
-            return
-        with open(self.entry.get()) as self.file:
-            self.output = self.file.read()
-        self.notes = os.listdir(notes)
-        if self.output == self.content.get("0.0", 'end'):
-            if os.path.isfile(en):
-                mb.showinfo("Information","The note or document saved.")
-                self.list.configure(values=["List Of Your Notes"] + self.notes)
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","Not ya da belge kaydedildi.")
-                self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
+        self.notes.remove(".backups")
+        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+        self.backups = os.listdir(f"{notes}.backups")
+        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+        if os.path.isfile(self.new_name):
+            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['rename-successful'][lang_])
         else:
-            if os.path.isfile(en):
-                mb.showerror("Error","The note or document could not be saved.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not ya da belge kaydedilemedi.")
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['rename-error'][lang_])
+    def restore(self):
+        if os.path.dirname(os.path.realpath(self.entry.get())) == f"{notes}.backups":
+            os.system(f"cp {self.entry.get()} {notes}{os.path.basename(self.entry.get())}")
+            with open(self.entry.get, "r") as self.file_original:
+                self.needed = self.file_original.read()
+            with open(f"{notes}{os.path.basename(self.entry.get())}", "r") as self.file_target:
+                self.content = self.file_target.read()
+        else:
+            os.system(f"cp {notes}.backups/{os.path.basename(self.entry.get())} {self.entry.get()}")
+            with open(f"{notes}.backups/{os.path.basename(self.entry.get())}", "r") as self.file_original:
+                self.needed = self.file_original.read()
+            with open({self.entry.get()}, "r") as self.file_target:
+                self.content = self.file_target.read()
+        if self.needed == self.content:
+            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['restore-successful'][lang_])
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
     def delete(self):
         if not os.path.isfile(self.entry.get()):
-            if os.path.isfile(en):
-                mb.showerror("Error","There is no such note or document.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Öyle bir not ya da belge yok.")
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
             return
         os.system(f"rm {self.entry.get()}")
+        self.entry.delete(0, "end")
         self.notes = os.listdir(notes)
-        if os.path.isfile(self.entry.get()):
-            if os.path.isfile(en):
-                mb.showerror("Error","The note or document could not be deleted.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata","Not ya da belge silinemedi.")
-            return
-        else:
-            if os.path.isfile(en):
-                mb.showinfo("Information","The note or document was deleted.")
-                self.list.configure(values=["List Of Your Notes"] + self.notes)
-            elif os.path.isfile(tr):
-                mb.showinfo("Bilgilendirme","Not ya da belge silindi.")
-                self.list.configure(values=["Notlarınızın Listesi"] + self.notes)
+        self.notes.remove(".backups")
+        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+        self.backups = os.listdir(f"{notes}.backups")
+        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+        if not os.path.isfile(self.name):
+            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['delete-successful'][lang_])
+        else: 
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['delete-error'][lang_])
 
 class TraditionalPackages(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1945,7 +1941,7 @@ class BashrcZshrc(ui.CTkFrame):
         self.tabview = ui.CTkTabview(self, fg_color="transparent")
         self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         if os.path.isfile(en):
-            self.buttons_tab = self.tabview.add("Options")
+            self.buttons_tab = self.tabview.add("sidebar")
             self.file_tab = self.tabview.add("File")
         elif os.path.isfile(tr):
             self.buttons_tab = self.tabview.add("Seçenekler")

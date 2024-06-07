@@ -89,8 +89,33 @@
         "plugged-yes": ["Plugged in: Yes", "Şarja bağlandı: Evet"],
         "plugged-no": ["Plugged in: No", "Şarja bağlandı: Hayır"]
     },
-    "notes-and-documents": {
-
+    "nad": {
+        "notes": ["Notes", "Notlar"],
+        "file": ["Dosya", "Dosya"],
+        "backups": ["Backups", "Yedekler"],
+        "save": ["Save", "Kaydet"],
+        "open": ["Open", "Aç"],
+        "create": ["Create", "Oluştur"],
+        "rename": ["Rename", "Yeniden Adlandır"],
+        "restore": ["Restore", "Geri Yükle"],
+        "delete": ["Delete", "Sil"],
+        "note-name-error": ["The note name cannot be 'Notes' or blank.", "Not adı 'Notlar' veya boş olamaz."],
+        "backup-name-error": ["The backup name cannot be 'Backups' blank.", "Yedek adı 'Yedekler' veya boş olamaz."],
+        "type": ["Type a new note name.", "Yeni bir not adı girin."],
+        "create-title": ["Create A New Note", "Yeni Bir Not Oluştur"],
+        "create-successful": ["The note created.", "Not oluşturuldu."],
+        "create-error": ["The note could not be created.", "Not oluşturulamadı."],
+        "save-successful": ["The note or document saved.", "Not ya da belge kaydedildi."],
+        "save-error": ["The note or document could not be saved.", "Not ya da belge kaydedilemedi."],
+        "open-error": ["The note or document could not be opened.", "Not ya da belge açılamadı."],
+        "no-error": ["There is no such note or document.", "Öyle bir not ya da belge yok."],
+        "rename-title": ["Rename A Note or Document", "Bir Notu ya da Belgeyi Yeniden Adlandır"],
+        "rename-successful": ["The note or document renamed.", "Not ya da belge yeniden adlandırıldı."],
+        "rename-error": ["The note could not be renamed.", "Not ya da belge yeniden adlandırılamadı."],
+        "restore-successful": ["The note restored.", "Not geri yüklendi."],
+        "restore-error": ["The note restored.", "Not geri yüklendi."],
+        "delete-successful": ["The note or document deleted.", "Not ya da belge silindi."],
+        "delete-error": ["The note or document could not be deleted.", "Not ya da belge silinemedi."]
     },
     "store": {
 
