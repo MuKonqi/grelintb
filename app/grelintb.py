@@ -247,9 +247,9 @@ def install_flatpak():
         delete_operation(f"{lang['operations']['install'][lang_]}: Flatpak", time_process)
     elif ask_f == False:
         mb.showerror(lang['globals']['error'][lang_], lang['globals']['cancelled'][lang_])
-def restart_grelintb(lang__: int):
+def restart_grelintb():
     global ask_g
-    ask_g = mb.askyesno(lang['globals']['warning'][lang__], lang['questions']['grelintb'][lang__])
+    ask_g = mb.askyesno(lang['globals']['warning'][lang_], lang['questions']['grelintb'][lang_])
     if ask_g == True:
         root.destroy()
         os.system(__file__)
@@ -357,7 +357,7 @@ class Sidebar(ui.CTkFrame):
     def update(self, string: str):
         os.system("pkexec /usr/local/bin/grelintb/update.sh")
         mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["updated"][lang_])
-        restart_grelintb(lang_)
+        restart_grelintb()
     def check_update(self, caller: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -397,7 +397,7 @@ class Sidebar(ui.CTkFrame):
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         os.system(f"rm -rf /home/{username}/.config/grelintb")
         mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["reset"][lang_])
-        restart_grelintb(lang_)
+        restart_grelintb()
     def uninstall(self):
         root.destroy()
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
@@ -415,7 +415,7 @@ class Sidebar(ui.CTkFrame):
             os.system(f"rm {config}theme/* ; touch {config}theme/blue.txt")
         elif new_theme == lang['sidebar']['green'][lang_]:
             os.system(f"rm {config}theme/* ; touch {config}theme/green.txt")
-        restart_grelintb(lang_)
+        restart_grelintb()
     def change_appearance(self, new_appearance: str):
         if new_appearance == lang['sidebar']['system'][lang_]:
             ui.set_appearance_mode("System")
@@ -431,7 +431,7 @@ class Sidebar(ui.CTkFrame):
             os.system(f"rm {config}language/* ; touch {config}language/en.txt")
         elif new_language == "Türkçe (Turkish)":
             os.system(f"rm {config}language/* ; touch {config}language/tr.txt")
-        restart_grelintb(lang_)
+        restart_grelintb()
     def running_processes(self):
         if current_operations != []:
             self.number = 0
@@ -572,36 +572,24 @@ class Startup(ui.CTkFrame):
                     self.status_text.configure(text=f"{lang['startup']['status'][lang_]}{lang['startup']['discharging'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
                     self.plugged_text.configure(text=lang['startup']['plugged-no'][lang_], font=ui.CTkFont(size=13, weight="bold"))
     def refresh(self):
-        if os.path.isfile(en):
-            self.scrollable.configure(label_text=f"Welcome {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-            self.weather.configure(text=f"Weather Forecast: Getting", font=ui.CTkFont(size=13, weight="bold")) 
-            self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"System", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname.configure(text=f"Host: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro.configure(text=f"Distribution: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel.configure(text=f"Kernel: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime.configure(text=f"Uptime: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time.configure(text=f"Boot Time: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Usages", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage.configure(text=f"CPU: Getting", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage.configure(text=f"Swap: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-        elif os.path.isfile(tr):
-            self.scrollable.configure(label_text=f"Merhabalar {username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-            self.weather.configure(text=f"Hava Durumu: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))   
-            self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Sistem", font=ui.CTkFont(size=15, weight="bold")) 
-            self.hostname.configure(text=f"Ana Bilgisayar Adı: {str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-            self.distro.configure(text=f"Dağıtım: {distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-            self.kernel.configure(text=f"Çekirdek: {platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-            self.uptime.configure(text=f"Çalışma Süresi: {os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-            self.boot_time.configure(text=f"Önyüklenme Vakti: {str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-            self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"Kullanımlar", font=ui.CTkFont(size=15, weight="bold"))
-            self.cpu_usage.configure(text=f"CPU: Alınıyor", font=ui.CTkFont(size=13, weight="bold"))
-            self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-            self.swap_usage.configure(text=f"Takas: %{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.weather.configure(text=f"{lang['startup']['weather'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold")) 
+        self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['system'][lang_], font=ui.CTkFont(size=15, weight="bold")) 
+        self.hostname.configure(text=f"{lang['startup']['hostname'][lang_]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+        self.distro.configure(text=f"{lang['startup']['distro'][lang_]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+        self.kernel.configure(text=f"{lang['startup']['kernel'][lang_]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+        self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.uptime.configure(text=f"{lang['startup']['uptime'][lang_]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+        self.boot_time.configure(text=f"{lang['startup']['boot-time'][lang_]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+        self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['usages'][lang_], font=ui.CTkFont(size=15, weight="bold"))
+        self.cpu_usage.configure(text=f"CPU: {lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.swap_usage.configure(text=f"{lang['startup']['swap'][lang_]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.refresh_button = ui.CTkButton(self, text=lang['startup']['refresh'][lang_], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
         self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
         self.weather_thread.start()
+        self.packages_thread = threading.Thread(target=lambda:self.packages_def(), daemon=True)
+        self.packages_thread.start()
         self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
         self.cpu_usage_thread.start()
         self.other_def("refresh")

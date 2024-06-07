@@ -73,7 +73,7 @@
         "usages": ["Usages", "Kullanımlar"],
         "swap": ["Swap: ", "Takas: "],
         "refresh": ["Refresh", "Yenile"],
-        "hardware": ["Hardware", "Donanım"],
+        "hardware": ["Hardware: ", "Donanım: "],
         "temperatures": ["Temperatures", "Sıcaklıklar"],
         "current": ["Current", "Anlık"],
         "high": ["High", "Yüksek"],
@@ -96,7 +96,7 @@
 
     },
     "configure-bashrc-and-zshrc": {
-
+        
     },
     "change-pc-name": {
 
