@@ -3,27 +3,28 @@
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases"><img src="https://img.shields.io/github/downloads/mukonqi/grelintb/total?label=Downloads" alt="Downloads"></img></a></p>
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest"><img src="https://img.shields.io/github/v/release/mukonqi/grelintb?label=Latest Release" alt="GitHub Release"></a></p>
 
-- Warning. This branch is for development.
+- Warning! This branch (dev) is for developing 1.5.0 version.
 
 ## Features
 ### Sidebar
-- A button with hidden style for showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).
-- A button with hidden style for showing version for opening current version's changelog.
-- A button with hidden style for opening [developer's website](https://mukonqi.github.io).
-- A button with hidden style for opening a window which showing license.
-- A button with hidden style for opening a window which showing credit.
-- A button for controling updates. If new version available, get the changelog of the new version and update to new version.
-- A button for resetting GrelinTB.
-- A button for uninstalling GrelinTB.
-- A list for changing color theme (random, dark blue, blue, green).
-- A list for Changing appearance mode (system, light, dark).
-- A list for Changing language (English, Turkish).
-- A button for showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
+- A button with hidden style to showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).
+- A button with hidden style to showing version for opening current version's changelog.
+- A button with hidden style to opening [developer's website](https://mukonqi.github.io).
+- A button with hidden style to opening a window which showing license.
+- A button with hidden style to opening a window which showing credit.
+- A button to controling updates. If new version available, get the changelog of the new version and update to new version.
+- A button to resetting GrelinTB.
+- A button to uninstalling GrelinTB.
+- A label to show what the following setting is.
+- A list to changing theme (GrelinTB, random, dark blue, blue, green).
+- A list to changing appearance (system, light, dark).
+- A list to changing language (English, Turkish).
+- A button to showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
 ### Startup
-- Showing warious informations (weather forecast, system, usages, fans, tempatures, battery).
+- Showing warious informations [weather forecast, system (), some hardware usages, fans, tempatures, battery].
 - Refreshing these informations.
 ### Notes and Documents
-- Creating, editing, renaming, deleting notes or any documents.
+- Creating (only for notes), editing, renaming, restoring (only for notes), deleting notes or may be documents.
 ### Store
 - Traditional Applications: Searching, installing, reinstalling, uninstalling and updating predefined and desired applications.
 - Flatpak Applications: Searching, installing, reinstalling, uninstalling and updating desired applications.
@@ -35,7 +36,7 @@
 - Configuring Bash and Zsh.
 - Changing the name of the computer.
 - Showing some informations about some distributions.
-- Making simple math operations (basic calculator).
+- Making simple math operations (basic calcer).
 ### Also
 - GrelinTB can auto detect tr_TR locale when there is no config related with language setting. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - GrelinTB can synchronize with the system theme (dark or light) when appearance setted to system.

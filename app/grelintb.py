@@ -615,7 +615,7 @@ class NotesAndDocuments(ui.CTkFrame):
         self.notes.remove(".backups")
         self.backups = os.listdir(f"{notes}.backups")
         self.notes_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['notes'][lang_]]+ self.notes, command=self.check_note)
-        self.entry = ui.CTkEntry(self.topbar, placeholder_text=lang['nad']['file'][lang_])
+        self.entry = ui.CTkEntry(self.topbar, placeholder_text=lang['nad']['note-or-document'][lang_])
         self.backups_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['backups'][lang_]]+ self.backups, command=self.check_backup)
         self.button1 = ui.CTkButton(self.sidebar, text=lang['nad']['create'][lang_], command=lambda:self.create("new"))
         self.button2 = ui.CTkButton(self.sidebar, text=lang['nad']['open'][lang_], command=self.open)
@@ -633,19 +633,19 @@ class NotesAndDocuments(ui.CTkFrame):
         self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
         self.button6.grid(row=5, column=0, sticky="nsew", pady=0, padx=(15, 0))
     def check_note(self, note_name: str):
+        self.button3.configure(state="normal")
+        self.button4.configure(state="normal")
         if note_name != lang['nad']['notes'][lang_] and note_name != "":
             self.entry.delete(0, "end")
             self.entry.insert(0, f"{notes}{note_name}")
-            self.button3.configure(state="normal")
-            self.button4.configure(state="normal")
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['note-name-error'][lang_])
     def check_backup(self, backup_name: str):
+        self.button3.configure(state="disabled")
+        self.button4.configure(state="disabled")
         if backup_name != lang['nad']['backups'][lang_] and backup_name != "":
             self.entry.delete(0, "end")
             self.entry.insert(0, f"{notes}.backups/{backup_name}")
-            self.button3.configure(state="disabled")
-            self.button4.configure(state="disabled")
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['backup-name-error'][lang_])
     def create(self, mode: str):
@@ -666,12 +666,12 @@ class NotesAndDocuments(ui.CTkFrame):
         self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
         if mode == "new" and os.path.isfile(self.new_name):
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['create-successful'][lang_])
-        elif not os.path.isfile(self.new_name):
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['create-error'][lang_])
     def save(self):
         try:
             if self.entry.get() == "":
                 self.create("save")
+            if f"{os.path.dirname(self.entry.get())}/" == notes:
+                os.system(f"cp {self.entry.get()} {notes}.backups/{os.path.basename(self.entry.get())}")
             with open(self.entry.get(), "w+") as self.file_save:
                 self.file_save.write(self.content.get("0.0", 'end'))
             with open(self.entry.get()) as self.file_control:
@@ -680,6 +680,8 @@ class NotesAndDocuments(ui.CTkFrame):
                 self.notes = os.listdir(notes)
                 self.notes.remove(".backups")
                 self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+                self.backups = os.listdir(f"{notes}.backups")
+                self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
                 mb.showinfo(lang['globals']['information'][lang_], lang['nad']['save-successful'][lang_])
             else:
                 mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
@@ -688,7 +690,7 @@ class NotesAndDocuments(ui.CTkFrame):
     def open(self):
         try:
             if self.entry.get() != "" or self.entry.get() != None:
-                with open(self.name, "r") as self.file_entry:
+                with open(self.entry.get(), "r") as self.file_entry:
                     self.text = self.file_entry.read()
             else:
                 self.name = fd.askopenfilename()
@@ -714,7 +716,14 @@ class NotesAndDocuments(ui.CTkFrame):
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             return
+        if f"{os.path.dirname(self.entry.get())}/" == notes:
+            os.system(f"cp {self.entry.get()} {notes}.backups/{os.path.basename(self.entry.get())}")
+        if not os.path.isfile(f"{os.path.dirname(self.entry.get())}/{self.new_name}"):
+            os.system(f"touch {os.path.dirname(self.entry.get())}/{self.new_name}")
         os.system(f"mv {self.entry.get()} {os.path.dirname(self.entry.get())}/{self.new_name}")
+        if not os.path.isfile(f"{os.path.dirname(self.entry.get())}/{self.new_name}"):
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['rename-error'][lang_])
+            return
         self.entry.delete(0, "end")
         self.entry.insert(0, f"{self.new_name}")
         self.notes = os.listdir(notes)
@@ -722,24 +731,29 @@ class NotesAndDocuments(ui.CTkFrame):
         self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
         self.backups = os.listdir(f"{notes}.backups")
         self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
-        if os.path.isfile(self.new_name):
-            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['rename-successful'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['rename-error'][lang_])
+        mb.showinfo(lang['globals']['information'][lang_], lang['nad']['rename-successful'][lang_])
     def restore(self):
-        if os.path.dirname(os.path.realpath(self.entry.get())) == f"{notes}.backups":
+        if os.path.dirname(self.entry.get()) == f"{notes}.backups":
             os.system(f"cp {self.entry.get()} {notes}{os.path.basename(self.entry.get())}")
-            with open(self.entry.get, "r") as self.file_original:
+            with open(self.entry.get(), "r") as self.file_original:
                 self.needed = self.file_original.read()
             with open(f"{notes}{os.path.basename(self.entry.get())}", "r") as self.file_target:
-                self.content = self.file_target.read()
-        else:
+                self.final = self.file_target.read()
+        elif f"{os.path.dirname(self.entry.get())}/" == notes:
             os.system(f"cp {notes}.backups/{os.path.basename(self.entry.get())} {self.entry.get()}")
             with open(f"{notes}.backups/{os.path.basename(self.entry.get())}", "r") as self.file_original:
                 self.needed = self.file_original.read()
-            with open({self.entry.get()}, "r") as self.file_target:
-                self.content = self.file_target.read()
-        if self.needed == self.content:
+            with open(self.entry.get(), "r") as self.file_target:
+                self.final = self.file_target.read()
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
+            return
+        if self.needed == self.final:
+            self.notes = os.listdir(notes)
+            self.notes.remove(".backups")
+            self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+            self.backups = os.listdir(f"{notes}.backups")
+            self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['restore-successful'][lang_])
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
@@ -747,14 +761,16 @@ class NotesAndDocuments(ui.CTkFrame):
         if not os.path.isfile(self.entry.get()):
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
             return
+        if f"{os.path.dirname(self.entry.get())}/" == notes:
+            os.system(f"cp {self.entry.get()} {notes}.backups/{os.path.basename(self.entry.get())}")
         os.system(f"rm {self.entry.get()}")
-        self.entry.delete(0, "end")
-        self.notes = os.listdir(notes)
-        self.notes.remove(".backups")
-        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-        self.backups = os.listdir(f"{notes}.backups")
-        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
-        if not os.path.isfile(self.name):
+        if not os.path.isfile(self.entry.get()):
+            self.entry.delete(0, "end")
+            self.notes = os.listdir(notes)
+            self.notes.remove(".backups")
+            self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
+            self.backups = os.listdir(f"{notes}.backups")
+            self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['delete-successful'][lang_])
         else: 
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['delete-error'][lang_])

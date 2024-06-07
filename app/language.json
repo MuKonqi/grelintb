@@ -91,7 +91,7 @@
     },
     "nad": {
         "notes": ["Notes", "Notlar"],
-        "file": ["Dosya", "Dosya"],
+        "note-or-document": ["Note or Document", "Not veya Belge"],
         "backups": ["Backups", "Yedekler"],
         "save": ["Save", "Kaydet"],
         "open": ["Open", "Aç"],
@@ -105,17 +105,17 @@
         "create-title": ["Create A New Note", "Yeni Bir Not Oluştur"],
         "create-successful": ["The note created.", "Not oluşturuldu."],
         "create-error": ["The note could not be created.", "Not oluşturulamadı."],
-        "save-successful": ["The note or document saved.", "Not ya da belge kaydedildi."],
-        "save-error": ["The note or document could not be saved.", "Not ya da belge kaydedilemedi."],
-        "open-error": ["The note or document could not be opened.", "Not ya da belge açılamadı."],
-        "no-error": ["There is no such note or document.", "Öyle bir not ya da belge yok."],
-        "rename-title": ["Rename A Note or Document", "Bir Notu ya da Belgeyi Yeniden Adlandır"],
-        "rename-successful": ["The note or document renamed.", "Not ya da belge yeniden adlandırıldı."],
-        "rename-error": ["The note could not be renamed.", "Not ya da belge yeniden adlandırılamadı."],
+        "save-successful": ["The note or document saved.", "Not veya belge kaydedildi."],
+        "save-error": ["The note or document could not be saved.", "Not veya belge kaydedilemedi."],
+        "open-error": ["The note or document could not be opened.", "Not veya belge açılamadı."],
+        "no-error": ["There is no such note or document.", "Öyle bir not veya belge yok."],
+        "rename-title": ["Rename A Note or Document", "Bir Notu veya Belgeyi Yeniden Adlandır"],
+        "rename-successful": ["The note or document renamed.", "Not veya belge yeniden adlandırıldı."],
+        "rename-error": ["The note could not be renamed.", "Not veya belge yeniden adlandırılamadı."],
         "restore-successful": ["The note restored.", "Not geri yüklendi."],
-        "restore-error": ["The note restored.", "Not geri yüklendi."],
-        "delete-successful": ["The note or document deleted.", "Not ya da belge silindi."],
-        "delete-error": ["The note or document could not be deleted.", "Not ya da belge silinemedi."]
+        "restore-error": ["The note could not be restored.", "Not geri yüklenemedi."],
+        "delete-successful": ["The note or document deleted.", "Not veya belge silindi."],
+        "delete-error": ["The note or document could not be deleted.", "Not veya belge silinemedi."]
     },
     "store": {
 

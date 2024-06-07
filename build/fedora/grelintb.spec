@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.5.0
-Release:        3
+Release:        4
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
