@@ -18,7 +18,8 @@
         "reinstall": ["Reinstall", "Yeniden Kur"],
         "uninstall": ["Uninstall", "Kaldır"],
         "update": ["Update", "Güncelle"],
-        "reset": ["Reset", "Sıfırla"]
+        "reset": ["Reset", "Sıfırla"],
+        "process": ["Process", "İşlem"]
     },
     "sidebar": {
         "version": ["Version: ", "Sürüm: "],
@@ -122,7 +123,27 @@
         "save-error": ["The note or document could not be saved.", "Not veya belge kaydedilemedi."]
     },
     "store": {
-
+        "packages": ["Packages", "Paketler"],
+        "deswmscs": ["Desktop Environments\nWindow Managers & Compositors", "Masaüstü Ortamları\nPencere Yöneticileri & Dizgiciler"],
+        "scripts": ["Scripts", "Betikler"],
+        "services": ["Services", "Servisleri"],
+        "home": ["Home", "Ev"],
+        "output": ["Output", "Çıktı"],
+        "close": ["Close", "Kapat"],
+        "traditionals": ["Traditionals", "Gelenekseller"],
+        "flatpaks": ["Flatpaks", "Flatpaklar"],
+        "proprietary": ["\n(Proprietary)", "\n(Özel Mülk)"],
+        "packages-name-error": ["Please enter name(s) of package(s).", "Lütfen paket(ler)in ad(lar)ını girin."],
+        "deswmscs-name-error": ["Please select a desktop environment or window managers or a ompositors.", "Lütfen bir masaüstü ortamı ya da pencere yöneticisi ya da dizgici seçin."],
+        "dnf-nosupport": ["DNF doesn't support reinstalling groups.", "DNF grupları yeniden kurmayı desteklemez."],
+        "all-slots-are-full": ["All the slots are full. At least close a output and try.", "Tüm slotlar dolu. En azından çıktıyı kapatıp deneyin."],
+        "service-name": ["Service Name", "Servis Adı"],
+        "status": ["Status", "Durum"],
+        "enable": ["Enable", "Aktifleştir"],
+        "disable": ["Disable", "Devre Dışı Bırak"],
+        "start": ["Start", "Başlat"],
+        "stop": ["Stop", "Durdur"],
+        "service-name-error": ["Please enter a service name.", "Lütfen bir servis adı girin."]
     },
     "configure-bashrc-and-zshrc": {
         

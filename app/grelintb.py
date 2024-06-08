@@ -63,6 +63,7 @@ try:
     from tkinter import messagebox as mb
     from tkinter import filedialog as fd
     from tkinter import PhotoImage as pi
+    from tkinter import StringVar as sv
 except:
     try:
         print("Installing Tkinter...")
@@ -77,6 +78,7 @@ except:
         from tkinter import messagebox as mb
         from tkinter import filedialog as fd
         from tkinter import PhotoImage as pi
+        from tkinter import StringVar as sv
     except:
         os.system(__file__)
         sys.exit(0)
@@ -445,13 +447,10 @@ class Sidebar(ui.CTkFrame):
             self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
             self.frame.grid(row=0, column=0, sticky="nsew")
             self.frame.grid_columnconfigure(0, weight=1)
-            self.window.title(lang['running_processes']['running-processes'][lang_])
+            self.window.title(lang['running-processes']['running-processes'][lang_])
             for self.progress in current_operations:
                 self.number = self.number + 1
-                if os.path.isfile(en):
-                    ui.CTkLabel(self.frame, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
-                elif os.path.isfile(tr):
-                    ui.CTkLabel(self.frame, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
+                ui.CTkLabel(self.frame, fg_color=["#b9b9b9", "#1f1f1f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
         else:
             mb.showwarning(lang['globals']['warning'][lang_], lang['running-processes']['no-process'][lang_])
 
@@ -607,10 +606,10 @@ class NotesAndDocuments(ui.CTkFrame):
         self.mainpage.grid_columnconfigure(0, weight=1)
         self.mainpage.grid_rowconfigure(0, weight=1)
         self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
-        self.mainbar.grid(row=0, column=0, sticky="nsew")
+        self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
         self.mainbar.grid_columnconfigure((0, 1), weight=1)
         self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
-        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(15, 0))
+        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
         self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
         self.notes_label = ui.CTkLabel(self.mainbar, text=lang['nad']['notes'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
@@ -663,8 +662,8 @@ class NotesAndDocuments(ui.CTkFrame):
             self.names[f"page{i}"] = i
             self.files[f"page{i}"] = None
             self.useds[f"page{i}"] = False
-        self.notes_label.grid(row=0, column=0, sticky="nsew", pady=10, padx=15)
-        self.backups_label.grid(row=0, column=1, sticky="nsew", pady=10, padx=15)
+        self.notes_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
+        self.backups_label.grid(row=0, column=1, sticky="nsew", pady=(0, 10), padx=15)
         self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
         self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
         self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
@@ -838,393 +837,265 @@ class NotesAndDocuments(ui.CTkFrame):
         self.save(caller)
         self.close(caller)
 
-class TraditionalPackages(ui.CTkFrame):
+class Packages(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((2, 3, 4, 5, 6), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.app_text = "Application"
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Packages")
-            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main('search'))
-            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
-            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
-            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
-        elif os.path.isfile(tr):
-            self.app_text = "Uygulama"
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Paketler")
-            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main('search'))
-            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
-            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
-            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
+        self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        self.mainpage = self.tabview.add(lang['store']['home'][lang_])
+        self.mainpage.grid_columnconfigure(0, weight=1)
+        self.mainpage.grid_rowconfigure(0, weight=1)
+        self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
+        self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
+        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
+        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.sidebar.grid_columnconfigure(0, weight=1)
+        self.traditionals_label = ui.CTkLabel(self.mainbar, text=lang['store']['traditionals'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.flatpaks_label = ui.CTkLabel(self.mainbar, text=lang['store']['flatpaks'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=lang['store']['packages'][lang_])
+        self.button1 = ui.CTkButton(self.sidebar, text=lang['operations']['search'][lang_], command=lambda:self.go('search'))
+        self.button2 = ui.CTkButton(self.sidebar, text=lang['operations']['install'][lang_], command=lambda:self.go('install'))
+        self.button3 = ui.CTkButton(self.sidebar, text=lang['operations']['reinstall'][lang_], command=lambda:self.go('reinstall'))
+        self.button4 = ui.CTkButton(self.sidebar, text=lang['operations']['uninstall'][lang_], command=lambda:self.go('uninstall'))
+        self.button5 = ui.CTkButton(self.sidebar, text=lang['operations']['update'][lang_], command=lambda:self.go('update'))
         if os.path.isfile(debian):
-            self.app = ui.CTkOptionMenu(self.frame, values=[self.app_text, "Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"], command=self.option)
+            self.traditionals = ["Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"]
         elif os.path.isfile(fedora):
-            self.app = ui.CTkOptionMenu(self.frame, values=[self.app_text, "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
+            self.traditionals = ["Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"]
         elif os.path.isfile(solus):
-            self.app = ui.CTkOptionMenu(self.frame, values=[self.app_text, "Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"], command=self.option)
+            self.traditionals = ["Firefox", "VLC", "LibreOffice-All", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "Neofetch", "Lolcat"]
         elif os.path.isfile(arch):
-            self.app = ui.CTkOptionMenu(self.frame, values=[self.app_text, "Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"], command=self.option)
-        self.app.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.entry.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button4.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button5.grid(row=6, column=0, sticky="nsew", pady=0, padx=(10, 0))
-    def name_error(self):
-        if os.path.isfile(en):
-            mb.showerror("Error", "Please select application from list or enter packages name.")
-        elif os.path.isfile(tr):
-            mb.showerror("Hata", "Lütfen listeden uygulama seçin ya da paket adları girin.")
-    def option(self, package: str):
-        if package == "Application" or package == "Uygulama":
-            self.name_error()
-            self.entry.delete(0, "end")
-        else:
-            self.entry.delete(0, "end")
-            self.entry.insert(0, package.lower())
-    def do_main(self, operation: str):
+            self.traditionals = ["Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"]
+        self.traditionals_number = 0
+        self.flatpaks = [["Firefox", "org.mozilla.Firefox"], ["Brave Browser", "com.brave.Browser"], [f"Google Chrome{lang['store']['proprietary'][lang_]}", "com.google.Chrome"], [f"Microsoft Edge{lang['store']['proprietary'][lang_]}", "com.microsoft.Edge"], ["Chromium", "org.chromium.Chromium"], ["Librewolf", "io.gitlab.librewolf-community"], [f"Discord{lang['store']['proprietary'][lang_]}", "com.discordapp.Discord"], ["Signal", "org.signal.Signal"], ["Telegram", "org.telegram.desktop"], [f"Spotify{lang['store']['proprietary'][lang_]}", "com.spotify.Client"], ["Tuta", "com.tutanota.Tutanota"], ["OBS Studio", "com.obsproject.Studio"], ["VLC", "org.videolan.VLC"], ["Audacity", "org.audacityteam.Audacity"], ["LibreOffice", "org.libreoffice.LibreOffice"], ["Blender", "org.blender.Blender"], ["GIMP", "org.gimp.GIMP"], ["Inkspace", "org.inkscape.Inkscape"], ["Design", "io.github.dubstar_04.design"], ["Plots", "com.github.alexhuntley.Plots"], [f"Visual Studio Code{lang['store']['proprietary'][lang_]}", "com.visualstudio.code"], ["VSCodium", "com.vscodium.codium"], ["Bitwarden", "com.bitwarden.desktop"], ["Okular", "org.kde.okular"], [f"Steam{lang['store']['proprietary'][lang_]}", "com.valvesoftware.Steam"], ["Heroic Games Launcher", "com.heroicgameslauncher.hgl"], ["Lutris", "net.lutris.Lutris"], ["ProtonUp-Qt", "net.davidotek.pupgui2"], ["Protontricks", "com.github.Matoking.protontricks"], ["Bottles", "com.usebottles.bottles"], ["Wine", "org.winehq.Wine"], ["Komikku", "info.febvre.Komikku"], ["Alpaca", "com.jeffser.Alpaca"], ["Memorado", "im.bernard.Memorado"], ["Keypunch", "dev.bragefuglseth.Keypunch"], ["Mingle", "io.github.halfmexican.Mingle"], ["Paper Clip", "io.github.diegoivan.pdf_metadata_editor"], ["Celeste", "com.hunterwittenborn.Celeste"], ["Door Knocker", "xyz.tytanium.DoorKnocker"], ["Flatseal", "com.github.tchx84.Flatseal"]]
+        self.flatpaks_number = 0
+        for traditional in self.traditionals:
+            self.traditionals_number += 1
+            ui.CTkButton(self.mainbar, text=traditional, command=lambda traditional = traditional: self.insert(traditional.lower())).grid(row=self.traditionals_number, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        for f_prettyname, f_name in self.flatpaks:
+            self.flatpaks_number += 1
+            ui.CTkButton(self.mainbar, text=f_prettyname, command=lambda f_name = f_name: self.insert(f_name)).grid(row=self.flatpaks_number, column=1, sticky="nsew", pady=(0, 10), padx=25)        
+        self.pages = {}
+        self.labels = {}
+        self.outputs = {}
+        self.closes = {}
+        self.useds = {}
+        for i in range(1, 15):
+            self.pages[f"page{i}"] = self.tabview.add(i)
+            self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
+            self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{lang['operations']['process'][lang_]} {i}")
+            self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=lang['store']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
+            self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
+            self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
+            self.useds[f"page{i}"] = False
+        self.traditionals_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
+        self.flatpaks_label.grid(row=0, column=1, sticky="nsew", pady=(0, 10), padx=15)
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
+        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
+        self.button5.grid(row=5, column=0, sticky="nsew")
+    def insert(self, name):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, name)
+    def do(self, operation: str):
         if self.entry.get() == "":
-            self.name_error()
+            mb.showerror(lang['globals']['error'][lang_], lang['store']['packages-name-error'][lang_])
             return
-        self.app.configure(state="disabled")
-        self.entry.configure(state="disabled")
-        self.button1.configure(state="disabled")
-        self.button2.configure(state="disabled")
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        self.button5.configure(state="disabled")
         self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            if operation == 'search':
-                add_operation(f"Searching {self.entry.get()}", self.time)
-            elif operation == 'install':
-                add_operation(f"Installing {self.entry.get()}", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"Reinstalling {self.entry.get()}", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"Uninstalling {self.entry.get()}", self.time)
-            elif operation == 'update':
-                add_operation(f"Updating {self.entry.get()}", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'search':
-                add_operation(f"{self.entry.get()} Aranıyor", self.time)
-            elif operation == 'install':
-                add_operation(f"{self.entry.get()} Kuruluyor", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"{self.entry.get()} Yeniden Kuruluyor", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"{self.entry.get()} Kaldırılıyor", self.time)
-            elif operation == 'update':
-                add_operation(f"{self.entry.get()} Güncelleniyor", self.time)
-        if os.path.isfile(debian):
-            if operation == 'search':
-                self.command = f"apt -y search {self.entry.get()}"
-            elif operation == 'install':
-                self.command = f"pkexec apt -y install {self.entry.get()}"
-            elif operation == 'reinstall':
-                self.command = f"pkexec apt -y install --reinstall {self.entry.get()}"
-            elif operation == 'uninstall':
-                self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
-            elif operation == 'update':
-                self.command = f"pkexec apt -y upgrade {self.entry.get()}"
-        elif os.path.isfile(fedora):
-            if operation == 'search':
-                self.command = f"dnf5 -y --nogpgcheck search {self.entry.get()}"
-            elif operation == 'install':
-                self.command = f"pkexec dnf5 -y --nogpgcheck install {self.entry.get()}"
-            elif operation == 'reinstall':
-                self.command = f"pkexec dnf5 -y --nogpgcheck reinstall {self.entry.get()}"
-            elif operation == 'uninstall':
-                self.command = f"pkexec dnf5 -y --nogpgcheck remove {self.entry.get()}"
-            elif operation == 'update':
-                self.command = f"pkexec dnf5 -y --nogpgcheck update {self.entry.get()}"
-        elif os.path.isfile(solus):
-            if operation == 'search':
-                self.command = f"eopkg -y search {self.entry.get()}"
-            elif operation == 'install':
-                self.command = f"pkexec eopkg -y install {self.entry.get()}"
-            elif operation == 'reinstall':
-                self.command = f"pkexec eopkg -y install --reinstall {self.entry.get()}"
-            elif operation == 'uninstall':
-                self.command = f"pkexec eopkg -y remove --purge {self.entry.get()}"
-            elif operation == 'update':
-                self.command = f"pkexec eopkg -y upgrade {self.entry.get()}"
-        elif os.path.isfile(arch):
-            if operation == 'search':
-                self.command = f"pacman --noconfirm -Ss {self.entry.get()}"
-            elif operation == 'install' or operation == 'reinstall':
-                self.command = f"pkexec pacman --noconfirm -S {self.entry.get()}"
-            elif operation == 'uninstall':
-                self.command = f"pkexec pacman --noconfirm -Rns {self.entry.get()}"
-            elif operation == 'update':
-                self.command = f"pkexec pacman --noconfirm -Syu {self.entry.get()}"
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")            
-        if os.path.isfile(en):
-            if operation == 'search':
-                delete_operation(f"Searching {self.entry.get()}", self.time)
-            elif operation == 'install':
-                delete_operation(f"Installing {self.entry.get()}", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"Reinstalling {self.entry.get()}", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"Uninstalling {self.entry.get()}", self.time)
-            elif operation == 'update':
-                delete_operation(f"Updating {self.entry.get()}", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'search':
-                delete_operation(f"{self.entry.get()} Aranıyor", self.time)
-            elif operation == 'install':
-                delete_operation(f"{self.entry.get()} Kuruluyor", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"{self.entry.get()} Yeniden Kuruluyor", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"{self.entry.get()} Kaldırılıyor", self.time)
-            elif operation == 'update':
-                delete_operation(f"{self.entry.get()} Güncelleniyor", self.time)
-        self.app.configure(state="normal")
-        self.entry.configure(state="normal")
-        self.button1.configure(state="normal")
-        self.button2.configure(state="normal")
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
-        self.button5.configure(state="normal")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
+        add_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+        if "." in self.entry.get():
+            if operation == "search":
+                self.command = f"flatpak {operation} {self.entry.get()}"
+            else:
+                self.command = f"flatpak {operation} {self.entry.get()} -y"
         else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
-        t.start()
-
-class FlatpakPackages(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((1, 2, 3, 4, 5), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Packages")
-            self.button1 = ui.CTkButton(self.frame, text="Search", command=lambda:self.go_main('search'))
-            self.button2 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
-            self.button3 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
-            self.button5 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
-        elif os.path.isfile(tr):
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Paketler")
-            self.button1 = ui.CTkButton(self.frame, text="Ara", command=lambda:self.go_main('search'))
-            self.button2 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
-            self.button3 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
-            self.button5 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
-        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button5.grid(row=5, column=0, sticky="nsew", pady=0, padx=(10, 0))
-    def do_main(self, operation: str):
-        if self.entry.get() == "":
-            if os.path.isfile(en):
-                mb.showerror("Error", "Please enter packages name.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata", "Lütfen paket adları girin.")
-            return
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                return
-        self.entry.configure(state="disabled")
-        self.button1.configure(state="disabled")
-        self.button2.configure(state="disabled")
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        self.button5.configure(state="disabled")
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            if operation == 'search':
-                add_operation(f"Searching {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'install':
-                add_operation(f"Installing {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"Reinstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"Uninstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'update':
-                add_operation(f"Updating {self.entry.get()} (Flatpak)", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'search':
-                add_operation(f"{self.entry.get()} Aranıyor (Flatpak)", self.time)
-            elif operation == 'install':
-                add_operation(f"{self.entry.get()} Kuruluyor (Flatpak)", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"{self.entry.get()} Yeniden Kuruluyor (Flatpak)", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"{self.entry.get()} Kaldırılıyor (Flatpak)", self.time)
-            elif operation == 'update':
-                add_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
-        if operation == 'search':
-            self.command = f"flatpak search {self.entry.get()}"
-        elif operation == 'install':
-            self.command = f"flatpak install {self.entry.get()} -y"
-        elif operation == 'reinstall':
-            self.command = f"flatpak install --reinstall '{self.entry.get()} -y"
-        elif operation == 'uninstall':
-            self.command = f"flatpak uninstall {self.entry.get()} -y"
-        elif operation == 'update':
-            self.command = f"flatpak update '{self.entry.get()} -y"
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")
-        if os.path.isfile(en):
-            if operation == 'search':
-                delete_operation(f"Searching {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'install':
-                delete_operation(f"Installing {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"Reinstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"Uninstalling {self.entry.get()} (Flatpak)", self.time)
-            elif operation == 'update':
-                delete_operation(f"Updating {self.entry.get()} (Flatpak)", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'search':
-                delete_operation(f"{self.entry.get()} Aranıyor (Flatpak)", self.time)
-            elif operation == 'install':
-                delete_operation(f"{self.entry.get()} Kuruluyor (Flatpak)", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"{self.entry.get()} Yeniden Kuruluyor (Flatpak)", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"{self.entry.get()} Kaldırılıyor (Flatpak)", self.time)
-            elif operation == 'update':
-                delete_operation(f"{self.entry.get()} Güncelleniyor (Flatpak)", self.time)
-        self.entry.configure(state="normal")
-        self.button1.configure(state="normal")
-        self.button2.configure(state="normal")
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
-        self.button5.configure(state="normal")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
-        t.start()
-
-class DEWM(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((2, 3, 4, 5), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.text = ui.CTkLabel(self.frame, text="Desktop Environment\nWindow Manager")
-            self.button1 = ui.CTkButton(self.frame, text="Install", command=lambda:self.go_main('install'))
-            self.button2 = ui.CTkButton(self.frame, text="Reinstall", command=lambda:self.go_main('reinstall'))
-            self.button3 = ui.CTkButton(self.frame, text="Uninstall", command=lambda:self.go_main('uninstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Update", command=lambda:self.go_main('update'))
-        elif os.path.isfile(tr):
-            self.text = ui.CTkLabel(self.frame, text="Masaüstü Ortamı\nPencere Yöneticisi")
-            self.button1 = ui.CTkButton(self.frame, text="Kur", command=lambda:self.go_main('install'))
-            self.button2 = ui.CTkButton(self.frame, text="Yeniden Kur", command=lambda:self.go_main('reinstall'))
-            self.button3 = ui.CTkButton(self.frame, text="Kaldır", command=lambda:self.go_main('uninstall'))
-            self.button4 = ui.CTkButton(self.frame, text="Güncelle", command=lambda:self.go_main('update'))
-        if os.path.isfile(debian):
-            self.dewm = ui.CTkOptionMenu(self.frame, values=["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"])
-        elif os.path.isfile(fedora):
-            self.dewm = ui.CTkOptionMenu(self.frame, values=["GNOME", "KDE", "Budgie", "Cinnamon", "Deepin", "MATE", "Xfce", "LXDE", "LXQt", "Phosh", "Sugar", "Sway", "i3", "Hyprland", "Openbox", "Fluxbox", "Blackbox", "bspwm", "Basic"])
-        elif os.path.isfile(solus):
-            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"])
-        elif os.path.isfile(arch):
-            self.dewm = ui.CTkOptionMenu(self.frame, values=["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Hyprland", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"])
-        self.text.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.dewm.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button1.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button2.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button3.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button4.grid(row=5, column=0, sticky="nsew", pady=0, padx=(10, 0))
-    def do_main(self, operation: str):
-        self.dewm.configure(state="disabled")
-        self.button1.configure(state="disabled")
-        self.button2.configure(state="disabled")
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            if operation == 'install':
-                add_operation(f"Installing {self.dewm.get()}", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"Reinstalling {self.dewm.get()}", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"Uninstalling {self.dewm.get()}", self.time)
-            elif operation == 'update':
-                add_operation(f"Updating {self.dewm.get()}", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'install':
-                add_operation(f"{self.dewm.get()} Kuruluyor", self.time)
-            elif operation == 'reinstall':
-                add_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-            elif operation == 'uninstall':
-                add_operation(f"{self.dewm.get()} Kaldırılıyor", self.time)
-            elif operation == 'update':
-                add_operation(f"{self.dewm.get()} Güncelleniyor", self.time)
-        if os.path.isfile(debian):
-            if self.dewm.get().lower() != "mate":
-                if operation == 'install':
-                    self.command = f"pkexec apt -y install {self.dewm.get().lower()}"
+            if os.path.isfile(debian):
+                if operation == 'search':
+                    self.command = f"apt -y search {self.entry.get()}"
+                elif operation == 'install':
+                    self.command = f"pkexec apt -y install {self.entry.get()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec apt -y install --reinstall {self.dewm.get().lower()}"
+                    self.command = f"pkexec apt -y install --reinstall {self.entry.get()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec apt -y autoremove --purge {self.dewm.get().lower()}"
+                    self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
                 elif operation == 'update':
-                    self.command = f"pkexec apt -y upgrade {self.dewm.get().lower()}"
-            elif self.dewm.get().lower() == "mate":
+                    self.command = f"pkexec apt -y upgrade {self.entry.get()}"
+            elif os.path.isfile(fedora):
+                if operation == 'search':
+                    self.command = f"dnf5 -y --nogpgcheck search {self.entry.get()}"
+                elif operation == 'install':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck install {self.entry.get()}"
+                elif operation == 'reinstall':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck reinstall {self.entry.get()}"
+                elif operation == 'uninstall':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck remove {self.entry.get()}"
+                elif operation == 'update':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck update {self.entry.get()}"
+            elif os.path.isfile(solus):
+                if operation == 'search':
+                    self.command = f"eopkg -y search {self.entry.get()}"
+                elif operation == 'install':
+                    self.command = f"pkexec eopkg -y install {self.entry.get()}"
+                elif operation == 'reinstall':
+                    self.command = f"pkexec eopkg -y install --reinstall {self.entry.get()}"
+                elif operation == 'uninstall':
+                    self.command = f"pkexec eopkg -y remove --purge {self.entry.get()}"
+                elif operation == 'update':
+                    self.command = f"pkexec eopkg -y upgrade {self.entry.get()}"
+            elif os.path.isfile(arch):
+                if operation == 'search':
+                    self.command = f"pacman --noconfirm -Ss {self.entry.get()}"
+                elif operation == 'install' or operation == 'reinstall':
+                    self.command = f"pkexec pacman --noconfirm -S {self.entry.get()}"
+                elif operation == 'uninstall':
+                    self.command = f"pkexec pacman --noconfirm -Rns {self.entry.get()}"
+                elif operation == 'update':
+                    self.command = f"pkexec pacman --noconfirm -Syu {self.entry.get()}"
+        self.which_page = 0
+        if self.useds["page1"] == False:
+            self.which_page = 1
+        elif self.useds["page2"] == False:
+            self.which_page = 2
+        elif self.useds["page3"] == False:
+            self.which_page = 3
+        elif self.useds["page4"] == False:
+            self.which_page = 4
+        elif self.useds["page5"] == False:
+            self.which_page = 5
+        elif self.useds["page6"] == False:
+            self.which_page = 6
+        elif self.useds["page7"] == False:
+            self.which_page = 7
+        elif self.useds["page8"] == False:
+            self.which_page = 8
+        elif self.useds["page9"] == False:
+            self.which_page = 9
+        elif self.useds["page10"] == False:
+            self.which_page = 10
+        elif self.useds["page11"] == False:
+            self.which_page = 11
+        elif self.useds["page12"] == False:
+            self.which_page = 12
+        elif self.useds["page13"] == False:
+            self.which_page = 13
+        elif self.useds["page14"] == False:
+            self.which_page = 14
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['store']['all-slots-are-full'][lang_])
+            return
+        self.labels[f"page{self.which_page}"].configure(text=f"{lang['operations'][operation][lang_]}: {self.entry.get()}")
+        self.useds[f"page{self.which_page}"] = True
+        self.tabview.set(self.which_page)
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.outputs[f"page{self.which_page}"].configure(state="normal")
+                self.outputs[f"page{self.which_page}"].insert("end", self.out)
+                self.outputs[f"page{self.which_page}"].configure(state="disabled")
+            for self.err in self.run_command.stderr:
+                self.outputs[f"page{self.which_page}"].configure(state="normal")
+                self.outputs[f"page{self.which_page}"].insert("end", self.err)
+                self.outputs[f"page{self.which_page}"].configure(state="disabled")
+        self.closes[f"page{self.which_page}"].configure(state="normal")
+        delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+        if self.run_command.returncode == 0:
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
+    def go(self, wanted: str):
+        self.thread = threading.Thread(target=lambda:self.do(wanted), daemon=False)
+        self.thread.start()
+    def close(self, caller: str):
+        self.labels[f"page{caller}"].configure(text=f"{lang['operations']['process'][lang_]} {caller}")
+        self.outputs[f"page{caller}"].configure(state="normal")
+        self.outputs[f"page{caller}"].delete("0.0", 'end')
+        self.outputs[f"page{caller}"].configure(state="disabled")
+        self.closes[f"page{caller}"].configure(state="disabled")
+        self.useds[f"page{caller}"] = False
+
+class DEsWMsCs(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        self.mainpage = self.tabview.add(lang['store']['home'][lang_])
+        self.mainpage.grid_columnconfigure(0, weight=1)
+        self.mainpage.grid_rowconfigure(0, weight=1)
+        self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
+        self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
+        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
+        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.sidebar.grid_columnconfigure(0, weight=1)
+        self.dewmc = sv(None)
+        self.deswmscs_label = ui.CTkLabel(self.mainbar, text=lang['store']['deswmscs'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.selected = ui.CTkLabel(self.sidebar, textvariable=self.dewmc)
+        self.button1 = ui.CTkButton(self.sidebar, text=lang['operations']['install'][lang_], command=lambda:self.go('install'))
+        self.button2 = ui.CTkButton(self.sidebar, text=lang['operations']['reinstall'][lang_], command=lambda:self.go('reinstall'))
+        self.button3 = ui.CTkButton(self.sidebar, text=lang['operations']['uninstall'][lang_], command=lambda:self.go('uninstall'))
+        self.button4 = ui.CTkButton(self.sidebar, text=lang['operations']['update'][lang_], command=lambda:self.go('update'))
+        if os.path.isfile(debian):
+            self.deswmscs = ["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"]
+        elif os.path.isfile(fedora):
+            self.deswmscs = ["GNOME", "KDE", "Budgie", "Cinnamon", "Deepin", "MATE", "Xfce", "LXDE", "LXQt", "Phosh", "Sugar", "Sway", "i3", "Hyprland", "Openbox", "Fluxbox", "Blackbox", "bspwm", "Basic"]
+        elif os.path.isfile(solus):
+            self.deswmscs = ["Budgie", "GNOME", "KDE", "Xfce", "Mate", "Fluxbox", "Openbox", "i3", "bspwm"]
+        elif os.path.isfile(arch):
+            self.deswmscs = ["Budgie", "Cinnamon", "Cutefish", "Deepin", "Enlightenment", "GNOME", "GNOME-Flashback", "Plasma", "LXDE", "LXDE-GTK3", "LXQt", "Mate", "Pantheon", "Phosh", "Sugar", "UKUI", "Xfce4", "Hyprland", "Fluxbox", "IceWM", "openmotif", "Openbox", "PekWM", "Xorg-TWM", "Herbstluftwm", "i3-WM", "Notion", "Stumpwm", "Awesome", "Qtile", "xmonad"]
+        self.deswmscs_number = 0
+        for dewmc in self.deswmscs:
+            self.deswmscs_number += 1
+            ui.CTkButton(self.mainbar, text=dewmc, command=lambda dewmc = dewmc: self.dewmc.set(dewmc)).grid(row=self.deswmscs_number, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.pages = {}
+        self.labels = {}
+        self.outputs = {}
+        self.closes = {}
+        self.useds = {}
+        for i in range(1, 15):
+            self.pages[f"page{i}"] = self.tabview.add(i)
+            self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
+            self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{lang['operations']['process'][lang_]} {i}")
+            self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=lang['store']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
+            self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
+            self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
+            self.useds[f"page{i}"] = False
+        self.deswmscs_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
+        self.selected.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
+        self.button4.grid(row=4, column=0, sticky="nsew")
+    def do(self, operation: str):
+        if self.dewmc.get() == None or self.dewmc.get() == "":
+            mb.showerror(lang['globals']['error'][lang_], lang['store']['deswmscs-name-error'][lang_])
+            return
+        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
+        add_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+        if os.path.isfile(debian):
+            if self.dewmc.get.lower() != "mate":
+                if operation == 'install':
+                    self.command = f"pkexec apt -y install {self.dewmc.get.lower()}"
+                elif operation == 'reinstall':
+                    self.command = f"pkexec apt -y install --reinstall {self.dewmc.get.lower()}"
+                elif operation == 'uninstall':
+                    self.command = f"pkexec apt -y autoremove --purge {self.dewmc.get.lower()}"
+                elif operation == 'update':
+                    self.command = f"pkexec apt -y upgrade {self.dewmc.get.lower()}"
+            elif self.dewmc.get.lower() == "mate":
                 if operation == 'install':
                     self.command = f"pkexec apt -y install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
                 elif operation == 'reinstall':
@@ -1234,110 +1105,181 @@ class DEWM(ui.CTkFrame):
                 elif operation == 'update':
                     self.command = f"pkexec apt -y upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
         elif os.path.isfile(fedora):
-            if self.dewm.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
+            if self.dewmc.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
                 if operation == 'install':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    if os.path.isfile(en):
-                        mb.showerror("Error", f"DNF doesn't support reinstalling {self.dewm.get()} group.")
-                    elif os.path.isfile(tr):
-                        mb.showerror("Error", f"DNF, {self.dewm.get()} grubunu yeniden kurmayı desteklemez.")
-                    if os.path.isfile(en):
-                        delete_operation(f"Reinstalling {self.dewm.get()}", self.time)
-                    elif os.path.isfile(tr):
-                        delete_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-                    self.dewm.configure(state="normal")
-                    self.button1.configure(state="normal")
-                    self.button2.configure(state="normal")
-                    self.button3.configure(state="normal")
-                    self.button4.configure(state="normal")
+                    mb.showerror(lang['globals']['error'][lang_], lang['store']['dnf-nosupport'][lang_])
+                    delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
                     return
                 elif operation == 'uninstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @{self.dewm.get().lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-            elif self.dewm.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+            elif self.dewmc.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck reinstall {self.dewm.get().lower()}; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck reinstall {self.dewmc.get.lower()}; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade {self.dewm.get().lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-            elif self.dewm.get() == "GNOME":
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+            elif self.dewmc.get() == "GNOME":
                 if operation == 'install':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    if os.path.isfile(en):
-                        mb.showerror("Error", f"DNF doesn't support reinstalling {self.dewm.get()} group.")
-                    elif os.path.isfile(tr):
-                        mb.showerror("Error", f"DNF, {self.dewm.get()} grubunu yeniden kurmayı desteklemez.")
-                    if os.path.isfile(en):
-                        delete_operation(f"Reinstalling {self.dewm.get()}", self.time)
-                    elif os.path.isfile(tr):
-                        delete_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-                    self.dewm.configure(state="normal")
-                    self.button1.configure(state="normal")
-                    self.button2.configure(state="normal")
-                    self.button3.configure(state="normal")
-                    self.button4.configure(state="normal")
+                    mb.showerror(lang['globals']['error'][lang_], lang['store']['dnf-nosupport'][lang_])
+                    delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
                     return
                 elif operation == 'uninstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"                        
         elif os.path.isfile(solus):
-            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
+            if self.dewmc.get.lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewmc.get.lower()}"
             else:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install {self.dewmc.get.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall {self.dewmc.get.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge {self.dewmc.get.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"           
+                    self.command = f"pkexec eopkg -y upgrade {self.dewmc.get.lower()}"           
         elif os.path.isfile(solus):
-            if self.dewm.get().lower() not in ["openbox", "fluxbox", "bspwm"]:
+            if self.dewmc.get.lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewmc.get.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewmc.get.lower()}"
             else:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install {self.dewmc.get.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall {self.dewmc.get.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge {self.dewm.get().lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge {self.dewmc.get.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade {self.dewm.get().lower()}"        
+                    self.command = f"pkexec eopkg -y upgrade {self.dewmc.get.lower()}"        
         elif os.path.isfile(arch):
             if operation == 'install':
-                self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
+                self.command = f"pkexec pacman --noconfirm -S {self.dewmc.get.lower()}"
             elif operation == 'reinstall':
-                self.command = f"pkexec pacman --noconfirm -S {self.dewm.get().lower()}"
+                self.command = f"pkexec pacman --noconfirm -S {self.dewmc.get.lower()}"
             elif operation == 'uninstall':
-                self.command = f"pkexec pacman --noconfirm -Rns {self.dewm.get().lower()}"
+                self.command = f"pkexec pacman --noconfirm -Rns {self.dewmc.get.lower()}"
             elif operation == 'update':
-                self.command = f"pkexec pacman --noconfirm -Syu {self.dewm.get().lower()}"
+                self.command = f"pkexec pacman --noconfirm -Syu {self.dewmc.get.lower()}"
+        self.which_page = 0
+        if self.useds["page1"] == False:
+            self.which_page = 1
+        elif self.useds["page2"] == False:
+            self.which_page = 2
+        elif self.useds["page3"] == False:
+            self.which_page = 3
+        elif self.useds["page4"] == False:
+            self.which_page = 4
+        elif self.useds["page5"] == False:
+            self.which_page = 5
+        elif self.useds["page6"] == False:
+            self.which_page = 6
+        elif self.useds["page7"] == False:
+            self.which_page = 7
+        elif self.useds["page8"] == False:
+            self.which_page = 8
+        elif self.useds["page9"] == False:
+            self.which_page = 9
+        elif self.useds["page10"] == False:
+            self.which_page = 10
+        elif self.useds["page11"] == False:
+            self.which_page = 11
+        elif self.useds["page12"] == False:
+            self.which_page = 12
+        elif self.useds["page13"] == False:
+            self.which_page = 13
+        elif self.useds["page14"] == False:
+            self.which_page = 14
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['store']['all-slots-are-full'][lang_])
+            return
+        self.labels[f"page{self.which_page}"].configure(text=f"{lang['operations'][operation][lang_]}: {self.entry.get()}")
+        self.useds[f"page{self.which_page}"] = True
+        self.tabview.set(self.which_page)
+        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.outputs[f"page{self.which_page}"].configure(state="normal")
+                self.outputs[f"page{self.which_page}"].insert("end", self.out)
+                self.outputs[f"page{self.which_page}"].configure(state="disabled")
+            for self.err in self.run_command.stderr:
+                self.outputs[f"page{self.which_page}"].configure(state="normal")
+                self.outputs[f"page{self.which_page}"].insert("end", self.err)
+                self.outputs[f"page{self.which_page}"].configure(state="disabled")
+        self.closes[f"page{self.which_page}"].configure(state="normal")
+        delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+        if self.run_command.returncode == 0:
+            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
+        else:
+            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
+    def go(self, wanted: str):
+        self.thread = threading.Thread(target=lambda:self.do(wanted), daemon=False)
+        self.thread.start()
+    def close(self, caller: str):
+        self.labels[f"page{caller}"].configure(text=f"{lang['operations']['process'][lang_]} {caller}")
+        self.outputs[f"page{caller}"].configure(state="normal")
+        self.outputs[f"page{caller}"].delete("0.0", 'end')
+        self.outputs[f"page{caller}"].configure(state="disabled")
+        self.closes[f"page{caller}"].configure(state="disabled")
+        self.useds[f"page{caller}"] = False
+        
+class Scripts(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
+class SystemdServices(ui.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.textbox = ui.CTkTextbox(self)
+        self.textbox.grid(row=1, column=0, sticky="nsew", padx=(0, 7.5), pady=(7.5, 0))
+        self.textbox.configure(state="disabled")
+        self.frame = ui.CTkFrame(self, fg_color="transparent")
+        self.frame.grid(row=1, column=1, sticky="nsew", padx=(7.5, 0), pady=(7.5, 0))
+        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.entry = ui.CTkEntry(self, placeholder_text=lang['store']['service-name'][lang_])
+        self.button1 = ui.CTkButton(self.frame, text=lang['store']['status'][lang_], command=lambda:self.go(["", "status"]))
+        self.button2 = ui.CTkButton(self.frame, text=lang['store']['enable'][lang_], command=lambda:self.go(["pkexec", "enable"]))
+        self.button3 = ui.CTkButton(self.frame, text=lang['store']['disable'][lang_], command=lambda:self.go(["pkexec", "disable"]))
+        self.button4 = ui.CTkButton(self.frame, text=lang['store']['start'][lang_], command=lambda:self.go(["pkexec", "start"]))
+        self.button5 = ui.CTkButton(self.frame, text=lang['store']['stop'][lang_], command=lambda:self.go(["pkexec", "start"]))
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 7.5), columnspan=2)
+        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 10))
+        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 10))
+        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 10))
+        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 10))
+        self.button5.grid(row=4, column=0, sticky="nsew")
+    def do(self, operation: str):
+        if self.entry.get() == "":
+            mb.showerror(lang['globals']['error'][lang_], lang['store']['service-name-error'][lang_])
+            return
         self.textbox.configure(state="normal")
         self.textbox.delete("0.0", 'end')
         self.textbox.configure(state="disabled")
-        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+        with subprocess.Popen(f"{operation[0]} SYSTEMD_COLORS=0 systemctl {operation[1]} {self.entry.get()}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
                 self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.out)
@@ -1346,36 +1288,13 @@ class DEWM(ui.CTkFrame):
                 self.textbox.configure(state="normal")
                 self.textbox.insert("end", self.err)
                 self.textbox.configure(state="disabled")
-        if os.path.isfile(en):
-            if operation == 'install':
-                delete_operation(f"Installing {self.dewm.get()}", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"Reinstalling {self.dewm.get()}", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"Uninstalling {self.dewm.get()}", self.time)
-            elif operation == 'update':
-                delete_operation(f"Updating {self.dewm.get()}", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'install':
-                delete_operation(f"{self.dewm.get()} Kuruluyor", self.time)
-            elif operation == 'reinstall':
-                delete_operation(f"{self.dewm.get()} Yeniden Kuruluyor", self.time)
-            elif operation == 'uninstall':
-                delete_operation(f"{self.dewm.get()} Kaldırılıyor", self.time)
-            elif operation == 'update':
-                delete_operation(f"{self.dewm.get()} Güncelleniyor", self.time)
-        self.dewm.configure(state="normal")
-        self.button1.configure(state="normal")
-        self.button2.configure(state="normal")
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
         if self.run_command.returncode == 0:
             mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
-        t.start()
+    def go(self, process: str):
+        self.thread = threading.Thread(target=lambda:self.do(process), daemon=False)
+        self.thread.start()
 
 class TraditionalScripts(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1391,23 +1310,23 @@ class TraditionalScripts(ui.CTkFrame):
         self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self.frame, text="Upgrade All Packages", command=lambda:self.go_main('update'))
-            self.button2 = ui.CTkButton(self.frame, text="Synchronize Distribution", command=lambda:self.go_main("dist_sync"))
-            self.button3 = ui.CTkButton(self.frame, text="Clean Package Cache", command=lambda:self.go_main("clean"))
-            self.button4 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go_main("remove"))
-            self.button5 = ui.CTkButton(self.frame, text="Fix Broken Dependencies", command=lambda:self.go_main("fix"))
-            self.button6 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go_main("history"))
-            self.button7 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go_main("list"))
-            self.button8 = ui.CTkButton(self.frame, text="List Installed Leaves", command=lambda:self.go_main("list2"))
+            self.button1 = ui.CTkButton(self.frame, text="Upgrade All Packages", command=lambda:self.go('update'))
+            self.button2 = ui.CTkButton(self.frame, text="Synchronize Distribution", command=lambda:self.go("dist_sync"))
+            self.button3 = ui.CTkButton(self.frame, text="Clean Package Cache", command=lambda:self.go("clean"))
+            self.button4 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go("remove"))
+            self.button5 = ui.CTkButton(self.frame, text="Fix Broken Dependencies", command=lambda:self.go("fix"))
+            self.button6 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go("history"))
+            self.button7 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go("list"))
+            self.button8 = ui.CTkButton(self.frame, text="List Installed Leaves", command=lambda:self.go("list2"))
         elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main('update'))
-            self.button2 = ui.CTkButton(self.frame, text="Dağıtımı Senkronize Et", command=lambda:self.go_main("dist_sync"))
-            self.button3 = ui.CTkButton(self.frame, text="Paket Önbelleğini Temizle", command=lambda:self.go_main("clean"))
-            self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("remove"))
-            self.button5 = ui.CTkButton(self.frame, text="Bozuk Bağımlılıkları Düzelt", command=lambda:self.go_main("fix"))
-            self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
-            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))
-            self.button8 = ui.CTkButton(self.frame, text="Kurulu Yaprakları Listele", command=lambda:self.go_main("list2"))
+            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go('update'))
+            self.button2 = ui.CTkButton(self.frame, text="Dağıtımı Senkronize Et", command=lambda:self.go("dist_sync"))
+            self.button3 = ui.CTkButton(self.frame, text="Paket Önbelleğini Temizle", command=lambda:self.go("clean"))
+            self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go("remove"))
+            self.button5 = ui.CTkButton(self.frame, text="Bozuk Bağımlılıkları Düzelt", command=lambda:self.go("fix"))
+            self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go("history"))
+            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go("list"))
+            self.button8 = ui.CTkButton(self.frame, text="Kurulu Yaprakları Listele", command=lambda:self.go("list2"))
         if not os.path.isfile(fedora):
             self.button8.configure(state="disabled")
         if os.path.isfile(fedora):
@@ -1425,7 +1344,7 @@ class TraditionalScripts(ui.CTkFrame):
         self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
         self.button7.grid(row=6, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
         self.button8.grid(row=7, column=0, sticky="nsew", padx=(10, 0))
-    def do_main(self, operation: str):
+    def do(self, operation: str):
         self.button1.configure(state="disabled")
         self.button2.configure(state="disabled")
         self.button3.configure(state="disabled")
@@ -1585,8 +1504,8 @@ class TraditionalScripts(ui.CTkFrame):
             mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+    def go(self, process: str):
+        t = threading.Thread(target=lambda:self.do(process), daemon=False)
         t.start()
 
 class FlatpakScripts(ui.CTkFrame):
@@ -1603,23 +1522,23 @@ class FlatpakScripts(ui.CTkFrame):
         self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go_main("update -y"))
-            self.button2 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go_main("uninstall --unused -y"))
-            self.button3 = ui.CTkButton(self.frame, text="Repair Flatpak Installation", command=lambda:self.go_main("repair"))
-            self.button4 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go_main("history"))
-            self.button5 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go_main("list"))
+            self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go("update -y"))
+            self.button2 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go("uninstall --unused -y"))
+            self.button3 = ui.CTkButton(self.frame, text="Repair Flatpak Installation", command=lambda:self.go("repair"))
+            self.button4 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go("history"))
+            self.button5 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go("list"))
         elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go_main("update -y"))
-            self.button2 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go_main("uninstall --unused -y"))
-            self.button3 = ui.CTkButton(self.frame, text="Flatpak Kurulumunu Onar", command=lambda:self.go_main("repair"))
-            self.button4 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go_main("history"))
-            self.button5 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go_main("list"))            
+            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go("update -y"))
+            self.button2 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go("uninstall --unused -y"))
+            self.button3 = ui.CTkButton(self.frame, text="Flatpak Kurulumunu Onar", command=lambda:self.go("repair"))
+            self.button4 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go("history"))
+            self.button5 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go("list"))            
         self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
         self.button5.grid(row=4, column=0, sticky="nsew", padx=(10, 0))
-    def do_main(self, operation: str):
+    def do(self, operation: str):
         if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
             install_flatpak()
             if ask_f == False:
@@ -1703,68 +1622,8 @@ class FlatpakScripts(ui.CTkFrame):
             mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
-        t.start()
-
-class SystemdServices(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((1, 2, 3, 4, 5), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Service Name")
-            self.button1 = ui.CTkButton(self.frame, text="Status", command=lambda:self.go_main(["", "status"]))
-            self.button2 = ui.CTkButton(self.frame, text="Enable", command=lambda:self.go_main(["pkexec", "enable"]))
-            self.button3 = ui.CTkButton(self.frame, text="Disable", command=lambda:self.go_main(["pkexec", "disable"]))
-            self.button4 = ui.CTkButton(self.frame, text="Start", command=lambda:self.go_main(["pkexec", "start"]))
-            self.button5 = ui.CTkButton(self.frame, text="Stop", command=lambda:self.go_main(["pkexec", "start"]))
-        elif os.path.isfile(tr):
-            self.entry = ui.CTkEntry(self.frame, placeholder_text="Servis Adı")
-            self.button1 = ui.CTkButton(self.frame, text="Durum", command=lambda:self.go_main(["", "status"]))
-            self.button2 = ui.CTkButton(self.frame, text="Aktifleştir", command=lambda:self.go_main(["pkexec", "enable"]))
-            self.button3 = ui.CTkButton(self.frame, text="Devre Dışı Bırak", command=lambda:self.go_main(["pkexec", "disable"]))
-            self.button4 = ui.CTkButton(self.frame, text="Başlat", command=lambda:self.go_main(["pkexec", "start"]))
-            self.button5 = ui.CTkButton(self.frame, text="Durdur", command=lambda:self.go_main(["pkexec", "start"]))
-        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button1.grid(row=1, column=0, sticky="nsew", pady=5, padx=(10, 0))
-        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button5.grid(row=5, column=0, sticky="nsew", padx=(10, 0))
-    def do_main(self, operation: str):
-        if self.entry.get() == "":
-            if os.path.isfile(en):
-                mb.showerror("Error", "Please enter service name.")
-            elif os.path.isfile(tr):
-                mb.showerror("Hata", "Lütfen servis adı girin.")
-            return
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(f"{operation[0]} SYSTEMD_COLORS=0 systemctl {operation[1]} {self.entry.get()}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go_main(self, process: str):
-        t = threading.Thread(target=lambda:self.do_main(process), daemon=False)
+    def go(self, process: str):
+        t = threading.Thread(target=lambda:self.do(process), daemon=False)
         t.start()
 
 class Store(ui.CTkFrame):
@@ -1774,72 +1633,26 @@ class Store(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-        if os.path.isfile(en):
-            if os.path.isfile(debian):
-                self.traditionalpackages = self.tabview.add("DEB\nPackages")
-            elif os.path.isfile(fedora):
-                self.traditionalpackages = self.tabview.add("RPM\nPackages")
-            elif os.path.isfile(solus):
-                self.traditionalpackages = self.tabview.add("EOPKG\nPackages")
-            elif os.path.isfile(arch):
-                self.traditionalpackages = self.tabview.add("Pacman\nPackages")
-            self.flatpakpackages = self.tabview.add("Flatpak\nPackages")
-            self.dewm = self.tabview.add("Desktop Environments\nWindow Managers")
-            if os.path.isfile(debian):
-                self.traditionalscripts = self.tabview.add("DPKG and APT\nRelated Scripts")
-            elif os.path.isfile(fedora):
-                self.traditionalscripts = self.tabview.add("DNF\nRelated Scripts")
-            elif os.path.isfile(solus):
-                self.traditionalscripts = self.tabview.add("EOPKG\nRelated Scripts")
-            elif os.path.isfile(arch):
-                self.traditionalscripts = self.tabview.add("Pacman\nRelated Scripts")
-            self.flatpakscripts = self.tabview.add("Flatpak\nScripts")
-            self.systemd = self.tabview.add("Systemd\nServices")
-        elif os.path.isfile(tr):
-            if os.path.isfile(debian):
-                self.traditionalpackages = self.tabview.add("DEB\nPaketleri")
-            elif os.path.isfile(fedora):
-                self.traditionalpackages = self.tabview.add("RPM\nPaketleri")
-            elif os.path.isfile(solus):
-                self.traditionalpackages = self.tabview.add("EOPKG\nPaketleri")
-            elif os.path.isfile(arch):
-                self.traditionalpackages = self.tabview.add("Pacman\nPaketleri")
-            self.flatpakpackages = self.tabview.add("Flatpak\nPaketleri")
-            self.dewm = self.tabview.add("Masaüstü Ortamları\nPencere Yöneticileri")
-            if os.path.isfile(debian):
-                self.traditionalscripts = self.tabview.add("DPKG ve APT\nİle İlgili Betikler")
-            elif os.path.isfile(fedora):
-                self.traditionalscripts = self.tabview.add("DNF\nİle İlgili Betikler")
-            elif os.path.isfile(solus):
-                self.traditionalscripts = self.tabview.add("EOPKG\nİle İlgili Betikler")
-            elif os.path.isfile(arch):
-                self.traditionalscripts = self.tabview.add("Pacman\nİle İlgili Betikler")
-            self.flatpakscripts = self.tabview.add("Flatpak\nBetikleri")
-            self.systemd = self.tabview.add("Systemd\nServisleri")
-        self.traditionalpackages.grid_columnconfigure(0, weight=1)
-        self.traditionalpackages.grid_rowconfigure(0, weight=1)
-        self.traditionalpackages_frame=TraditionalPackages(self.traditionalpackages)
-        self.traditionalpackages_frame.grid(row=0, column=0, sticky="nsew")
-        self.flatpakpackages.grid_columnconfigure(0, weight=1)
-        self.flatpakpackages.grid_rowconfigure(0, weight=1)
-        self.flatpakpackages_frame=FlatpakPackages(self.flatpakpackages)
-        self.flatpakpackages_frame.grid(row=0, column=0, sticky="nsew")
-        self.dewm.grid_columnconfigure(0, weight=1)
-        self.dewm.grid_rowconfigure(0, weight=1)
-        self.dewm_frame=DEWM(self.dewm)
-        self.dewm_frame.grid(row=0, column=0, sticky="nsew")
-        self.traditionalscripts.grid_columnconfigure(0, weight=1)
-        self.traditionalscripts.grid_rowconfigure(0, weight=1)
-        self.traditionalscripts_frame=TraditionalScripts(self.traditionalscripts)
-        self.traditionalscripts_frame.grid(row=0, column=0, sticky="nsew")
-        self.flatpakscripts.grid_columnconfigure(0, weight=1)
-        self.flatpakscripts.grid_rowconfigure(0, weight=1)
-        self.flatpakscripts_frame=FlatpakScripts(self.flatpakscripts)
-        self.flatpakscripts_frame.grid(row=0, column=0, sticky="nsew")
-        self.systemd.grid_columnconfigure(0, weight=1)
-        self.systemd.grid_rowconfigure(0, weight=1)
-        self.systemd_frame=SystemdServices(self.systemd)
-        self.systemd_frame.grid(row=0, column=0, sticky="nsew")
+        self.packages_tab = self.tabview.add(lang['store']['packages'][lang_])
+        self.deswmscs_tab = self.tabview.add(lang['store']['deswmscs'][lang_])
+        self.scripts_tab = self.tabview.add(lang['store']['scripts'][lang_])
+        self.systemdservices_tab = self.tabview.add(f"Systemd\n{lang['store']['services'][lang_]}")
+        self.packages_tab.grid_columnconfigure(0, weight=1)
+        self.packages_tab.grid_rowconfigure(0, weight=1)
+        self.packages_frame = Packages(self.packages_tab, fg_color="transparent")
+        self.packages_frame.grid(row=0, column=0, sticky="nsew")
+        self.deswmscs_tab.grid_columnconfigure(0, weight=1)
+        self.deswmscs_tab.grid_rowconfigure(0, weight=1)
+        self.deswmscs_frame = DEsWMsCs(self.deswmscs_tab, fg_color="transparent")
+        self.deswmscs_frame.grid(row=0, column=0, sticky="nsew")
+        self.scripts_tab.grid_columnconfigure(0, weight=1)
+        self.scripts_tab.grid_rowconfigure(0, weight=1)
+        self.scripts_frame = Scripts(self.scripts_tab, fg_color="transparent")
+        self.scripts_frame.grid(row=0, column=0, sticky="nsew")
+        self.systemdservices_tab.grid_columnconfigure(0, weight=1)
+        self.systemdservices_tab.grid_rowconfigure(0, weight=1)
+        self.systemdservices_frame = SystemdServices(self.systemdservices_tab, fg_color="transparent")
+        self.systemdservices_frame.grid(row=0, column=0, sticky="nsew")
 
 class BashrcZshrcButtons(ui.CTkFrame):
     def __init__(self, master, **kwargs):
