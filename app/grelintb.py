@@ -182,7 +182,7 @@ elif os.path.isfile(green):
     ui.set_default_color_theme('green')
 if "sv" in sys.argv[1:]:
     version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
-if "stg" in sys.argv[1:]:
+if "st" in sys.argv[1:]:
     ui.set_default_color_theme("/home/mukonqi/works/grelintb/app/theme.json")
 
 def update_status():
@@ -599,57 +599,97 @@ class Startup(ui.CTkFrame):
 class NotesAndDocuments(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.topbar = ui.CTkFrame(self, fg_color="transparent")
-        self.topbar.grid(row=0, column=0, sticky="nsew", columnspan=2)
-        self.topbar.grid_rowconfigure(0, weight=1)
-        self.topbar.grid_columnconfigure((0, 1, 2), weight=1)
-        self.sidebar = ui.CTkFrame(self, fg_color="transparent")
-        self.sidebar.grid(row=1, column=1, sticky="nsew")
+        self.tabview = ui.CTkTabview(self, corner_radius=25)
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        self.mainpage = self.tabview.add(lang['nad']['home'][lang_])
+        self.mainpage.grid_columnconfigure(0, weight=1)
+        self.mainpage.grid_rowconfigure(0, weight=1)
+        self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
+        self.mainbar.grid(row=0, column=0, sticky="nsew")
+        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
+        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(15, 0))
         self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
-        self.content = ui.CTkTextbox(self)
-        self.content.grid(row=1, column=0, sticky="nsew")
+        self.notes_label = ui.CTkLabel(self.mainbar, text=lang['nad']['notes'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.backups_label = ui.CTkLabel(self.mainbar, text=lang['nad']['backups'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=lang['nad']['note-or-document'][lang_])
+        self.button1 = ui.CTkButton(self.sidebar, text=lang['nad']['create'][lang_], command=lambda:self.create("new"))
+        self.button2 = ui.CTkButton(self.sidebar, text=lang['nad']['open'][lang_], command=self.open)
+        self.button3 = ui.CTkButton(self.sidebar, text=lang['nad']['rename'][lang_], command=self.rename)
+        self.button4 = ui.CTkButton(self.sidebar, text=lang['nad']['restore'][lang_], command=self.restore)
+        self.button5 = ui.CTkButton(self.sidebar, text=lang['nad']['delete'][lang_], command=self.delete)
         self.notes = os.listdir(notes)
         self.notes.remove(".backups")
         self.backups = os.listdir(f"{notes}.backups")
-        self.notes_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['notes'][lang_]]+ self.notes, command=self.check_note)
-        self.entry = ui.CTkEntry(self.topbar, placeholder_text=lang['nad']['note-or-document'][lang_])
-        self.backups_list = ui.CTkOptionMenu(self.topbar, values=[lang['nad']['backups'][lang_]]+ self.backups, command=self.check_backup)
-        self.button1 = ui.CTkButton(self.sidebar, text=lang['nad']['create'][lang_], command=lambda:self.create("new"))
-        self.button2 = ui.CTkButton(self.sidebar, text=lang['nad']['open'][lang_], command=self.open)
-        self.button3 = ui.CTkButton(self.sidebar, text=lang['nad']['save'][lang_], command=self.save)
-        self.button4 = ui.CTkButton(self.sidebar, text=lang['nad']['rename'][lang_], command=self.rename)
-        self.button5 = ui.CTkButton(self.sidebar, text=lang['nad']['restore'][lang_], command=self.restore)
-        self.button6 = ui.CTkButton(self.sidebar, text=lang['nad']['delete'][lang_], command=self.delete)
-        self.notes_list.grid(row=0, column=0, sticky="nsew", pady=(0, 15))
-        self.entry.grid(row=0, column=1, sticky="nsew", pady=(0, 15), padx=(5, 0))
-        self.backups_list.grid(row=0, column=2, sticky="nsew", pady=(0, 15), padx=(5, 0))
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(15, 0))
-        self.button6.grid(row=5, column=0, sticky="nsew", pady=0, padx=(15, 0))
-    def check_note(self, note_name: str):
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
-        if note_name != lang['nad']['notes'][lang_] and note_name != "":
-            self.entry.delete(0, "end")
-            self.entry.insert(0, f"{notes}{note_name}")
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['note-name-error'][lang_])
-    def check_backup(self, backup_name: str):
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        if backup_name != lang['nad']['backups'][lang_] and backup_name != "":
-            self.entry.delete(0, "end")
-            self.entry.insert(0, f"{notes}.backups/{backup_name}")
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['backup-name-error'][lang_])
+        self.notes_number = 0
+        self.backups_number = 0
+        for note_name in self.notes:
+            self.notes_number += 1
+            ui.CTkButton(self.mainbar, text=note_name, command=lambda note_name = note_name: self.insert(f"{notes}{note_name}")).grid(row=self.notes_number, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        for backup_name in self.backups:
+            self.backups_number += 1
+            ui.CTkButton(self.mainbar, text=backup_name, command=lambda backup_name = backup_name: self.insert(f"{notes}.backups/{backup_name}")).grid(row=self.backups_number, column=1, sticky="nsew", pady=(0, 10), padx=25)
+        self.pages = {}
+        self.labels = {}
+        self.contents = {}
+        self.frames = {}
+        self.saves = {}
+        self.saves_closes = {}
+        self.closes = {}
+        self.names = {}
+        self.files = {}
+        self.useds = {}
+        for i in range(1, 9):
+            self.pages[f"page{i}"] = self.tabview.add(i)
+            self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
+            self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=lang['nad']['note-or-document'][lang_])
+            self.contents[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
+            self.frames[f"page{i}"] = ui.CTkFrame(self.pages[f"page{i}"], fg_color="transparent")
+            self.frames[f"page{i}"].grid_rowconfigure((0, 1, 2), weight=1)
+            self.frames[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.saves[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['save'][lang_], command=lambda i = i: self.save(i), state="disabled")
+            self.saves_closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['save-close'][lang_], command=lambda i = i: self.save_close(i), state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.labels[f"page{i}"].grid(row=0, column=0, columnspan=2, sticky="nsew")
+            self.contents[f"page{i}"].grid(row=1, column=0, sticky="nsew")
+            self.frames[f"page{i}"].grid(row=1, column=1, sticky="nsew", padx=(15, 0))
+            self.saves[f"page{i}"].grid(row=0, column=0, sticky="nsew", pady=(0, 10))
+            self.saves_closes[f"page{i}"].grid(row=1, column=0, sticky="nsew", pady=(0, 10))
+            self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew")
+            self.names[f"page{i}"] = i
+            self.files[f"page{i}"] = None
+            self.useds[f"page{i}"] = False
+        self.notes_label.grid(row=0, column=0, sticky="nsew", pady=10, padx=15)
+        self.backups_label.grid(row=0, column=1, sticky="nsew", pady=10, padx=15)
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
+        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
+        self.button5.grid(row=5, column=0, sticky="nsew")
+    def insert(self, file: str):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, file)
+    def list(self, name):
+        if name != None:
+            self.insert(name)
+        self.notes = os.listdir(notes)
+        self.notes.remove(".backups")
+        self.backups = os.listdir(f"{notes}.backups")
+        self.notes_number = 0
+        self.backups_number = 0
+        for note_name in self.notes:
+            self.notes_number += 1
+            ui.CTkButton(self.mainbar, text=note_name, command=lambda note_name = note_name: self.insert(f"{notes}{note_name}")).grid(row=self.notes_number, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        for backup_name in self.backups:
+            self.backups_number += 1
+            ui.CTkButton(self.mainbar, text=backup_name, command=lambda backup_name = backup_name: self.insert(f"{notes}.backups/{backup_name}")).grid(row=self.backups_number, column=1, sticky="nsew", pady=(0, 10), padx=25)
     def create(self, mode: str):
-        self.dialog = ui.CTkInputDialog(text=lang['nad']['type'][lang_], title=lang['nad']['create-title'][lang_])
+        self.dialog = ui.CTkInputDialog(text=lang['nad']['create-description'][lang_], title=lang['nad']['create-title'][lang_])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             return
@@ -657,39 +697,12 @@ class NotesAndDocuments(ui.CTkFrame):
         if not os.path.isfile(f"{notes}{self.new_name}"):
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['create-error'][lang_])
             return
-        self.entry.delete(0, "end")
-        self.entry.insert(0, f"{notes}{self.new_name}")
-        self.notes = os.listdir(notes)
-        self.notes.remove(".backups")
-        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-        self.backups = os.listdir(f"{notes}.backups")
-        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+        self.list(f"{notes}{self.new_name}")
         if mode == "new" and os.path.isfile(self.new_name):
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['create-successful'][lang_])
-    def save(self):
-        try:
-            if self.entry.get() == "":
-                self.create("save")
-            if f"{os.path.dirname(self.entry.get())}/" == notes:
-                os.system(f"cp {self.entry.get()} {notes}.backups/{os.path.basename(self.entry.get())}")
-            with open(self.entry.get(), "w+") as self.file_save:
-                self.file_save.write(self.content.get("0.0", 'end'))
-            with open(self.entry.get()) as self.file_control:
-                self.control = self.file_control.read()
-            if self.control == self.content.get("0.0", 'end'):
-                self.notes = os.listdir(notes)
-                self.notes.remove(".backups")
-                self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-                self.backups = os.listdir(f"{notes}.backups")
-                self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
-                mb.showinfo(lang['globals']['information'][lang_], lang['nad']['save-successful'][lang_])
-            else:
-                mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
-        except:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
     def open(self):
         try:
-            if self.entry.get() != "" or self.entry.get() != None:
+            if self.entry.get() != "" and self.entry.get() != None:
                 with open(self.entry.get(), "r") as self.file_entry:
                     self.text = self.file_entry.read()
             else:
@@ -698,21 +711,56 @@ class NotesAndDocuments(ui.CTkFrame):
                     self.text = self.file_fd.read()
                 self.entry.delete(0, "end")
                 self.entry.insert(0, self.name)
-                if os.path.dirname(self.name) == f"{notes}.backups":
-                    self.button3.configure(state="disabled")
-                    self.button4.configure(state="disabled")
-                else:
-                    self.button3.configure(state="normal")
-                    self.button4.configure(state="normal")   
-            self.content.delete("0.0", 'end')
-            self.content.insert("0.0", self.text)
+            self.which_page = 0
+            if self.useds["page1"] == False:
+                self.which_page = 1
+            elif self.useds["page2"] == False:
+                self.which_page = 2
+            elif self.useds["page3"] == False:
+                self.which_page = 3
+            elif self.useds["page4"] == False:
+                self.which_page = 4
+            elif self.useds["page5"] == False:
+                self.which_page = 5
+            elif self.useds["page6"] == False:
+                self.which_page = 6
+            elif self.useds["page7"] == False:
+                self.which_page = 7
+            elif self.useds["page8"] == False:
+                self.which_page = 8
+            else:
+                mb.showerror(lang['globals']['error'][lang_], lang['nad']['all-slots-are-full'][lang_])
+                return
+            self.labels[f"page{self.which_page}"].configure(text=self.entry.get())
+            self.contents[f"page{self.which_page}"].configure(state="normal")
+            self.contents[f"page{self.which_page}"].insert("0.0", self.text)
+            if os.path.dirname(self.entry.get()) == f"{notes}.backups":
+                self.contents[f"page{self.which_page}"].configure(state="disabled")
+            else:
+                self.saves[f"page{self.which_page}"].configure(state="normal")
+                self.saves_closes[f"page{self.which_page}"].configure(state="normal")
+            self.closes[f"page{self.which_page}"].configure(state="normal")
+            self.files[f"page{self.which_page}"] = self.entry.get()
+            self.useds[f"page{self.which_page}"] = True
+            try:
+                self.tabview.rename(self.names[f"page{self.which_page}"], os.path.basename(self.entry.get())[:4])
+                self.tabview.set(os.path.basename(self.entry.get())[:4])
+                self.names[f"page{self.which_page}"] = os.path.basename(self.entry.get())[:4]
+            except:
+                try:
+                    self.tabview.set(self.which_page)
+                except:
+                    self.tabview.set(os.path.basename(self.entry.get())[:4])
         except:
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['open-error'][lang_])
     def rename(self):
+        if os.path.dirname(self.entry.get()) == f"{notes}.backups":
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['cant-be-renamed'][lang_])
+            return
         if not os.path.isfile(self.entry.get()):
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
             return
-        self.dialog = ui.CTkInputDialog(text=lang['nad']['type'][lang_], title=lang['nad']['create-title'][lang_])
+        self.dialog = ui.CTkInputDialog(text=lang['nad']['rename-description'][lang_], title=lang['nad']['rename-title'][lang_])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             return
@@ -724,13 +772,7 @@ class NotesAndDocuments(ui.CTkFrame):
         if not os.path.isfile(f"{os.path.dirname(self.entry.get())}/{self.new_name}"):
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['rename-error'][lang_])
             return
-        self.entry.delete(0, "end")
-        self.entry.insert(0, f"{self.new_name}")
-        self.notes = os.listdir(notes)
-        self.notes.remove(".backups")
-        self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-        self.backups = os.listdir(f"{notes}.backups")
-        self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+        self.list(f"{os.path.dirname(self.entry.get())}/{self.new_name}")
         mb.showinfo(lang['globals']['information'][lang_], lang['nad']['rename-successful'][lang_])
     def restore(self):
         if os.path.dirname(self.entry.get()) == f"{notes}.backups":
@@ -749,11 +791,7 @@ class NotesAndDocuments(ui.CTkFrame):
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
             return
         if self.needed == self.final:
-            self.notes = os.listdir(notes)
-            self.notes.remove(".backups")
-            self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-            self.backups = os.listdir(f"{notes}.backups")
-            self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+            self.list(None)
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['restore-successful'][lang_])
         else:
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
@@ -766,14 +804,39 @@ class NotesAndDocuments(ui.CTkFrame):
         os.system(f"rm {self.entry.get()}")
         if not os.path.isfile(self.entry.get()):
             self.entry.delete(0, "end")
-            self.notes = os.listdir(notes)
-            self.notes.remove(".backups")
-            self.notes_list.configure(values=[lang['nad']['notes'][lang_]]+ self.notes)
-            self.backups = os.listdir(f"{notes}.backups")
-            self.backups_list.configure(values=[lang['nad']['backups'][lang_]]+ self.backups)
+            self.list(None)
             mb.showinfo(lang['globals']['information'][lang_], lang['nad']['delete-successful'][lang_])
         else: 
             mb.showerror(lang['globals']['error'][lang_], lang['nad']['delete-error'][lang_])
+    def save(self, caller: str):
+        try:
+            if f"{os.path.dirname(self.files[f"page{caller}"])}/" == notes:
+                os.system(f"cp {self.files[f"page{caller}"]} {notes}.backups/{os.path.basename(self.files[f"page{caller}"])}")
+            with open(self.files[f"page{caller}"], "w+") as self.file_save:
+                self.file_save.write(self.contents[f"page{caller}"].get("0.0", 'end'))
+            with open(self.files[f"page{caller}"], "r") as self.file_control:
+                self.control = self.file_control.read()
+            self.list(None)
+            if self.control == self.contents[f"page{caller}"].get("0.0", 'end'):
+                mb.showinfo(lang['globals']['information'][lang_], lang['nad']['save-successful'][lang_])
+            else:
+                mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
+        except:
+            mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
+    def close(self, caller: str):
+        self.labels[f"page{caller}"].configure(text=lang['nad']['note-or-document'][lang_])
+        self.contents[f"page{caller}"].configure(state="normal")
+        self.contents[f"page{caller}"].delete("0.0", 'end')
+        self.contents[f"page{caller}"].configure(state="disabled")
+        self.saves[f"page{caller}"].configure(state="disabled")
+        self.saves_closes[f"page{caller}"].configure(state="disabled")
+        self.closes[f"page{caller}"].configure(state="disabled")
+        self.names[f"page{caller}"] = caller
+        self.files[f"page{caller}"] = None
+        self.useds[f"page{caller}"] = False
+    def save_close(self, caller: str):
+        self.save(caller)
+        self.close(caller)
 
 class TraditionalPackages(ui.CTkFrame):
     def __init__(self, master, **kwargs):

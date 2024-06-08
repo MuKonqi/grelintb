@@ -1,12 +1,12 @@
 Name:           grelintb
 Version:        1.5.0
-Release:        4
+Release:        5
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
 Source0:        %{name}-1.tar.gz
 
-Requires:       dnf5 python3 python3-tkinter python3-pip git curl coreutils xdg-utils
+Requires:       dnf5 python3-libdnf5 python3-libdnf5-cli python3 python3-tkinter python3-pip git curl coreutils xdg-utils
 
 %description
 GrelinTB comes with various tools. Here are examples: Useful informations about the system etc., a simple note and document editor, a simple store for packages and DEs and WMs, various scripts for packages, a simple configuration tool for Bashrc and Zshrc, a tool to change the name of the computer, information about some distributions and a simple calcer.
