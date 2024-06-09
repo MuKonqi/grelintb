@@ -408,7 +408,7 @@ class Sidebar(ui.CTkFrame):
             self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.button.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         elif caller != "startup":
-            mb.showinfo(l_dict['globals']['information'][l_use], f"GrelinTB{l_dict['changelog']['up-to-date'][l_use]}")
+            mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
     def reset(self):
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         os.system(f"rm -rf /home/{username}/.config/grelintb")
@@ -2167,113 +2167,47 @@ class Root(ui.CTk):
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
-    if "help" in sys.argv[1:] or 'yardım' in sys.argv[1:]:
-        if os.path.isfile(en):
-            print(" Copyright (C) 2024 MuKonqi (Muhammed S.)")
-            print("This is GrelinTB's help page.")
-            print("Current version: "+version_current)
-            print("Developer:       MuKonqi (Muhammed S.)")
-            print("License:         GPLv3 or later")
-            print("Credit:          Google Material Symbols (for application icon)")
-            print("List of all parameters for GrelinTB:")
-            print("  help:          Show this page")
-            print("  grelintb:      Open website of GrelinTB's GitHub repository")
-            print("  version:       Show changelog of "+version_current)
-            print("  developer:     Open website of GrelinTB developer")
-            print("  license:       Show license text of GPLv3")
-            print("  credit:        Open website of the credit")
-            print("  update:        Update GrelinTB")
-            print("  reset:         Reset GrelinTB")
-            print("  uninstall:     Uninstall GrelinTB")  
-            print("                 Start GrelinTB normally (default)")
-        elif os.path.isfile(tr):
-            print(" Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)")
-            print("Bu GrelinTB'nin yardım sayfasıdır.")
-            print("Şimdiki sürüm:   "+version_current)
-            print("Geliştirici:     MuKonqi (Muhammed S.)")
-            print("Lisans:          GPLv3 veya daha sonrası")
-            print("Kredi:           Google Material Symbols (uygulama ikonu için)")            
-            print("GrelinTB için tüm parametrelerin listesi:")
-            print("  yardım:        Bu sayfayı göster")
-            print("  grelintb:      GrelinTB'nin GitHub deposunu aç")
-            print("  sürüm:         "+version_current+" sürümünün değişik günlüğünü göster")
-            print("  geliştirici:   GrelinTB geliştiricisinin internet sitesini aç")
-            print("  lisans:        GPLv3 lisansının metnini göster")
-            print("  kredi:         Kredinin internet sitesini aç")
-            print("  güncelle:      GrelinTB'yı güncelle")
-            print("  sıfırla:       GrelinTB'yı sıfırla")
-            print("  kaldır:        GrelinTB'yı kaldır")
-            print("                 GrelinTB'yi normal olarak aç (varsayılan)")
+    if "-h" in sys.argv[1:] or '--help' in sys.argv[1:]:
+        print(f"{l_dict['cli']['copyright'][l_use]}\n{l_dict['cli']['welcome'][l_use]}{username}!\n{l_dict['cli']['information'][l_use]}\n{l_dict['cli']['version-info'][l_use]}{version_current}\n{l_dict['cli']['developer-info'][l_use]}\n{l_dict['cli']['license-info'][l_use]}\n{l_dict['cli']['credit-info'][l_use]}\n{l_dict['cli']['parameters'][l_use]}\n{l_dict['cli']['help'][l_use]}\n{l_dict['cli']['info'][l_use]}\n{l_dict['cli']['changelog'][l_use]}\n{l_dict['cli']['developer'][l_use]}\n{l_dict['cli']['license'][l_use]}\n{l_dict['cli']['credit'][l_use]}\n{l_dict['cli']['update'][l_use]}\n{l_dict['cli']['reset'][l_use]}\n{l_dict['cli']['uninstall'][l_use]}\n{l_dict['cli']['none'][l_use]}")
         sys.exit(0)
-    elif __file__ in sys.argv[1:]:
+    elif "-i" in sys.argv[1:] or "--info" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
         sys.exit(0)
-    elif 'version' in sys.argv[1:] or 'sürüm' in sys.argv[1:]:
-        with open("/usr/local/bin/grelintb/primary-changelog.txt", "r") as cl_primary_file:
-            cl_primary_text = cl_primary_file.read()
+    elif '-ch' in sys.argv[1:] or '--changelog' in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as cl_major_file:
             cl_major_text = cl_major_file.read()
         with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as cl_minor_file:
             cl_minor_text = cl_minor_file.read()
-        if os.path.isfile(en):
-            print(f" Primary Changelog For {version_current}\n{cl_primary_text}\n\n Major Changelog For {version_current}\n{cl_major_text}\n\n Minor Changelog For {version_current}\n{cl_minor_text}")
-        elif os.path.isfile(tr):
-            print(f" {version_current} İçin Birincil Değişiklik Günlüğü\n{cl_primary_text}\n\n {version_current} İçin Major Değişiklik Günlüğü\n{cl_major_text}\n\n {version_current} İçin Minor Değişiklik Günlüğü\n{cl_minor_text}")
+        print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{cl_major_text}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{cl_minor_text}")
         sys.exit(0)
     elif 'developer' in sys.argv[1:] or 'geliştirici' in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
         sys.exit(0)
-    elif 'license' in sys.argv[1:] or "lisans" in sys.argv[1:]:
+    elif '-l' in sys.argv[1:] or "--license" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
             l_text = l_file.read()
-        print(f"\n{l_text}")
+        print(l_text)
         sys.exit(0)
-    elif 'credit' in sys.argv[1:] or 'kredi' in sys.argv[1:]:
+    elif '-c' in sys.argv[1:] or '--credit' in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
         sys.exit(0)
-    elif 'update' in sys.argv[1:] or 'güncelle' in sys.argv[1:]:
+    elif 'up' in sys.argv[1:] or 'update' in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
-            if os.path.isfile(en):
-                print(f" Primary Changelog For {version_latest}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/primary-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n Major Changelog For {version_latest}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n Minor Changelog For {version_latest}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n")
-                question = input(f"Do you want to update {version_latest} version? [y/n or e/h]: ")
-            elif os.path.isfile(tr):
-                print(f" {version_latest} İçin Birincil Değişiklik Günlüğü\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/primary-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n {version_latest} İçin Major Değişiklik Günlüğü\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n {version_latest} İçin Minor Değişiklik Günlüğü\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n")
-                question = input(f"{version_latest} sürümüne güncellemek ister misiniz? [e/h veya y/n]: ")
+            print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
+            question = input(l_dict['cli']['want'][l_use])
             if question.lower() == "y" or question.lower() == "e":
-                os.system("pkexec /usr/local/bin/grelintb/update.sh")
-                if os.path.isfile(en):
-                    print("GrelinTB updated.")
-                elif os.path.isfile(tr):
-                    print("GrelinTB güncellendi.")
-            elif question.lower() == "n" or question.lower() == "h":
-                if os.path.isfile(en):
-                    print("Update cancelled.")
-                elif os.path.isfile(tr):
-                    print("Güncelleme iptal edildi.")                
+                os.system("pkexec /usr/local/bin/grelintb/update.sh")          
         else:
-            if os.path.isfile(en):
-                print("GrelinTB is up to date.")
-            elif os.path.isfile(tr):
-                print("GrelinTB güncel.")
+            print(l_dict['changelog']['up-to-date'][l_use])
         sys.exit(0)
-    elif 'reset' in sys.argv[1:] or 'sıfırla' in sys.argv[1:]:
+    elif 'rs' in sys.argv[1:] or 'reset' in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-        if os.path.isfile(en):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            print("GrelinTB reset.")
-        elif os.path.isfile(tr):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            print("GrelinTB sıfırlandı.")
+        os.system(f"rm -rf /home/{username}/.config/grelintb")
         sys.exit(0)
-    elif 'uninstall' in sys.argv[1:] or 'kaldır' in sys.argv[1:]:
+    elif 'un' in sys.argv[1:] or 'uninstall' in sys.argv[1:]:
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
-        if os.path.isfile(en):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            print("GrelinTB uninstalled.")
-        elif os.path.isfile(tr):
-            os.system(f"rm -rf /home/{username}/.config/grelintb")
-            print("GrelinTB kaldırıldı.")
+        os.system(f"rm -rf /home/{username}/.config/grelintb")
         sys.exit(0)
     else:
         root = Root(className="grelintb")

@@ -48,7 +48,7 @@
         "changelogs": ["Changelogs: ", "Değişiklik Günlükleri: "],
         "major": ["Major Changelog: ", "Büyük Değişiklik Günlüğü: "],
         "minor": ["Mijor Changelog: ", "Küçük Değişiklik Günlüğü: "],
-        "up-to-date": [" is up to date.", " zaten güncel."]
+        "up-to-date": ["GrelinTB is up to date.", "GrelinTB zaten güncel."]
     },
     "license": {
         "license": ["License", "Lisans"],
@@ -176,6 +176,24 @@
         "tools": ["Tools", "Araçlar"]
     },
     "cli": {
-        
+        "copyright": [" | Copyright (C) 2024 MuKonqi (Muhammed S.)", " | Telif Hakkı (C) 2024 MuKonqi (Muhammed S.)"],
+        "welcome": ["Welcome to GrelinTB's help mode, ", "GrelinTB'nin yardım moduna hoşgeldiniz, "],
+        "information": [" | Information", " | Bilgilendirme"],
+        "version-info": ["Version: ", "Sürüm: "],
+        "developer-info": ["Developer: MuKonqi (Muhammed S.) <mukonqi.github.io>", "Geliştirici: MuKonqi (Muhammed S.) <mukonqi.github.io>"],
+        "license-info": ["License: GPLv3+ (GPLv3 or later)", "Lisans: GPLv3+ (GPLv3 veya sonrası)"],
+        "credit-info": ["Credit: Google Materiel Symbols for application icon", "Kredi: Uygulama ikonu için Google Material Symbols"],
+        "parameters": [" | Parameters", " | Parametreler"],
+        "help": ["-h   | --help:               Shows this page", "-h   | --help:               Bu sayfayı gösterir"],
+        "info": ["-i   | --info:               Opens GrelinTB's website <mukonqi.github.io/grelintb>", "-i   | --info:               GrelinTB'nin internet sitesini açar <mukonqi.github.io/grelintb>"],
+        "changelog": ["-ch  | --changelog:          Prints changelogs", "-ch  | --changelog:          Değişiklik günlüklerini yazdırır"],
+        "developer": ["-dev | --developer:          Opens developer's website", "-dev | --developer:          Geliştircinin internet sitesini açar"],
+        "license": ["-l   | --license:            Prints license text", "-l   | --license:            Lisans metnini yazdıdır"],
+        "credit": ["-c   | --credit:             Opens credit's webpage", "-c   | --credit:             Kredinin internet sitesini açar"],
+        "update": ["up   | update:               Checks updates, asks you if there is an update", "up   | update:               Güncellemeleri kontrol eder, güncelleme güncellemek için sorar"],
+        "reset": ["rs   | reset:                Resets", "rs   | reset:                Sıfırlar"],
+        "uninstall": ["un   | uninstall:            Uninstalls", "un   | uninstall:            Kaldırır"],
+        "none": ["                             Starts normally (graphical)", "                             Normalce başlatır (grafiksel)"],
+        "want": ["Do you want to update? [y/e or others]: ", "Güncellemek ister misiniz? [y/e veya diğerleri]: "]
     }
 }
