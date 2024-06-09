@@ -1,5 +1,6 @@
 {
     "globals": {
+        "i": ["", "i"],
         "information": ["Information", "Bilgilendirme"],
         "warning": ["Warning", "Uyarı"],
         "error": ["Error", "Hata"],
@@ -19,6 +20,7 @@
         "uninstall": ["Uninstall", "Kaldır"],
         "update": ["Update", "Güncelle"],
         "reset": ["Reset", "Sıfırla"],
+        "status": ["Status", "Durum"],
         "process": ["Process", "İşlem"]
     },
     "sidebar": {
@@ -126,17 +128,26 @@
         "packages": ["Packages", "Paketler"],
         "deswmscs": ["Desktop Environments\nWindow Managers & Compositors", "Masaüstü Ortamları\nPencere Yöneticileri & Dizgiciler"],
         "scripts": ["Scripts", "Betikler"],
-        "services": ["Services", "Servisleri"],
+        "services": ["Services", "Servisler"],
         "home": ["Home", "Ev"],
         "output": ["Output", "Çıktı"],
         "close": ["Close", "Kapat"],
-        "traditionals": ["Traditionals", "Gelenekseller"],
-        "flatpaks": ["Flatpaks", "Flatpaklar"],
+        "all-slots-are-full": ["All the slots are full. At least close a output and try.", "Tüm slotlar dolu. En azından bir tane çıktıyı kapatıp deneyin."],
         "proprietary": ["\n(Proprietary)", "\n(Özel Mülk)"],
         "packages-name-error": ["Please enter name(s) of package(s).", "Lütfen paket(ler)in ad(lar)ını girin."],
         "deswmscs-name-error": ["Please select a desktop environment or window managers or a ompositors.", "Lütfen bir masaüstü ortamı ya da pencere yöneticisi ya da dizgici seçin."],
         "dnf-nosupport": ["DNF doesn't support reinstalling groups.", "DNF grupları yeniden kurmayı desteklemez."],
-        "all-slots-are-full": ["All the slots are full. At least close a output and try.", "Tüm slotlar dolu. En azından çıktıyı kapatıp deneyin."],
+        "update": ["Update All Packages", "Tüm Paketleri Güncelle"],
+        "sync": ["Synchronize Distribution", "Dağıtımı Senkronize Et"],
+        "clean": ["Clean Package Cache", "Paket Önbelleğini Temizle"],
+        "remove": ["Remove Unnecessary Packages", "Gereksiz Paketleri Sil"],
+        "fix": ["Fix Broken Dependencies", "Bozuk Bağımlılıkları Düzelt"],
+        "history": ["Show History", "Geçmişi Göster"],
+        "list": ["List Installed Packages", "Kurulu Paketleri Listele"],
+        "leaves": ["List Installed Leaves", "Kurulu Yaprakları Listele"],
+        "repair": ["Repair Flatpak Installation", "Flatpak Kurulumunu Onar"],
+        "running": ["Running Services", "Çalışan Servisler"],
+        "active": ["Active Services", "Aktif Servisler"],
         "service-name": ["Service Name", "Servis Adı"],
         "status": ["Status", "Durum"],
         "enable": ["Enable", "Aktifleştir"],
@@ -156,5 +167,15 @@
     },
     "calcer": {
 
+    },
+    "root": {
+        "04-12-2008": ["Today is developer's (MuKonqi) birthday. Happy birthday!", "Bugün geliştircinin (MuKonqi) doğum günü. İyi ki doğdun!"],
+        "startup": ["Startup", "Başlangıç"],
+        "nad": ["Notes and Documents", "Notlar ve Belgeler"],
+        "store": ["Store", "Mağaza"],
+        "tools": ["Tools", "Araçlar"]
+    },
+    "cli": {
+        
     }
 }

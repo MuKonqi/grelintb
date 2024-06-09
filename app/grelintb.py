@@ -124,6 +124,18 @@ random = f"/home/{username}/.config/grelintb/theme/random.txt"
 dark_blue = f"/home/{username}/.config/grelintb/theme/dark_blue.txt"
 blue = f"/home/{username}/.config/grelintb/theme/blue.txt"
 green = f"/home/{username}/.config/grelintb/theme/green.txt"
+if os.path.isfile(debian):
+    pkg_type = "DEB"
+    pkg_mngr = "APT & DPKG"
+elif os.path.isfile(fedora):
+    pkg_type = "RPM"
+    pkg_mngr = "DNF"
+elif os.path.isfile(solus):
+    pkg_type = "EOPKG"
+    pkg_mngr = "EOPKG"
+elif os.path.isfile(arch):
+    pkg_type = "Pacman"
+    pkg_mngr = "Pacman"
 
 if not os.path.isdir(config):
     os.system(f"mkdir {config}")
@@ -156,13 +168,13 @@ if not os.path.isfile(f"{local}zshrc-session"):
     os.system(f"cp /home/{username}/.zshrc {local}zshrc-session")
 
 if os.path.isfile(en):
-    lang_ = 0
+    l_use = 0
 elif os.path.isfile(tr):
-    lang_ = 1
+    l_use = 1
 try:
     with open("/home/mukonqi/works/grelintb/app/language.json", "r") as language_file:
-        language = language_file.read()
-    lang = json.loads(language, object_pairs_hook=dict)
+        l_read = language_file.read()
+    l_dict = json.loads(l_read, object_pairs_hook=dict)
 except:
     print("Language file not found. (6)")
     sys.exit(6)
@@ -189,9 +201,9 @@ if "st" in sys.argv[1:]:
 
 def update_status():
     if process_number <= 0:
-        status.configure(text=lang['sidebar']['idle'][lang_])
+        status.configure(text=l_dict['sidebar']['idle'][l_use])
     else:
-        status.configure(text=f"{lang['sidebar']['running'][lang_]} ({process_number})")
+        status.configure(text=f"{l_dict['sidebar']['running'][l_use]} ({process_number})")
 def add_operation(operation: str, time: str):
     global current_operations, process_number
     process_number = process_number + 1
@@ -203,16 +215,16 @@ def delete_operation(operation: str, time: str):
     update_status()
     current_operations.remove([operation, time])
 def restart_system():
-    ask_r = mb.askyesno(lang['globals']['warning'][lang_], lang['questions']['reboot'][lang_])
+    ask_r = mb.askyesno(l_dict['globals']['warning'][l_use], l_dict['questions']['reboot'][l_use])
     if ask_r == True:
         os.system("pkexec reboot")
 def install_app(appname: str, packagename: str):
     global ask_a
     global process_number
-    ask_a = mb.askyesno(lang['globals']['warning'][lang_], f"{appname} {lang['questions']['install'][lang_]}")
+    ask_a = mb.askyesno(l_dict['globals']['warning'][l_use], f"{appname} {l_dict['questions']['install'][l_use]}")
     if ask_a == True:
         time_process = str(time.strftime("%H:%M:%S", time.localtime()))
-        add_operation(f"{lang['operations']['install'][lang_]}: {appname}", time_process)
+        add_operation(f"{l_dict['operations']['install'][l_use]}: {appname}", time_process)
         if os.path.isfile(en):
             add_operation(f"Installing {appname}", time_process)
         elif os.path.isfile(tr):
@@ -225,16 +237,16 @@ def install_app(appname: str, packagename: str):
             cmd = os.system(f'pkexec eopkg -y install {packagename}')
         elif os.path.isfile(arch):
             cmd = os.system(f'pkexec pacman --noconfirm -S  {packagename}')
-        delete_operation(f"{lang['operations']['install'][lang_]}: {appname}", time_process)
+        delete_operation(f"{l_dict['operations']['install'][l_use]}: {appname}", time_process)
     elif ask_a == False:
-        mb.showerror(lang['globals']['error'][lang_], lang['globals']['cancelled'][lang_])
+        mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['cancelled'][l_use])
 def install_flatpak():
     global ask_f
     global process_number
-    ask_f = mb.askyesno(lang['globals']['warning'][lang_], f"Flatpak {lang['questions']['install'][lang_]}")
+    ask_f = mb.askyesno(l_dict['globals']['warning'][l_use], f"Flatpak {l_dict['questions']['install'][l_use]}")
     if ask_f == True:
         time_process = str(time.strftime("%H:%M:%S", time.localtime()))
-        add_operation(f"{lang['operations']['install'][lang_]}: Flatpak", time_process)
+        add_operation(f"{l_dict['operations']['install'][l_use]}: Flatpak", time_process)
         if os.path.isfile(debian):
             cmd1 = os.system('pkexec apt -y install flatpak')
             cmd2 = os.system('flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo')
@@ -248,12 +260,12 @@ def install_flatpak():
         elif os.path.isfile(arch):
             cmd1 = os.system('pkexec pacman --noconfirm -S flatpak')
             restart_system()
-        delete_operation(f"{lang['operations']['install'][lang_]}: Flatpak", time_process)
+        delete_operation(f"{l_dict['operations']['install'][l_use]}: Flatpak", time_process)
     elif ask_f == False:
-        mb.showerror(lang['globals']['error'][lang_], lang['globals']['cancelled'][lang_])
+        mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['cancelled'][l_use])
 def restart_grelintb():
     global ask_g
-    ask_g = mb.askyesno(lang['globals']['warning'][lang_], lang['questions']['grelintb'][lang_])
+    ask_g = mb.askyesno(l_dict['globals']['warning'][l_use], l_dict['questions']['grelintb'][l_use])
     if ask_g == True:
         root.destroy()
         os.system(__file__)
@@ -264,36 +276,36 @@ class Sidebar(ui.CTkFrame):
         global status
         self.grid_rowconfigure((5, 9, 16), weight=1)
         self.text = ui.CTkButton(self, text="GrelinTB", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True), font=ui.CTkFont(size=20, weight="bold"), fg_color="transparent")
-        self.version_b = ui.CTkButton(self, text=f"{lang['sidebar']['version'][lang_]}{version_current}", command=self.changelog, fg_color="transparent")
-        self.mukonqi_b = ui.CTkButton(self, text=f"{lang['sidebar']['developer'][lang_]}MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent")
-        self.license_b = ui.CTkButton(self, text=f"{lang['sidebar']['license'][lang_]}GPLv3+", command=self.license, fg_color="transparent")
-        self.credit_b = ui.CTkButton(self, text=f"{lang['sidebar']['credit'][lang_]}G. M. Icons", command=self.credit, fg_color="transparent")
-        self.update_b = ui.CTkButton(self, text=lang['operations']['update'][lang_], command=lambda:self.check_update('sidebar'))
-        self.reset_b = ui.CTkButton(self, text=lang['operations']['reset'][lang_], command=self.reset)
-        self.uninstall_b = ui.CTkButton(self, text=lang['operations']['uninstall'][lang_], command=self.uninstall)
-        self.theme_label = ui.CTkLabel(self, text=lang['sidebar']['theme'][lang_])
-        self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", lang['sidebar']['random'][lang_], lang['sidebar']['dark-blue'][lang_], lang['sidebar']['blue'][lang_], lang['sidebar']['green'][lang_]], command=self.change_theme)
-        self.appearance_label = ui.CTkLabel(self, text=lang['sidebar']['appearance'][lang_])
-        self.appearance_menu = ui.CTkOptionMenu(self, values=[lang['sidebar']['system'][lang_], lang['sidebar']['light'][lang_], lang['sidebar']['dark'][lang_]], command=self.change_appearance)
-        self.language_label = ui.CTkLabel(self, text=lang['sidebar']['language'][lang_])
+        self.version_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['version'][l_use]}{version_current}", command=self.changelog, fg_color="transparent")
+        self.mukonqi_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['developer'][l_use]}MuKonqi", command=lambda:subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True), fg_color="transparent")
+        self.license_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['license'][l_use]}GPLv3+", command=self.license, fg_color="transparent")
+        self.credit_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['credit'][l_use]}G. M. Icons", command=self.credit, fg_color="transparent")
+        self.update_b = ui.CTkButton(self, text=l_dict['operations']['update'][l_use], command=lambda:self.check_update('sidebar'))
+        self.reset_b = ui.CTkButton(self, text=l_dict['operations']['reset'][l_use], command=self.reset)
+        self.uninstall_b = ui.CTkButton(self, text=l_dict['operations']['uninstall'][l_use], command=self.uninstall)
+        self.theme_label = ui.CTkLabel(self, text=l_dict['sidebar']['theme'][l_use])
+        self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", l_dict['sidebar']['random'][l_use], l_dict['sidebar']['dark-blue'][l_use], l_dict['sidebar']['blue'][l_use], l_dict['sidebar']['green'][l_use]], command=self.change_theme)
+        self.appearance_label = ui.CTkLabel(self, text=l_dict['sidebar']['appearance'][l_use])
+        self.appearance_menu = ui.CTkOptionMenu(self, values=[l_dict['sidebar']['system'][l_use], l_dict['sidebar']['light'][l_use], l_dict['sidebar']['dark'][l_use]], command=self.change_appearance)
+        self.language_label = ui.CTkLabel(self, text=l_dict['sidebar']['language'][l_use])
         self.language_menu = ui.CTkOptionMenu(self, values=["English (İngilizce)", "Türkçe (Turkish)"], command=self.change_language)
-        status = ui.CTkButton(self, text=lang['sidebar']['idle'][lang_], command=self.running_processes, font=ui.CTkFont(size=12, weight="bold"))
+        status = ui.CTkButton(self, text=l_dict['sidebar']['idle'][l_use], command=self.running_processes, font=ui.CTkFont(size=12, weight="bold"))
         if os.path.isfile(random):
-            self.theme_menu.set(lang['sidebar']['random'][lang_])
+            self.theme_menu.set(l_dict['sidebar']['random'][l_use])
         elif os.path.isfile(grelintb):
             self.theme_menu.set("GrelinTB")
         elif os.path.isfile(dark_blue):
-            self.theme_menu.set(lang['sidebar']['dark-blue'][lang_])
+            self.theme_menu.set(l_dict['sidebar']['dark-blue'][l_use])
         elif os.path.isfile(blue):
-            self.theme_menu.set(lang['sidebar']['blue'][lang_])
+            self.theme_menu.set(l_dict['sidebar']['blue'][l_use])
         elif os.path.isfile(green):
-            self.theme_menu.set(lang['sidebar']['green'][lang_])
+            self.theme_menu.set(l_dict['sidebar']['green'][l_use])
         if os.path.isfile(system):
-            self.appearance_menu.set(lang['sidebar']['system'][lang_])
+            self.appearance_menu.set(l_dict['sidebar']['system'][l_use])
         elif os.path.isfile(light):
-            self.appearance_menu.set(lang['sidebar']['light'][lang_])
+            self.appearance_menu.set(l_dict['sidebar']['light'][l_use])
         elif os.path.isfile(dark):
-            self.appearance_menu.set(lang['sidebar']['dark'][lang_])
+            self.appearance_menu.set(l_dict['sidebar']['dark'][l_use])
         if os.path.isfile(en):
             self.language_menu.set("English (İngilizce)")
         elif os.path.isfile(tr):
@@ -322,9 +334,9 @@ class Sidebar(ui.CTkFrame):
         self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
         self.frame.grid_columnconfigure(0, weight=1)
         self.frame.grid(row=0, column=0, sticky="nsew")
-        self.window.title(f"{lang['changelog']['changelogs'][lang_]}{version_current}")
-        self.label1 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['major'][lang_]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
-        self.label2 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['minor'][lang_]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
+        self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_current}")
+        self.label1 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['major'][l_use]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
+        self.label2 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['minor'][l_use]}{version_current}", font=ui.CTkFont(size=14, weight="bold"))
         with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
             self.cl_major_text = self.cl_major_file.read()
         with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
@@ -345,8 +357,8 @@ class Sidebar(ui.CTkFrame):
         self.window.minsize(540, 540)
         self.window.grid_rowconfigure(1, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
-        self.window.title(lang['license']['license'][lang_])
-        self.label = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text=lang['license']['label'][lang_])
+        self.window.title(l_dict['license']['license'][l_use])
+        self.label = ui.CTkLabel(self.window, font=ui.CTkFont(size=16, weight="bold"), text=l_dict['license']['label'][l_use])
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as self.license_file:
             self.license_text = self.license_file.read()
         self.textbox = ui.CTkTextbox(self.window)
@@ -355,12 +367,12 @@ class Sidebar(ui.CTkFrame):
         self.label.grid(row=0, column=0, sticky="nsew", pady=10)
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
     def credit(self):
-        self.credit_mb = mb.askyesno(lang['credit']['credit'][lang_], lang['credit']['label'][lang_])
+        self.credit_mb = mb.askyesno(l_dict['credit']['credit'][l_use], l_dict['credit']['label'][l_use])
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
     def update(self, string: str):
         os.system("pkexec /usr/local/bin/grelintb/update.sh")
-        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["updated"][lang_])
+        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
         restart_grelintb()
     def check_update(self, caller: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
@@ -373,13 +385,13 @@ class Sidebar(ui.CTkFrame):
             self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
             self.frame.grid_columnconfigure(0, weight=1)
             self.frame.grid(row=0, column=0, sticky="nsew")
-            self.window.title(f"{lang['changelog']['changelogs'][lang_]}{version_latest}")
-            self.label1 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['major'][lang_]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-            self.label2 = ui.CTkLabel(self.frame, text=f"{lang['changelog']['minor'][lang_]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
+            self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_latest}")
+            self.label1 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['major'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
+            self.label2 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['minor'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
             if caller == 'sidebar':
-                self.button = ui.CTkButton(self.window, text=lang["operations"]["update"][lang_], command=lambda:Sidebar.update(self, 'sidebar'))
+                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self, 'sidebar'))
             elif caller == "startup":
-                self.button = ui.CTkButton(self.window, text=lang["operations"]["update"][lang_], command=lambda:Sidebar.update(self, "startup"))
+                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self, "startup"))
             with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
                 self.cl_major_text = self.cl_major_file.read()
             with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
@@ -396,38 +408,38 @@ class Sidebar(ui.CTkFrame):
             self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.button.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         elif caller != "startup":
-            mb.showinfo(lang['globals']['information'][lang_], f"GrelinTB{lang['changelog']['up-to-date'][lang_]}")
+            mb.showinfo(l_dict['globals']['information'][l_use], f"GrelinTB{l_dict['changelog']['up-to-date'][l_use]}")
     def reset(self):
         os.system("pkexec /usr/local/bin/grelintb/reset.sh")
         os.system(f"rm -rf /home/{username}/.config/grelintb")
-        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']["reset"][lang_])
+        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
         restart_grelintb()
     def uninstall(self):
         root.destroy()
         os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
         os.system(f"rm -rf /home/{username}/.config/grelintb")
-        mb.showinfo(lang['globals']["information"][lang_], lang['sidebar']['uninstalled'][lang_])
+        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']['uninstalled'][l_use])
         sys.exit(0)
     def change_theme(self, new_theme: str):
         if new_theme == "GrelinTB":
             os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
-        elif new_theme == lang['sidebar']['random'][lang_]:
+        elif new_theme == l_dict['sidebar']['random'][l_use]:
             os.system(f"rm {config}theme/* ; touch {config}theme/random.txt")
-        elif new_theme == lang['sidebar']['dark-blue'][lang_]:
+        elif new_theme == l_dict['sidebar']['dark-blue'][l_use]:
             os.system(f"rm {config}theme/* ; touch {config}theme/dark_blue.txt")
-        elif new_theme == lang['sidebar']['blue'][lang_]:
+        elif new_theme == l_dict['sidebar']['blue'][l_use]:
             os.system(f"rm {config}theme/* ; touch {config}theme/blue.txt")
-        elif new_theme == lang['sidebar']['green'][lang_]:
+        elif new_theme == l_dict['sidebar']['green'][l_use]:
             os.system(f"rm {config}theme/* ; touch {config}theme/green.txt")
         restart_grelintb()
     def change_appearance(self, new_appearance: str):
-        if new_appearance == lang['sidebar']['system'][lang_]:
+        if new_appearance == l_dict['sidebar']['system'][l_use]:
             ui.set_appearance_mode("System")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/system.txt")
-        elif new_appearance == lang['sidebar']['light'][lang_]:
+        elif new_appearance == l_dict['sidebar']['light'][l_use]:
             ui.set_appearance_mode("Light")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/light.txt")
-        elif new_appearance == lang['sidebar']['dark'][lang_]:
+        elif new_appearance == l_dict['sidebar']['dark'][l_use]:
             ui.set_appearance_mode("Dark")
             os.system(f"rm {config}appearance/* ; touch {config}appearance/dark.txt")
     def change_language(self, new_language: str):
@@ -447,12 +459,12 @@ class Sidebar(ui.CTkFrame):
             self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
             self.frame.grid(row=0, column=0, sticky="nsew")
             self.frame.grid_columnconfigure(0, weight=1)
-            self.window.title(lang['running-processes']['running-processes'][lang_])
+            self.window.title(l_dict['running-processes']['running-processes'][l_use])
             for self.progress in current_operations:
                 self.number = self.number + 1
                 ui.CTkLabel(self.frame, fg_color=["#b9b9b9", "#1f1f1f"], corner_radius=20, text=f"{self.progress[0]} - {self.progress[1]}", font=ui.CTkFont(size=15, weight="bold")).grid(row=self.number, column=0, pady=5, padx=10, sticky="nsew")
         else:
-            mb.showwarning(lang['globals']['warning'][lang_], lang['running-processes']['no-process'][lang_])
+            mb.showwarning(l_dict['globals']['warning'][l_use], l_dict['running-processes']['no-process'][l_use])
 
 class Startup(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -462,21 +474,21 @@ class Startup(ui.CTkFrame):
         self.scrollable = ui.CTkScrollableFrame(self, fg_color="transparent")
         self.scrollable.grid(row=0, column=0, sticky="nsew")
         self.scrollable.grid_columnconfigure((0, 1, 2, 3), weight=1)
-        self.scrollable.configure(label_text=f"{lang['startup']['welcome'][lang_]}{username}!", label_font=ui.CTkFont(size=16, weight="bold"))
-        self.weather = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['weather'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold")) 
-        self.system = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['system'][lang_], font=ui.CTkFont(size=15, weight="bold")) 
-        self.hostname = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['hostname'][lang_]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-        self.distro = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['distro'][lang_]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-        self.kernel = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['kernel'][lang_]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-        self.packages = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['packages'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
-        self.uptime = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['uptime'][lang_]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-        self.boot_time = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['boot-time'][lang_]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-        self.usages = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['usages'][lang_], font=ui.CTkFont(size=15, weight="bold"))
-        self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: {lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.scrollable.configure(label_text=f"{l_dict['startup']['welcome'][l_use]}{username}!", label_font=ui.CTkFont(size=16, weight="bold"))
+        self.weather = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['weather'][l_use]}{l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold")) 
+        self.system = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['system'][l_use], font=ui.CTkFont(size=15, weight="bold")) 
+        self.hostname = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['hostname'][l_use]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+        self.distro = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['distro'][l_use]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+        self.kernel = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['kernel'][l_use]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+        self.packages = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['packages'][l_use]}{l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.uptime = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['uptime'][l_use]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+        self.boot_time = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['boot-time'][l_use]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+        self.usages = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['usages'][l_use], font=ui.CTkFont(size=15, weight="bold"))
+        self.cpu_usage = ui.CTkLabel(self.scrollable, text=f"CPU: {l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
         self.disk_usage = ui.CTkLabel(self.scrollable, text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
         self.ram_usage = ui.CTkLabel(self.scrollable, text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-        self.swap_usage = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['swap'][lang_]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-        self.refresh_button = ui.CTkButton(self, text=lang['startup']['refresh'][lang_], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
+        self.swap_usage = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['swap'][l_use]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.refresh_button = ui.CTkButton(self, text=l_dict['startup']['refresh'][l_use], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
         self.weather.grid(row=0, column=0, pady=(0, 10), columnspan=4)
         self.system.grid(row=1, column=0, pady=(0, 7.5), columnspan=4)
         self.hostname.grid(row=2, column=0, pady=(0, 7.5), columnspan=4)
@@ -499,16 +511,16 @@ class Startup(ui.CTkFrame):
         self.cpu_usage_thread.start()
         self.other_def("startup")
     def weather_def(self):
-        self.weather.configure(text=lang['startup']['weather'][lang_]+subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])
+        self.weather.configure(text=l_dict['startup']['weather'][l_use]+subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])
     def packages_def(self):
         if os.path.isfile(debian):
-            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('dpkg --list | grep ^i | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (DEB), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+            self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('dpkg --list | grep ^i | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (DEB), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
         elif os.path.isfile(fedora):
-            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('dnf5 list --installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (RPM), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+            self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('dnf5 list --installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (RPM), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
         elif os.path.isfile(solus):
-            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('eopkg --list-installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (EOPKG), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+            self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('eopkg --list-installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (EOPKG), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
         elif os.path.isfile(arch):
-            self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{subprocess.Popen('pacman -Q | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (PACMAN), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
+            self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('pacman -Q | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (PACMAN), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
     def cpu_usage_def(self):
         self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
     def other_def(self, mode: str):
@@ -518,13 +530,13 @@ class Startup(ui.CTkFrame):
             self.temps_ok = True
             self.temps_number = 10
             self.temps = psutil.sensors_temperatures()
-            self.temps_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['temperatures'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+            self.temps_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['temperatures'][l_use], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
             for self.temps_name, self.temps_entries in self.temps.items():
                 self.temps_number = self.temps_number + 1
-                self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{lang['startup']['hardware'][lang_]}{self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.temps_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{l_dict['startup']['hardware'][l_use]}{self.temps_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.temps_entry in self.temps_entries:
                     self.temps_number = self.temps_number + 1
-                    ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: {lang['startup']['current'][lang_]} = {self.temps_entry.current} °C, {lang['startup']['high'][lang_]} = {self.temps_entry.high} °C, {lang['startup']['critical'][lang_]} = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
+                    ui.CTkLabel(self.scrollable, text=f"{self.temps_entry.label or self.temps_name}: {l_dict['startup']['current'][l_use]} = {self.temps_entry.current} °C, {l_dict['startup']['high'][l_use]} = {self.temps_entry.high} °C, {l_dict['startup']['critical'][l_use]} = {self.temps_entry.critical} °C", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.temps_number, column=0, pady=(0, 5), columnspan=4)
         if hasattr (psutil, "sensors_fans") and psutil.sensors_fans():
             self.fans_ok = True
             if self.temps_ok == True:
@@ -532,10 +544,10 @@ class Startup(ui.CTkFrame):
             else:
                 self.fans_number = 10
             self.fans = psutil.sensors_fans()
-            self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['fans'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
+            self.fans_header = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['fans'][l_use], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.fans_number, column=0, pady=(5, 7.5), columnspan=4)
             for self.fans_name, self.fans_entries in self.fans.items():
                 self.fans_number = self.fans_number + 1
-                self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{lang['startup']['hardware'][lang_]}{self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
+                self.fans_label = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=f"{l_dict['startup']['hardware'][l_use]}{self.fans_name}", font=ui.CTkFont(size=14, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 7.5), columnspan=4)
                 for self.fans_entry in self.fans_entries:
                     self.fans_number = self.fans_number + 1
                     ui.CTkLabel(self.scrollable, text=f"{self.fans_entry.label or self.fans_name}: {self.fans_entry.current} RPM", font=ui.CTkFont(size=13, weight="bold")).grid(row=self.fans_number, column=0, pady=(0, 5), columnspan=4)
@@ -548,45 +560,45 @@ class Startup(ui.CTkFrame):
                 self.batt_number = 10
             self.batt = psutil.sensors_battery()
             if mode == "startup":
-                self.header_text = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['battery'][lang_], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
-                self.charge_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['charge'][lang_]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                self.header_text = ui.CTkLabel(self.scrollable, fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['battery'][l_use], font=ui.CTkFont(size=15, weight="bold")).grid(row=self.batt_number, column=0, pady=(5, 7.5), columnspan=4)
+                self.charge_text = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['charge'][l_use]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 if self.batt.power_plugged:
-                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['status'][lang_]}{str(lang['startup']['charging'][lang_] if self.batt.percent < 100 else lang['startup']['charged'][lang_])}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.plugged_text = ui.CTkLabel(self.scrollable, text=lang['startup']['plugged-yes'][lang_], font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['remaining'][l_use]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['status'][l_use]}{str(l_dict['startup']['charging'][l_use] if self.batt.percent < 100 else l_dict['startup']['charged'][l_use])}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text = ui.CTkLabel(self.scrollable, text=l_dict['startup']['plugged-yes'][l_use], font=ui.CTkFont(size=13, weight="bold"))
                 else:
-                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{lang['startup']['status'][lang_]}{lang['startup']['discharging'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.plugged_text = ui.CTkLabel(self.scrollable, text=lang['startup']['plugged-no'][lang_], font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['remaining'][l_use]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text = ui.CTkLabel(self.scrollable, text=f"{l_dict['startup']['status'][l_use]}{l_dict['startup']['discharging'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text = ui.CTkLabel(self.scrollable, text=l_dict['startup']['plugged-no'][l_use], font=ui.CTkFont(size=13, weight="bold"))
                 self.charge_text.grid(row=self.batt_number + 1, column=0, pady=(0, 5), columnspan=4)
                 self.remaining_text.grid(row=self.batt_number + 2, column=0, pady=(0, 5), columnspan=4)
                 self.status_text.grid(row=self.batt_number + 3, column=0, pady=(0, 5), columnspan=4)
                 self.plugged_text.grid(row=self.batt_number + 4, column=0, pady=(0, 5), columnspan=4)
             elif mode == "refresh":
-                self.charge_text.configure(text=f"{lang['startup']['charge'][lang_]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
+                self.charge_text.configure(text=f"{l_dict['startup']['charge'][l_use]}{str(round(self.batt.percent, 2))}", font=ui.CTkFont(size=13, weight="bold"))
                 if self.batt.power_plugged:
-                    self.remaining_text.configure(text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.status_text.configure(text=f"{lang['startup']['status'][lang_]}{str(lang['startup']['charging'][lang_] if self.batt.percent < 100 else lang['startup']['charged'][lang_])}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.plugged_text.configure(text=lang['startup']['plugged-yes'][lang_], font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text.configure(text=f"{l_dict['startup']['remaining'][l_use]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text.configure(text=f"{l_dict['startup']['status'][l_use]}{str(l_dict['startup']['charging'][l_use] if self.batt.percent < 100 else l_dict['startup']['charged'][l_use])}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text.configure(text=l_dict['startup']['plugged-yes'][l_use], font=ui.CTkFont(size=13, weight="bold"))
                 else:
-                    self.remaining_text.configure(text=f"{lang['startup']['remaining'][lang_]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.status_text.configure(text=f"{lang['startup']['status'][lang_]}{lang['startup']['discharging'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
-                    self.plugged_text.configure(text=lang['startup']['plugged-no'][lang_], font=ui.CTkFont(size=13, weight="bold"))
+                    self.remaining_text.configure(text=f"{l_dict['startup']['remaining'][l_use]}{str(dt.timedelta(seconds = self.batt.secsleft))}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.status_text.configure(text=f"{l_dict['startup']['status'][l_use]}{l_dict['startup']['discharging'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
+                    self.plugged_text.configure(text=l_dict['startup']['plugged-no'][l_use], font=ui.CTkFont(size=13, weight="bold"))
     def refresh(self):
-        self.weather.configure(text=f"{lang['startup']['weather'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold")) 
-        self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['system'][lang_], font=ui.CTkFont(size=15, weight="bold")) 
-        self.hostname.configure(text=f"{lang['startup']['hostname'][lang_]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
-        self.distro.configure(text=f"{lang['startup']['distro'][lang_]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
-        self.kernel.configure(text=f"{lang['startup']['kernel'][lang_]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
-        self.packages.configure(text=f"{lang['startup']['packages'][lang_]}{lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
-        self.uptime.configure(text=f"{lang['startup']['uptime'][lang_]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
-        self.boot_time.configure(text=f"{lang['startup']['boot-time'][lang_]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
-        self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=lang['startup']['usages'][lang_], font=ui.CTkFont(size=15, weight="bold"))
-        self.cpu_usage.configure(text=f"CPU: {lang['startup']['getting'][lang_]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.weather.configure(text=f"{l_dict['startup']['weather'][l_use]}{l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold")) 
+        self.system.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['system'][l_use], font=ui.CTkFont(size=15, weight="bold")) 
+        self.hostname.configure(text=f"{l_dict['startup']['hostname'][l_use]}{str(socket.gethostname())}", font=ui.CTkFont(size=13, weight="bold"))
+        self.distro.configure(text=f"{l_dict['startup']['distro'][l_use]}{distro.name(pretty=True)}", font=ui.CTkFont(size=13, weight="bold"))
+        self.kernel.configure(text=f"{l_dict['startup']['kernel'][l_use]}{platform.platform()}", font=ui.CTkFont(size=13, weight="bold"))
+        self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
+        self.uptime.configure(text=f"{l_dict['startup']['uptime'][l_use]}{os.popen('uptime -p').read()[:-1].replace('up ', '')}", font=ui.CTkFont(size=13, weight="bold"))
+        self.boot_time.configure(text=f"{l_dict['startup']['boot-time'][l_use]}{str(dt.datetime.fromtimestamp(psutil.boot_time()).strftime('%d.%m.%Y %H:%M:%S'))}", font=ui.CTkFont(size=13, weight="bold"))
+        self.usages.configure(fg_color=["#a9a9a9", "#2f2f2f"], corner_radius=20, text=l_dict['startup']['usages'][l_use], font=ui.CTkFont(size=15, weight="bold"))
+        self.cpu_usage.configure(text=f"CPU: {l_dict['startup']['getting'][l_use]}", font=ui.CTkFont(size=13, weight="bold"))
         self.disk_usage.configure(text=f"Disk: %{str(psutil.disk_usage('/')[3])}", font=ui.CTkFont(size=13, weight="bold"))
         self.ram_usage.configure(text=f"RAM: %{str(psutil.virtual_memory()[2])}", font=ui.CTkFont(size=13, weight="bold"))
-        self.swap_usage.configure(text=f"{lang['startup']['swap'][lang_]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
-        self.refresh_button = ui.CTkButton(self, text=lang['startup']['refresh'][lang_], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
+        self.swap_usage.configure(text=f"{l_dict['startup']['swap'][l_use]}%{str(psutil.swap_memory()[3])}", font=ui.CTkFont(size=13, weight="bold"))
+        self.refresh_button = ui.CTkButton(self, text=l_dict['startup']['refresh'][l_use], command=self.refresh, font=ui.CTkFont(size=15, weight="bold"))
         self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
         self.weather_thread.start()
         self.packages_thread = threading.Thread(target=lambda:self.packages_def(), daemon=True)
@@ -602,7 +614,7 @@ class NotesAndDocuments(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew")
-        self.mainpage = self.tabview.add(lang['nad']['home'][lang_])
+        self.mainpage = self.tabview.add(l_dict['nad']['home'][l_use])
         self.mainpage.grid_columnconfigure(0, weight=1)
         self.mainpage.grid_rowconfigure(0, weight=1)
         self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
@@ -612,14 +624,14 @@ class NotesAndDocuments(ui.CTkFrame):
         self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
         self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
-        self.notes_label = ui.CTkLabel(self.mainbar, text=lang['nad']['notes'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
-        self.backups_label = ui.CTkLabel(self.mainbar, text=lang['nad']['backups'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
-        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=lang['nad']['note-or-document'][lang_])
-        self.button1 = ui.CTkButton(self.sidebar, text=lang['nad']['create'][lang_], command=lambda:self.create("new"))
-        self.button2 = ui.CTkButton(self.sidebar, text=lang['nad']['open'][lang_], command=self.open)
-        self.button3 = ui.CTkButton(self.sidebar, text=lang['nad']['rename'][lang_], command=self.rename)
-        self.button4 = ui.CTkButton(self.sidebar, text=lang['nad']['restore'][lang_], command=self.restore)
-        self.button5 = ui.CTkButton(self.sidebar, text=lang['nad']['delete'][lang_], command=self.delete)
+        self.notes_label = ui.CTkLabel(self.mainbar, text=l_dict['nad']['notes'][l_use], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.backups_label = ui.CTkLabel(self.mainbar, text=l_dict['nad']['backups'][l_use], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=l_dict['nad']['note-or-document'][l_use])
+        self.button1 = ui.CTkButton(self.sidebar, text=l_dict['nad']['create'][l_use], command=lambda:self.create("new"))
+        self.button2 = ui.CTkButton(self.sidebar, text=l_dict['nad']['open'][l_use], command=self.open)
+        self.button3 = ui.CTkButton(self.sidebar, text=l_dict['nad']['rename'][l_use], command=self.rename)
+        self.button4 = ui.CTkButton(self.sidebar, text=l_dict['nad']['restore'][l_use], command=self.restore)
+        self.button5 = ui.CTkButton(self.sidebar, text=l_dict['nad']['delete'][l_use], command=self.delete)
         self.notes = os.listdir(notes)
         self.notes.remove(".backups")
         self.backups = os.listdir(f"{notes}.backups")
@@ -645,14 +657,14 @@ class NotesAndDocuments(ui.CTkFrame):
             self.pages[f"page{i}"] = self.tabview.add(i)
             self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
             self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
-            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=lang['nad']['note-or-document'][lang_])
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=l_dict['nad']['note-or-document'][l_use])
             self.contents[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
             self.frames[f"page{i}"] = ui.CTkFrame(self.pages[f"page{i}"], fg_color="transparent")
             self.frames[f"page{i}"].grid_rowconfigure((0, 1, 2), weight=1)
             self.frames[f"page{i}"].grid_columnconfigure(0, weight=1)
-            self.saves[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['save'][lang_], command=lambda i = i: self.save(i), state="disabled")
-            self.saves_closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['save-close'][lang_], command=lambda i = i: self.save_close(i), state="disabled")
-            self.closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=lang['nad']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.saves[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=l_dict['nad']['save'][l_use], command=lambda i = i: self.save(i), state="disabled")
+            self.saves_closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=l_dict['nad']['save-close'][l_use], command=lambda i = i: self.save_close(i), state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.frames[f"page{i}"], text=l_dict['nad']['close'][l_use], command=lambda i = i: self.close(i), state="disabled")
             self.labels[f"page{i}"].grid(row=0, column=0, columnspan=2, sticky="nsew")
             self.contents[f"page{i}"].grid(row=1, column=0, sticky="nsew")
             self.frames[f"page{i}"].grid(row=1, column=1, sticky="nsew", padx=(15, 0))
@@ -688,17 +700,17 @@ class NotesAndDocuments(ui.CTkFrame):
             self.backups_number += 1
             ui.CTkButton(self.mainbar, text=backup_name, command=lambda backup_name = backup_name: self.insert(f"{notes}.backups/{backup_name}")).grid(row=self.backups_number, column=1, sticky="nsew", pady=(0, 10), padx=25)
     def create(self, mode: str):
-        self.dialog = ui.CTkInputDialog(text=lang['nad']['create-description'][lang_], title=lang['nad']['create-title'][lang_])
+        self.dialog = ui.CTkInputDialog(text=l_dict['nad']['create-description'][l_use], title=l_dict['nad']['create-title'][l_use])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             return
         os.system(f"touch {notes}{self.new_name}")
         if not os.path.isfile(f"{notes}{self.new_name}"):
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['create-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['create-error'][l_use])
             return
         self.list(f"{notes}{self.new_name}")
         if mode == "new" and os.path.isfile(self.new_name):
-            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['create-successful'][lang_])
+            mb.showinfo(l_dict['globals']['information'][l_use], l_dict['nad']['create-successful'][l_use])
     def open(self):
         try:
             if self.entry.get() != "" and self.entry.get() != None:
@@ -728,7 +740,7 @@ class NotesAndDocuments(ui.CTkFrame):
             elif self.useds["page8"] == False:
                 self.which_page = 8
             else:
-                mb.showerror(lang['globals']['error'][lang_], lang['nad']['all-slots-are-full'][lang_])
+                mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['all-slots-are-full'][l_use])
                 return
             self.labels[f"page{self.which_page}"].configure(text=self.entry.get())
             self.contents[f"page{self.which_page}"].configure(state="normal")
@@ -751,15 +763,15 @@ class NotesAndDocuments(ui.CTkFrame):
                 except:
                     self.tabview.set(os.path.basename(self.entry.get())[:4])
         except:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['open-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['open-error'][l_use])
     def rename(self):
         if os.path.dirname(self.entry.get()) == f"{notes}.backups":
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['cant-be-renamed'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['cant-be-renamed'][l_use])
             return
         if not os.path.isfile(self.entry.get()):
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['no-error'][l_use])
             return
-        self.dialog = ui.CTkInputDialog(text=lang['nad']['rename-description'][lang_], title=lang['nad']['rename-title'][lang_])
+        self.dialog = ui.CTkInputDialog(text=l_dict['nad']['rename-description'][l_use], title=l_dict['nad']['rename-title'][l_use])
         self.new_name = self.dialog.get_input()
         if self.new_name == None:
             return
@@ -769,10 +781,10 @@ class NotesAndDocuments(ui.CTkFrame):
             os.system(f"touch {os.path.dirname(self.entry.get())}/{self.new_name}")
         os.system(f"mv {self.entry.get()} {os.path.dirname(self.entry.get())}/{self.new_name}")
         if not os.path.isfile(f"{os.path.dirname(self.entry.get())}/{self.new_name}"):
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['rename-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['rename-error'][l_use])
             return
         self.list(f"{os.path.dirname(self.entry.get())}/{self.new_name}")
-        mb.showinfo(lang['globals']['information'][lang_], lang['nad']['rename-successful'][lang_])
+        mb.showinfo(l_dict['globals']['information'][l_use], l_dict['nad']['rename-successful'][l_use])
     def restore(self):
         if os.path.dirname(self.entry.get()) == f"{notes}.backups":
             os.system(f"cp {self.entry.get()} {notes}{os.path.basename(self.entry.get())}")
@@ -787,16 +799,16 @@ class NotesAndDocuments(ui.CTkFrame):
             with open(self.entry.get(), "r") as self.file_target:
                 self.final = self.file_target.read()
         else:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['restore-error'][l_use])
             return
         if self.needed == self.final:
             self.list(None)
-            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['restore-successful'][lang_])
+            mb.showinfo(l_dict['globals']['information'][l_use], l_dict['nad']['restore-successful'][l_use])
         else:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['restore-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['restore-error'][l_use])
     def delete(self):
         if not os.path.isfile(self.entry.get()):
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['no-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['no-error'][l_use])
             return
         if f"{os.path.dirname(self.entry.get())}/" == notes:
             os.system(f"cp {self.entry.get()} {notes}.backups/{os.path.basename(self.entry.get())}")
@@ -804,9 +816,9 @@ class NotesAndDocuments(ui.CTkFrame):
         if not os.path.isfile(self.entry.get()):
             self.entry.delete(0, "end")
             self.list(None)
-            mb.showinfo(lang['globals']['information'][lang_], lang['nad']['delete-successful'][lang_])
+            mb.showinfo(l_dict['globals']['information'][l_use], l_dict['nad']['delete-successful'][l_use])
         else: 
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['delete-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['delete-error'][l_use])
     def save(self, caller: str):
         try:
             if f"{os.path.dirname(self.files[f"page{caller}"])}/" == notes:
@@ -817,13 +829,13 @@ class NotesAndDocuments(ui.CTkFrame):
                 self.control = self.file_control.read()
             self.list(None)
             if self.control == self.contents[f"page{caller}"].get("0.0", 'end'):
-                mb.showinfo(lang['globals']['information'][lang_], lang['nad']['save-successful'][lang_])
+                mb.showinfo(l_dict['globals']['information'][l_use], l_dict['nad']['save-successful'][l_use])
             else:
-                mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
+                mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['save-error'][l_use])
         except:
-            mb.showerror(lang['globals']['error'][lang_], lang['nad']['save-error'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['nad']['save-error'][l_use])
     def close(self, caller: str):
-        self.labels[f"page{caller}"].configure(text=lang['nad']['note-or-document'][lang_])
+        self.labels[f"page{caller}"].configure(text=l_dict['nad']['note-or-document'][l_use])
         self.contents[f"page{caller}"].configure(state="normal")
         self.contents[f"page{caller}"].delete("0.0", 'end')
         self.contents[f"page{caller}"].configure(state="disabled")
@@ -844,24 +856,25 @@ class Packages(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
         self.tabview.grid(row=0, column=0, sticky="nsew")
-        self.mainpage = self.tabview.add(lang['store']['home'][lang_])
+        self.mainpage = self.tabview.add(l_dict['store']['home'][l_use])
         self.mainpage.grid_columnconfigure(0, weight=1)
         self.mainpage.grid_rowconfigure(0, weight=1)
         self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
         self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
         self.mainbar.grid_columnconfigure((0, 1), weight=1)
-        self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
+        self.sidebar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent", width=125)
         self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
-        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
-        self.traditionals_label = ui.CTkLabel(self.mainbar, text=lang['store']['traditionals'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
-        self.flatpaks_label = ui.CTkLabel(self.mainbar, text=lang['store']['flatpaks'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
-        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=lang['store']['packages'][lang_])
-        self.button1 = ui.CTkButton(self.sidebar, text=lang['operations']['search'][lang_], command=lambda:self.go('search'))
-        self.button2 = ui.CTkButton(self.sidebar, text=lang['operations']['install'][lang_], command=lambda:self.go('install'))
-        self.button3 = ui.CTkButton(self.sidebar, text=lang['operations']['reinstall'][lang_], command=lambda:self.go('reinstall'))
-        self.button4 = ui.CTkButton(self.sidebar, text=lang['operations']['uninstall'][lang_], command=lambda:self.go('uninstall'))
-        self.button5 = ui.CTkButton(self.sidebar, text=lang['operations']['update'][lang_], command=lambda:self.go('update'))
+        self.traditionals_label = ui.CTkLabel(self.mainbar, text=pkg_type, corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.flatpaks_label = ui.CTkLabel(self.mainbar, text="Flatpak", corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=l_dict['store']['packages'][l_use])
+        self.button1 = ui.CTkButton(self.sidebar, text=f"{l_dict['operations']['search'][l_use]} ({pkg_mngr})", command=lambda:self.go([pkg_mngr, "search"]))
+        self.button2 = ui.CTkButton(self.sidebar, text=f"{l_dict['operations']['search'][l_use]} (Flatpak)", command=lambda:self.go(["flatpak", "search"]))
+        self.button3 = ui.CTkButton(self.sidebar, text=l_dict['operations']['install'][l_use], command=lambda:self.go(["auto", "install"]))
+        self.button4 = ui.CTkButton(self.sidebar, text=l_dict['operations']['reinstall'][l_use], command=lambda:self.go(["auto", "reinstall"]))
+        self.button5 = ui.CTkButton(self.sidebar, text=l_dict['operations']['uninstall'][l_use], command=lambda:self.go(["auto", "uninstall"]))
+        self.button6 = ui.CTkButton(self.sidebar, text=l_dict['operations']['update'][l_use], command=lambda:self.go(["auto", "update"]))
         if os.path.isfile(debian):
             self.traditionals = ["Firefox-ESR", "Firefox", "VLC", "LibreOffice", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Lolcat"]
         elif os.path.isfile(fedora):
@@ -871,7 +884,7 @@ class Packages(ui.CTkFrame):
         elif os.path.isfile(arch):
             self.traditionals = ["Firefox", "VLC", "LibreOffice-Fresh", "GParted", "GIMP", "Wine", "Ark", "Rhythmbox", "Spectacle", "Okular", "GNOME-Boxes", "Grub-Customizer", "Goverlay", "gamemode", "Mangohud", "Dolphin", "Nautilus", "Nemo", "Caja", "Thunar", "PCManFM", "PCManFM-Qt", "Neofetch", "Fastfetch", "Lolcat"]
         self.traditionals_number = 0
-        self.flatpaks = [["Firefox", "org.mozilla.Firefox"], ["Brave Browser", "com.brave.Browser"], [f"Google Chrome{lang['store']['proprietary'][lang_]}", "com.google.Chrome"], [f"Microsoft Edge{lang['store']['proprietary'][lang_]}", "com.microsoft.Edge"], ["Chromium", "org.chromium.Chromium"], ["Librewolf", "io.gitlab.librewolf-community"], [f"Discord{lang['store']['proprietary'][lang_]}", "com.discordapp.Discord"], ["Signal", "org.signal.Signal"], ["Telegram", "org.telegram.desktop"], [f"Spotify{lang['store']['proprietary'][lang_]}", "com.spotify.Client"], ["Tuta", "com.tutanota.Tutanota"], ["OBS Studio", "com.obsproject.Studio"], ["VLC", "org.videolan.VLC"], ["Audacity", "org.audacityteam.Audacity"], ["LibreOffice", "org.libreoffice.LibreOffice"], ["Blender", "org.blender.Blender"], ["GIMP", "org.gimp.GIMP"], ["Inkspace", "org.inkscape.Inkscape"], ["Design", "io.github.dubstar_04.design"], ["Plots", "com.github.alexhuntley.Plots"], [f"Visual Studio Code{lang['store']['proprietary'][lang_]}", "com.visualstudio.code"], ["VSCodium", "com.vscodium.codium"], ["Bitwarden", "com.bitwarden.desktop"], ["Okular", "org.kde.okular"], [f"Steam{lang['store']['proprietary'][lang_]}", "com.valvesoftware.Steam"], ["Heroic Games Launcher", "com.heroicgameslauncher.hgl"], ["Lutris", "net.lutris.Lutris"], ["ProtonUp-Qt", "net.davidotek.pupgui2"], ["Protontricks", "com.github.Matoking.protontricks"], ["Bottles", "com.usebottles.bottles"], ["Wine", "org.winehq.Wine"], ["Komikku", "info.febvre.Komikku"], ["Alpaca", "com.jeffser.Alpaca"], ["Memorado", "im.bernard.Memorado"], ["Keypunch", "dev.bragefuglseth.Keypunch"], ["Mingle", "io.github.halfmexican.Mingle"], ["Paper Clip", "io.github.diegoivan.pdf_metadata_editor"], ["Celeste", "com.hunterwittenborn.Celeste"], ["Door Knocker", "xyz.tytanium.DoorKnocker"], ["Flatseal", "com.github.tchx84.Flatseal"]]
+        self.flatpaks = [["Firefox", "org.mozilla.Firefox"], ["Brave Browser", "com.brave.Browser"], [f"Google Chrome{l_dict['store']['proprietary'][l_use]}", "com.google.Chrome"], [f"Microsoft Edge{l_dict['store']['proprietary'][l_use]}", "com.microsoft.Edge"], ["Chromium", "org.chromium.Chromium"], ["Librewolf", "io.gitlab.librewolf-community"], [f"Discord{l_dict['store']['proprietary'][l_use]}", "com.discordapp.Discord"], ["Signal", "org.signal.Signal"], ["Telegram", "org.telegram.desktop"], [f"Spotify{l_dict['store']['proprietary'][l_use]}", "com.spotify.Client"], ["Tuta", "com.tutanota.Tutanota"], ["OBS Studio", "com.obsproject.Studio"], ["VLC", "org.videolan.VLC"], ["Audacity", "org.audacityteam.Audacity"], ["LibreOffice", "org.libreoffice.LibreOffice"], ["Blender", "org.blender.Blender"], ["GIMP", "org.gimp.GIMP"], ["Inkspace", "org.inkscape.Inkscape"], ["Design", "io.github.dubstar_04.design"], ["Plots", "com.github.alexhuntley.Plots"], [f"Visual Studio Code{l_dict['store']['proprietary'][l_use]}", "com.visualstudio.code"], ["VSCodium", "com.vscodium.codium"], ["Bitwarden", "com.bitwarden.desktop"], ["Okular", "org.kde.okular"], [f"Steam{l_dict['store']['proprietary'][l_use]}", "com.valvesoftware.Steam"], ["Heroic Games Launcher", "com.heroicgameslauncher.hgl"], ["Lutris", "net.lutris.Lutris"], ["ProtonUp-Qt", "net.davidotek.pupgui2"], ["Protontricks", "com.github.Matoking.protontricks"], ["Bottles", "com.usebottles.bottles"], ["Wine", "org.winehq.Wine"], ["Flatseal", "com.github.tchx84.Flatseal"]]
         self.flatpaks_number = 0
         for traditional in self.traditionals:
             self.traditionals_number += 1
@@ -888,133 +901,140 @@ class Packages(ui.CTkFrame):
             self.pages[f"page{i}"] = self.tabview.add(i)
             self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
             self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
-            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{lang['operations']['process'][lang_]} {i}")
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{l_dict['operations']['process'][l_use]} {i}")
             self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
-            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=lang['store']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=l_dict['store']['close'][l_use], command=lambda i = i: self.close(i), state="disabled")
             self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
             self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
             self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
             self.useds[f"page{i}"] = False
         self.traditionals_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
         self.flatpaks_label.grid(row=0, column=1, sticky="nsew", pady=(0, 10), padx=15)
-        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
-        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
-        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
-        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
-        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
-        self.button5.grid(row=5, column=0, sticky="nsew")
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button5.grid(row=5, column=0, sticky="nsew", pady=(0, 5), padx=(0, 10))
+        self.button6.grid(row=6, column=0, sticky="nsew", padx=(0, 10))
     def insert(self, name):
         self.entry.delete(0, "end")
         self.entry.insert(0, name)
-    def do(self, operation: str):
-        if self.entry.get() == "":
-            mb.showerror(lang['globals']['error'][lang_], lang['store']['packages-name-error'][lang_])
+    def do(self, operation, target, use, time):
+        if target == "" or target == None:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['packages-name-error'][l_use])
             return
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        add_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
-        if "." in self.entry.get():
-            if operation == "search":
-                self.command = f"flatpak {operation} {self.entry.get()}"
+        add_operation(f"{l_dict['operations'][operation[1]][l_use]}: {target}", time)
+        if "." in target or operation[0] == "flatpak":
+            if operation[1] == "search":
+                self.command = f"flatpak {operation[1]} {target}"
             else:
-                self.command = f"flatpak {operation} {self.entry.get()} -y"
+                self.command = f"flatpak {operation[1]} {target} -y"
         else:
             if os.path.isfile(debian):
-                if operation == 'search':
-                    self.command = f"apt -y search {self.entry.get()}"
-                elif operation == 'install':
-                    self.command = f"pkexec apt -y install {self.entry.get()}"
-                elif operation == 'reinstall':
-                    self.command = f"pkexec apt -y install --reinstall {self.entry.get()}"
-                elif operation == 'uninstall':
-                    self.command = f"pkexec apt -y autoremove --purge {self.entry.get()}"
-                elif operation == 'update':
-                    self.command = f"pkexec apt -y upgrade {self.entry.get()}"
+                if operation[1] == 'search':
+                    self.command = f"apt -y search {target}"
+                elif operation[1] == 'install':
+                    self.command = f"pkexec apt -y install {target}"
+                elif operation[1] == 'reinstall':
+                    self.command = f"pkexec apt -y install --reinstall {target}"
+                elif operation[1] == 'uninstall':
+                    self.command = f"pkexec apt -y autoremove --purge {target}"
+                elif operation[1] == 'update':
+                    self.command = f"pkexec apt -y upgrade {target}"
             elif os.path.isfile(fedora):
-                if operation == 'search':
-                    self.command = f"dnf5 -y --nogpgcheck search {self.entry.get()}"
-                elif operation == 'install':
-                    self.command = f"pkexec dnf5 -y --nogpgcheck install {self.entry.get()}"
-                elif operation == 'reinstall':
-                    self.command = f"pkexec dnf5 -y --nogpgcheck reinstall {self.entry.get()}"
-                elif operation == 'uninstall':
-                    self.command = f"pkexec dnf5 -y --nogpgcheck remove {self.entry.get()}"
-                elif operation == 'update':
-                    self.command = f"pkexec dnf5 -y --nogpgcheck update {self.entry.get()}"
+                if operation[1] == 'search':
+                    self.command = f"dnf5 -y --nogpgcheck search {target}"
+                elif operation[1] == 'install':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck install {target}"
+                elif operation[1] == 'reinstall':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck reinstall {target}"
+                elif operation[1] == 'uninstall':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck remove {target}"
+                elif operation[1] == 'update':
+                    self.command = f"pkexec dnf5 -y --nogpgcheck update {target}"
             elif os.path.isfile(solus):
-                if operation == 'search':
-                    self.command = f"eopkg -y search {self.entry.get()}"
-                elif operation == 'install':
-                    self.command = f"pkexec eopkg -y install {self.entry.get()}"
-                elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall {self.entry.get()}"
-                elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge {self.entry.get()}"
-                elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade {self.entry.get()}"
+                if operation[1] == 'search':
+                    self.command = f"eopkg -y search {target}"
+                elif operation[1] == 'install':
+                    self.command = f"pkexec eopkg -y install {target}"
+                elif operation[1] == 'reinstall':
+                    self.command = f"pkexec eopkg -y install --reinstall {target}"
+                elif operation[1] == 'uninstall':
+                    self.command = f"pkexec eopkg -y remove --purge {target}"
+                elif operation[1] == 'update':
+                    self.command = f"pkexec eopkg -y upgrade {target}"
             elif os.path.isfile(arch):
-                if operation == 'search':
-                    self.command = f"pacman --noconfirm -Ss {self.entry.get()}"
-                elif operation == 'install' or operation == 'reinstall':
-                    self.command = f"pkexec pacman --noconfirm -S {self.entry.get()}"
-                elif operation == 'uninstall':
-                    self.command = f"pkexec pacman --noconfirm -Rns {self.entry.get()}"
-                elif operation == 'update':
-                    self.command = f"pkexec pacman --noconfirm -Syu {self.entry.get()}"
-        self.which_page = 0
-        if self.useds["page1"] == False:
-            self.which_page = 1
-        elif self.useds["page2"] == False:
-            self.which_page = 2
-        elif self.useds["page3"] == False:
-            self.which_page = 3
-        elif self.useds["page4"] == False:
-            self.which_page = 4
-        elif self.useds["page5"] == False:
-            self.which_page = 5
-        elif self.useds["page6"] == False:
-            self.which_page = 6
-        elif self.useds["page7"] == False:
-            self.which_page = 7
-        elif self.useds["page8"] == False:
-            self.which_page = 8
-        elif self.useds["page9"] == False:
-            self.which_page = 9
-        elif self.useds["page10"] == False:
-            self.which_page = 10
-        elif self.useds["page11"] == False:
-            self.which_page = 11
-        elif self.useds["page12"] == False:
-            self.which_page = 12
-        elif self.useds["page13"] == False:
-            self.which_page = 13
-        elif self.useds["page14"] == False:
-            self.which_page = 14
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['store']['all-slots-are-full'][lang_])
-            return
-        self.labels[f"page{self.which_page}"].configure(text=f"{lang['operations'][operation][lang_]}: {self.entry.get()}")
-        self.useds[f"page{self.which_page}"] = True
-        self.tabview.set(self.which_page)
-        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+                if operation[1] == 'search':
+                    self.command = f"pacman --noconfirm -Ss {target}"
+                elif operation[1] == 'install' or operation[1] == 'reinstall':
+                    self.command = f"pkexec pacman --noconfirm -S {target}"
+                elif operation[1] == 'uninstall':
+                    self.command = f"pkexec pacman --noconfirm -Rns {target}"
+                elif operation[1] == 'update':
+                    self.command = f"pkexec pacman --noconfirm -Syu {target}"
+        self.labels[f"page{use}"].configure(text=f"{l_dict['operations'][operation[1]][l_use]}: {target}")
+        self.useds[f"page{use}"] = True
+        self.tabview.set(use)
+        with subprocess.Popen(self.command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
-                self.outputs[f"page{self.which_page}"].configure(state="normal")
-                self.outputs[f"page{self.which_page}"].insert("end", self.out)
-                self.outputs[f"page{self.which_page}"].configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.outputs[f"page{self.which_page}"].configure(state="normal")
-                self.outputs[f"page{self.which_page}"].insert("end", self.err)
-                self.outputs[f"page{self.which_page}"].configure(state="disabled")
-        self.closes[f"page{self.which_page}"].configure(state="normal")
-        delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.out)
+                self.outputs[f"page{use}"].configure(state="disabled")
+        self.closes[f"page{use}"].configure(state="normal")
+        delete_operation(f"{l_dict['operations'][operation[1]][l_use]}: {target}", time)
         if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['globals']['completed'][l_use])
         else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['failed'][l_use])
     def go(self, wanted: str):
-        self.thread = threading.Thread(target=lambda:self.do(wanted), daemon=False)
-        self.thread.start()
+        if self.useds["page1"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 1, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page2"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 2, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page3"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 3, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page4"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 4, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page5"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 5, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page6"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 6, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page7"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 7, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page8"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 8, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page9"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 9, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page10"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 10, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page11"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 11, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page12"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 12, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page13"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 13, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page14"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 14, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        else:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['all-slots-are-full'][l_use])
+            return
     def close(self, caller: str):
-        self.labels[f"page{caller}"].configure(text=f"{lang['operations']['process'][lang_]} {caller}")
+        self.labels[f"page{caller}"].configure(text=f"{l_dict['operations']['process'][l_use]} {caller}")
         self.outputs[f"page{caller}"].configure(state="normal")
         self.outputs[f"page{caller}"].delete("0.0", 'end')
         self.outputs[f"page{caller}"].configure(state="disabled")
@@ -1028,23 +1048,23 @@ class DEsWMsCs(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
         self.tabview.grid(row=0, column=0, sticky="nsew")
-        self.mainpage = self.tabview.add(lang['store']['home'][lang_])
+        self.mainpage = self.tabview.add(l_dict['store']['home'][l_use])
         self.mainpage.grid_columnconfigure(0, weight=1)
         self.mainpage.grid_rowconfigure(0, weight=1)
         self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
         self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
-        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.mainbar.grid_columnconfigure(0, weight=1)
         self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
         self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
-        self.sidebar.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
         self.sidebar.grid_columnconfigure(0, weight=1)
         self.dewmc = sv(None)
-        self.deswmscs_label = ui.CTkLabel(self.mainbar, text=lang['store']['deswmscs'][lang_], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.deswmscs_label = ui.CTkLabel(self.mainbar, text=l_dict['store']['deswmscs'][l_use], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
         self.selected = ui.CTkLabel(self.sidebar, textvariable=self.dewmc)
-        self.button1 = ui.CTkButton(self.sidebar, text=lang['operations']['install'][lang_], command=lambda:self.go('install'))
-        self.button2 = ui.CTkButton(self.sidebar, text=lang['operations']['reinstall'][lang_], command=lambda:self.go('reinstall'))
-        self.button3 = ui.CTkButton(self.sidebar, text=lang['operations']['uninstall'][lang_], command=lambda:self.go('uninstall'))
-        self.button4 = ui.CTkButton(self.sidebar, text=lang['operations']['update'][lang_], command=lambda:self.go('update'))
+        self.button1 = ui.CTkButton(self.sidebar, text=l_dict['operations']['install'][l_use], command=lambda:self.go('install'))
+        self.button2 = ui.CTkButton(self.sidebar, text=l_dict['operations']['reinstall'][l_use], command=lambda:self.go('reinstall'))
+        self.button3 = ui.CTkButton(self.sidebar, text=l_dict['operations']['uninstall'][l_use], command=lambda:self.go('uninstall'))
+        self.button4 = ui.CTkButton(self.sidebar, text=l_dict['operations']['update'][l_use], command=lambda:self.go('update'))
         if os.path.isfile(debian):
             self.deswmscs = ["KDE-Plasma-Desktop", "GNOME", "Cinnamon", "Mate", "Xfce4", "LXDE", "LXQt", "Openbox", "bspwm", "Qtile", "Herbstluftwm", "Awesome", "IceWM", "i3", "Sway", "Xmonad"]
         elif os.path.isfile(fedora):
@@ -1066,9 +1086,9 @@ class DEsWMsCs(ui.CTkFrame):
             self.pages[f"page{i}"] = self.tabview.add(i)
             self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
             self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
-            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{lang['operations']['process'][lang_]} {i}")
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{l_dict['operations']['process'][l_use]} {i}")
             self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
-            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=lang['store']['close'][lang_], command=lambda i = i: self.close(i), state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=l_dict['store']['close'][l_use], command=lambda i = i: self.close(i), state="disabled")
             self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
             self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
             self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
@@ -1079,23 +1099,22 @@ class DEsWMsCs(ui.CTkFrame):
         self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
         self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
         self.button4.grid(row=4, column=0, sticky="nsew")
-    def do(self, operation: str):
-        if self.dewmc.get() == None or self.dewmc.get() == "":
-            mb.showerror(lang['globals']['error'][lang_], lang['store']['deswmscs-name-error'][lang_])
+    def do(self, operation, target, use, time):
+        if target == None or target == "":
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['deswmscs-name-error'][l_use])
             return
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        add_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+        add_operation(f"{l_dict['operations'][operation][l_use]}: {target}", time)
         if os.path.isfile(debian):
-            if self.dewmc.get.lower() != "mate":
+            if target.lower() != "mate":
                 if operation == 'install':
-                    self.command = f"pkexec apt -y install {self.dewmc.get.lower()}"
+                    self.command = f"pkexec apt -y install {target.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec apt -y install --reinstall {self.dewmc.get.lower()}"
+                    self.command = f"pkexec apt -y install --reinstall {target.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec apt -y autoremove --purge {self.dewmc.get.lower()}"
+                    self.command = f"pkexec apt -y autoremove --purge {target.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec apt -y upgrade {self.dewmc.get.lower()}"
-            elif self.dewmc.get.lower() == "mate":
+                    self.command = f"pkexec apt -y upgrade {target.lower()}"
+            elif target.lower() == "mate":
                 if operation == 'install':
                     self.command = f"pkexec apt -y install mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
                 elif operation == 'reinstall':
@@ -1105,139 +1124,150 @@ class DEsWMsCs(ui.CTkFrame):
                 elif operation == 'update':
                     self.command = f"pkexec apt -y upgrade mate-desktop-environment mate-desktop-environment-core mate-desktop-environment-extra"
         elif os.path.isfile(fedora):
-            if self.dewmc.get() in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
+            if target in ["KDE", "Xfce", "Phosh", "LXDE", "LXQt", "Cinnamon", "Mate", "Sugar", "Deepin", "Budgie", "Basic", "Sway", "Deepin", "i3"]:
                 if operation == 'install':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @{target.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    mb.showerror(lang['globals']['error'][lang_], lang['store']['dnf-nosupport'][lang_])
-                    delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+                    mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['dnf-nosupport'][l_use])
+                    delete_operation(f"{l_dict['operations'][operation][l_use]}: {target}", time)
                     return
                 elif operation == 'uninstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @{target.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @{self.dewmc.get.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-            elif self.dewmc.get() in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @{target.lower()}-desktop-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+            elif target in ["Openbox", "Fluxbox", "Blackbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install {target.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck reinstall {self.dewmc.get.lower()}; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck reinstall {target.lower()}; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove {target.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
-                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade {self.dewmc.get.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
-            elif self.dewmc.get() == "GNOME":
+                    self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade {target.lower()} ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
+            elif target == "GNOME":
                 if operation == 'install':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck install @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'reinstall':
-                    mb.showerror(lang['globals']['error'][lang_], lang['store']['dnf-nosupport'][lang_])
-                    delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+                    mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['dnf-nosupport'][l_use])
+                    delete_operation(f"{l_dict['operations'][operation][l_use]}: {target}", time)
                     return
                 elif operation == 'uninstall':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck remove @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"
                 elif operation == 'update':
                     self.command = f"pkexec bash -c 'dnf5 -y --nogpgcheck upgrade @workstation-product-environment ; SYSTEMD_COLORS=0 systemctl set-default graphical.target'"                        
         elif os.path.isfile(solus):
-            if self.dewmc.get.lower() not in ["openbox", "fluxbox", "bspwm"]:
+            if target.lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install -c desktop.{target.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{target.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{target.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{target.lower()}"
             else:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install {target.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall {target.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge {target.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade {self.dewmc.get.lower()}"           
+                    self.command = f"pkexec eopkg -y upgrade {target.lower()}"           
         elif os.path.isfile(solus):
-            if self.dewmc.get.lower() not in ["openbox", "fluxbox", "bspwm"]:
+            if target.lower() not in ["openbox", "fluxbox", "bspwm"]:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install -c desktop.{target.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall -c desktop.{target.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge -c desktop.{target.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade -c desktop.{self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y upgrade -c desktop.{target.lower()}"
             else:
                 if operation == 'install':
-                    self.command = f"pkexec eopkg -y install {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install {target.lower()}"
                 elif operation == 'reinstall':
-                    self.command = f"pkexec eopkg -y install --reinstall {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y install --reinstall {target.lower()}"
                 elif operation == 'uninstall':
-                    self.command = f"pkexec eopkg -y remove --purge {self.dewmc.get.lower()}"
+                    self.command = f"pkexec eopkg -y remove --purge {target.lower()}"
                 elif operation == 'update':
-                    self.command = f"pkexec eopkg -y upgrade {self.dewmc.get.lower()}"        
+                    self.command = f"pkexec eopkg -y upgrade {target.lower()}"        
         elif os.path.isfile(arch):
             if operation == 'install':
-                self.command = f"pkexec pacman --noconfirm -S {self.dewmc.get.lower()}"
+                self.command = f"pkexec pacman --noconfirm -S {target.lower()}"
             elif operation == 'reinstall':
-                self.command = f"pkexec pacman --noconfirm -S {self.dewmc.get.lower()}"
+                self.command = f"pkexec pacman --noconfirm -S {target.lower()}"
             elif operation == 'uninstall':
-                self.command = f"pkexec pacman --noconfirm -Rns {self.dewmc.get.lower()}"
+                self.command = f"pkexec pacman --noconfirm -Rns {target.lower()}"
             elif operation == 'update':
-                self.command = f"pkexec pacman --noconfirm -Syu {self.dewmc.get.lower()}"
-        self.which_page = 0
-        if self.useds["page1"] == False:
-            self.which_page = 1
-        elif self.useds["page2"] == False:
-            self.which_page = 2
-        elif self.useds["page3"] == False:
-            self.which_page = 3
-        elif self.useds["page4"] == False:
-            self.which_page = 4
-        elif self.useds["page5"] == False:
-            self.which_page = 5
-        elif self.useds["page6"] == False:
-            self.which_page = 6
-        elif self.useds["page7"] == False:
-            self.which_page = 7
-        elif self.useds["page8"] == False:
-            self.which_page = 8
-        elif self.useds["page9"] == False:
-            self.which_page = 9
-        elif self.useds["page10"] == False:
-            self.which_page = 10
-        elif self.useds["page11"] == False:
-            self.which_page = 11
-        elif self.useds["page12"] == False:
-            self.which_page = 12
-        elif self.useds["page13"] == False:
-            self.which_page = 13
-        elif self.useds["page14"] == False:
-            self.which_page = 14
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['store']['all-slots-are-full'][lang_])
-            return
-        self.labels[f"page{self.which_page}"].configure(text=f"{lang['operations'][operation][lang_]}: {self.entry.get()}")
-        self.useds[f"page{self.which_page}"] = True
-        self.tabview.set(self.which_page)
+                self.command = f"pkexec pacman --noconfirm -Syu {target.lower()}"
+        self.labels[f"page{use}"].configure(text=f"{l_dict['operations'][operation][l_use]}: {target}")
+        self.useds[f"page{use}"] = True
+        self.tabview.set(use)
         with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
             for self.out in self.run_command.stdout:
-                self.outputs[f"page{self.which_page}"].configure(state="normal")
-                self.outputs[f"page{self.which_page}"].insert("end", self.out)
-                self.outputs[f"page{self.which_page}"].configure(state="disabled")
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.out)
+                self.outputs[f"page{use}"].configure(state="disabled")
             for self.err in self.run_command.stderr:
-                self.outputs[f"page{self.which_page}"].configure(state="normal")
-                self.outputs[f"page{self.which_page}"].insert("end", self.err)
-                self.outputs[f"page{self.which_page}"].configure(state="disabled")
-        self.closes[f"page{self.which_page}"].configure(state="normal")
-        delete_operation(f"{lang['operations'][operation][lang_]}: {self.entry.get()}", self.time)
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.err)
+                self.outputs[f"page{use}"].configure(state="disabled")
+        self.closes[f"page{use}"].configure(state="normal")
+        delete_operation(f"{l_dict['operations'][operation][l_use]}: {target}", time)
         if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['globals']['completed'][l_use])
         else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['failed'][l_use])
     def go(self, wanted: str):
-        self.thread = threading.Thread(target=lambda:self.do(wanted), daemon=False)
-        self.thread.start()
+        if self.useds["page1"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 1, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page2"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 2, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page3"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 3, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page4"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 4, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page5"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 5, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page6"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 6, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page7"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 7, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page8"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 8, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page9"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 9, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page10"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 10, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page11"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 11, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page12"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 12, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page13"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 13, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page14"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.dewmc.get(), 14, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        else:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['all-slots-are-full'][l_use])
+            return
     def close(self, caller: str):
-        self.labels[f"page{caller}"].configure(text=f"{lang['operations']['process'][lang_]} {caller}")
+        self.labels[f"page{caller}"].configure(text=f"{l_dict['operations']['process'][l_use]} {caller}")
         self.outputs[f"page{caller}"].configure(state="normal")
         self.outputs[f"page{caller}"].delete("0.0", 'end')
         self.outputs[f"page{caller}"].configure(state="disabled")
@@ -1246,385 +1276,339 @@ class DEsWMsCs(ui.CTkFrame):
         
 class Scripts(ui.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master, **kwargs)        
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        self.mainpage = self.tabview.add(l_dict['store']['home'][l_use])
+        self.mainpage.grid_columnconfigure(0, weight=1)
+        self.mainpage.grid_rowconfigure(0, weight=1)
+        self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
+        self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
+        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.traditionals_label = ui.CTkLabel(self.mainbar, text=pkg_mngr, corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.flatpaks_label = ui.CTkLabel(self.mainbar, text="Flatpak", corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.button11 = ui.CTkButton(self.mainbar, text=l_dict['store']['update'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['update'][l_use]]))
+        self.button12 = ui.CTkButton(self.mainbar, text=l_dict['store']['sync'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['sync'][l_use]]))
+        self.button13 = ui.CTkButton(self.mainbar, text=l_dict['store']['clean'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['clean'][l_use]]))
+        self.button14 = ui.CTkButton(self.mainbar, text=l_dict['store']['remove'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['remove'][l_use]]))
+        self.button15 = ui.CTkButton(self.mainbar, text=l_dict['store']['fix'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['fix'][l_use]]))
+        self.button16 = ui.CTkButton(self.mainbar, text=l_dict['store']['history'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['history'][l_use]]))
+        self.button17 = ui.CTkButton(self.mainbar, text=l_dict['store']['list'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['list'][l_use]]))
+        self.button18 = ui.CTkButton(self.mainbar, text=l_dict['store']['leaves'][l_use], command=lambda:self.go([pkg_mngr, l_dict['store']['leaves'][l_use]]))
+        self.button21 = ui.CTkButton(self.mainbar, text=l_dict['store']['update'][l_use], command=lambda:self.go(["flatpak", l_dict['store']['update'][l_use]]))
+        self.button22 = ui.CTkButton(self.mainbar, text=l_dict['store']['remove'][l_use], command=lambda:self.go(["flatpak", l_dict['store']['remove'][l_use]]))
+        self.button23 = ui.CTkButton(self.mainbar, text=l_dict['store']['repair'][l_use], command=lambda:self.go(["flatpak", l_dict['store']['repair'][l_use]]))
+        self.button24 = ui.CTkButton(self.mainbar, text=l_dict['store']['history'][l_use], command=lambda:self.go(["flatpak", l_dict['store']['history'][l_use]]))
+        self.button25 = ui.CTkButton(self.mainbar, text=l_dict['store']['list'][l_use], command=lambda:self.go(["flatpak", l_dict['store']['list'][l_use]]))
+        if not os.path.isfile(fedora):
+            self.button18.configure(state="disabled")
+        if os.path.isfile(fedora):
+            self.button15.configure(state="disabled")
+        if os.path.isfile(arch):
+            self.button12.configure(state="disabled")
+        if os.path.isfile(solus):
+            self.button12.configure(state="disabled")
+            self.button15.configure(state="disabled")
+        self.pages = {}
+        self.labels = {}
+        self.outputs = {}
+        self.closes = {}
+        self.useds = {}
+        for i in range(1, 15):
+            self.pages[f"page{i}"] = self.tabview.add(i)
+            self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
+            self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{l_dict['operations']['process'][l_use]} {i}")
+            self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=l_dict['store']['close'][l_use], command=lambda i = i: self.close(i), state="disabled")
+            self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
+            self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
+            self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
+            self.useds[f"page{i}"] = False
+        self.traditionals_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
+        self.button11.grid(row=1, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button12.grid(row=2, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button13.grid(row=3, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button14.grid(row=4, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button15.grid(row=5, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button16.grid(row=6, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button17.grid(row=7, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.button18.grid(row=8, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.flatpaks_label.grid(row=0, column=1, sticky="nsew", pady=(0, 10), padx=15)
+        self.button21.grid(row=1, column=1, sticky="nsew", pady=(0, 10), padx=25)
+        self.button22.grid(row=2, column=1, sticky="nsew", pady=(0, 10), padx=25)
+        self.button23.grid(row=3, column=1, sticky="nsew", pady=(0, 10), padx=25)
+        self.button24.grid(row=4, column=1, sticky="nsew", pady=(0, 10), padx=25)
+        self.button25.grid(row=5, column=1, sticky="nsew", pady=(0, 10), padx=25)
+    def do(self, operation, use, time):
+        add_operation(f"{operation[0]}: {operation[1]}", time)
+        if operation[0] == "flatpak":
+            if operation[1] == l_dict['store']['update'][l_use]:
+                self.command = f"flatpak update -y"
+            elif operation[1] == l_dict['store']['remove'][l_use]:
+                self.command = f"flatpak uninstall --unused -y"
+            elif operation[1] == l_dict['store']['repair'][l_use]:
+                self.command = f"flatpak repair"
+            elif operation[1] == l_dict['store']['history'][l_use]:
+                self.command = f"flatpak history"
+            elif operation[1] == l_dict['store']['list'][l_use]:
+                self.command = f"flatpak list"
+        else:
+            if os.path.isfile(debian):
+                if operation[1] == l_dict['store']['update'][l_use]:
+                    self.command = 'pkexec apt -y upgrade'
+                elif operation[1] == l_dict['store']['sync'][l_use]:
+                    self.command = 'pkexec apt -y dist-upgrade'
+                elif operation[1] == l_dict['store']['clean'][l_use]:
+                    self.command = 'pkexec apt -y autoclean'
+                elif operation[1] == l_dict['store']['remove'][l_use]:
+                    self.command = 'pkexec apt -y autoremove'
+                elif operation[1] == l_dict['store']['fix'][l_use]:
+                    self.command = 'pkexec bash -c "apt-get -y install -f ; dpkg --configure -a ; aptitude -y install"'
+                elif operation[1] == l_dict['store']['history'][l_use]:
+                    self.command = 'cat /var/log/dpkg.log'
+                elif operation[1] == l_dict['store']['list'][l_use]:
+                    self.command = 'dpkg --list | grep ^i'
+            elif os.path.isfile(fedora):
+                if operation[1] == l_dict['store']['update'][l_use]:
+                    self.command = 'pkexec dnf5 -y --nogpgcheck upgrade'
+                elif operation[1] == l_dict['store']['sync'][l_use]:
+                    self.command = 'pkexec dnf5 -y --nogpgcheck distro-sync'
+                elif operation[1] == l_dict['store']['clean'][l_use]:
+                    self.command = 'pkexec dnf5 -y --nogpgcheck clean all'
+                elif operation[1] == l_dict['store']['remove'][l_use]:
+                    self.command = 'pkexec dnf5 -y --nogpgcheck autoremove'
+                elif operation[1] == l_dict['store']['history'][l_use]:
+                    self.command = 'dnf5 history list'
+                elif operation[1] == l_dict['store']['list'][l_use]:
+                    self.command = 'dnf5 list --installed'
+                elif operation[1] == l_dict['store']['leaves'][l_use]:
+                    self.command = 'dnf5 leaves'
+            elif os.path.isfile(solus):
+                if operation[1] == l_dict['store']['update'][l_use]:
+                    self.command = 'pkexec eopkg -y upgrade'
+                elif operation[1] == l_dict['store']['clean'][l_use]:
+                    self.command = 'pkexec eopkg -y dc'
+                elif operation[1] == l_dict['store']['remove'][l_use]:
+                    self.command = 'pkexec eopkg -y rmf'
+                elif operation[1] == l_dict['store']['history'][l_use]:
+                    self.command = 'eopkg history'
+                elif operation[1] == l_dict['store']['list'][l_use]:
+                    self.command = 'eopkg list-installed'
+            elif os.path.isfile(arch):
+                if operation[1] == l_dict['store']['update'][l_use]:
+                    self.command = 'pkexec pacman --noconfirm -Syu'
+                elif operation[1] == l_dict['store']['clean'][l_use]:
+                    self.command = 'pkexec pacman --noconfirm -Scc'
+                elif operation[1] == l_dict['store']['remove'][l_use]:
+                    self.command = 'pacman --noconfirm -Qdtq | pacman --noconfirm -Rs -'
+                elif operation[1] == l_dict['store']['fix'][l_use]:
+                    self.command = 'pacman --noconfirm -Dk'
+                elif operation[1] == l_dict['store']['history'][l_use]:
+                    self.command = 'cat /var/log/pacman.log'
+                elif operation[1] == l_dict['store']['list'][l_use]:
+                    self.command = 'pacman -Q'
+        self.labels[f"page{use}"].configure(text=f"{operation[0]}: {operation[1]}")
+        self.useds[f"page{use}"] = True
+        self.tabview.set(use)
+        with subprocess.Popen(self.command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.out)
+                self.outputs[f"page{use}"].configure(state="disabled")
+        self.closes[f"page{use}"].configure(state="normal")
+        delete_operation(f"{operation[0]}: {operation[1]}", time)
+        if self.run_command.returncode == 0:
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['globals']['completed'][l_use])
+        else:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['failed'][l_use])
+    def go(self, wanted: str):
+        if self.useds["page1"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 1, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page2"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 2, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page3"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 3, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page4"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 4, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page5"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 5, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page6"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 6, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page7"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 7, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page8"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 8, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page9"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 9, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page10"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 10, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page11"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 11, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page12"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 12, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page13"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 13, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        elif self.useds["page14"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, 14, str(time.strftime("%H:%M:%S", time.localtime()))), daemon=False)
+            self.thread.start()
+        else:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['all-slots-are-full'][l_use])
+            return
+    def close(self, caller: str):
+        self.labels[f"page{caller}"].configure(text=f"{l_dict['operations']['process'][l_use]} {caller}")
+        self.outputs[f"page{caller}"].configure(state="normal")
+        self.outputs[f"page{caller}"].delete("0.0", 'end')
+        self.outputs[f"page{caller}"].configure(state="disabled")
+        self.closes[f"page{caller}"].configure(state="disabled")
+        self.useds[f"page{caller}"] = False
         
 class SystemdServices(ui.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=1, column=0, sticky="nsew", padx=(0, 7.5), pady=(7.5, 0))
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=1, column=1, sticky="nsew", padx=(7.5, 0), pady=(7.5, 0))
-        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        self.entry = ui.CTkEntry(self, placeholder_text=lang['store']['service-name'][lang_])
-        self.button1 = ui.CTkButton(self.frame, text=lang['store']['status'][lang_], command=lambda:self.go(["", "status"]))
-        self.button2 = ui.CTkButton(self.frame, text=lang['store']['enable'][lang_], command=lambda:self.go(["pkexec", "enable"]))
-        self.button3 = ui.CTkButton(self.frame, text=lang['store']['disable'][lang_], command=lambda:self.go(["pkexec", "disable"]))
-        self.button4 = ui.CTkButton(self.frame, text=lang['store']['start'][lang_], command=lambda:self.go(["pkexec", "start"]))
-        self.button5 = ui.CTkButton(self.frame, text=lang['store']['stop'][lang_], command=lambda:self.go(["pkexec", "start"]))
-        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 7.5), columnspan=2)
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 10))
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 10))
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 10))
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 10))
-        self.button5.grid(row=4, column=0, sticky="nsew")
-    def do(self, operation: str):
-        if self.entry.get() == "":
-            mb.showerror(lang['globals']['error'][lang_], lang['store']['service-name-error'][lang_])
+        self.tabview = ui.CTkTabview(self, corner_radius=25, fg_color="transparent")
+        self.tabview.grid(row=0, column=0, sticky="nsew")
+        self.mainpage = self.tabview.add(l_dict['store']['home'][l_use])
+        self.mainpage.grid_columnconfigure(0, weight=1)
+        self.mainpage.grid_rowconfigure(0, weight=1)
+        self.mainbar = ui.CTkScrollableFrame(self.mainpage, fg_color="transparent")
+        self.mainbar.grid(row=0, column=0, sticky="nsew", padx=(0, 7.5))
+        self.mainbar.grid_columnconfigure((0, 1), weight=1)
+        self.sidebar = ui.CTkFrame(self.mainpage, fg_color="transparent")
+        self.sidebar.grid(row=0, column=1, sticky="nsew", padx=(7.5, 0))
+        self.sidebar.grid_rowconfigure((0, 1, 2, 3, 4, 5), weight=1)
+        self.sidebar.grid_columnconfigure(0, weight=1)
+        self.running_label = ui.CTkLabel(self.mainbar, text=l_dict['store']['running'][l_use], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.active_label = ui.CTkLabel(self.mainbar, text=l_dict['store']['active'][l_use], corner_radius=25, fg_color=["#b9b9b9", "#1f1f1f"], font=ui.CTkFont(size=15, weight="bold"))
+        self.entry = ui.CTkEntry(self.sidebar, placeholder_text=l_dict['store']['service-name'][l_use])
+        self.button1 = ui.CTkButton(self.sidebar, text=l_dict['store']['status'][l_use], command=lambda:self.go(["", "status"]))
+        self.button2 = ui.CTkButton(self.sidebar, text=l_dict['store']['enable'][l_use], command=lambda:self.go(["pkexec", "enable"]))
+        self.button3 = ui.CTkButton(self.sidebar, text=l_dict['store']['disable'][l_use], command=lambda:self.go(["pkexec", "disable"]))
+        self.button4 = ui.CTkButton(self.sidebar, text=l_dict['store']['start'][l_use], command=lambda:self.go(["pkexec", "start"]))
+        self.button5 = ui.CTkButton(self.sidebar, text=l_dict['store']['stop'][l_use], command=lambda:self.go(["pkexec", "stop"]))
+        self.running_number = 0
+        self.active_number = 0
+        with subprocess.Popen(r"systemctl list-units --type=service --state=running | awk '/.*\.service/ {print $1}'", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.list_running:
+            for running in self.list_running.stdout:
+                self.running_number += 1
+                ui.CTkButton(self.mainbar, text=running.replace(".service", "").replace("\n", ""), command=lambda running = running: self.insert(running.replace("\n", ""))).grid(row=self.running_number, column=1, sticky="nsew", pady=(0, 10), padx=25)        
+        with subprocess.Popen(r"systemctl list-units --type=service --state=active | awk '/.*\.service/ {print $1}'", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.list_active:
+            for active in self.list_active.stdout:
+                self.active_number += 1
+                ui.CTkButton(self.mainbar, text=active.replace(".service", "").replace("\n", ""), command=lambda active = active: self.insert(active.replace("\n", ""))).grid(row=self.active_number, column=0, sticky="nsew", pady=(0, 10), padx=25)
+        self.pages = {}
+        self.labels = {}
+        self.outputs = {}
+        self.closes = {}
+        self.useds = {}
+        for i in range(1, 15):
+            self.pages[f"page{i}"] = self.tabview.add(i)
+            self.pages[f"page{i}"].grid_rowconfigure(1, weight=1)
+            self.pages[f"page{i}"].grid_columnconfigure(0, weight=1)
+            self.labels[f"page{i}"] = ui.CTkLabel(self.pages[f"page{i}"], text=f"{l_dict['operations']['process'][l_use]} {i}")
+            self.outputs[f"page{i}"] = ui.CTkTextbox(self.pages[f"page{i}"], state="disabled")
+            self.closes[f"page{i}"] = ui.CTkButton(self.pages[f"page{i}"], text=l_dict['store']['close'][l_use], command=lambda i = i: self.close(i), state="disabled")
+            self.labels[f"page{i}"].grid(row=0, column=0, sticky="nsew")
+            self.outputs[f"page{i}"].grid(row=1, column=0, sticky="nsew")
+            self.closes[f"page{i}"].grid(row=2, column=0, sticky="nsew", pady=(10, 0))
+            self.useds[f"page{i}"] = False
+        self.running_label.grid(row=0, column=0, sticky="nsew", pady=(0, 10), padx=15)
+        self.active_label.grid(row=0, column=1, sticky="nsew", pady=(0, 10), padx=15)
+        self.entry.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+        self.button1.grid(row=1, column=0, sticky="nsew", pady=(0, 5))
+        self.button2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
+        self.button3.grid(row=3, column=0, sticky="nsew", pady=(0, 5))
+        self.button4.grid(row=4, column=0, sticky="nsew", pady=(0, 5))
+        self.button5.grid(row=5, column=0, sticky="nsew")
+    def insert(self, name):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, name)  
+    def do(self, operation, target, use):
+        self.labels[f"page{use}"].configure(text=f"{l_dict['store'][operation[1]][l_use]}: {target}")
+        self.useds[f"page{use}"] = True
+        self.tabview.set(use)
+        with subprocess.Popen(f"{operation[0]} SYSTEMD_COLORS=0 systemctl {operation[1]} {target}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
+            for self.out in self.run_command.stdout:
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.out)
+                self.outputs[f"page{use}"].configure(state="disabled")
+            for self.err in self.run_command.stderr:
+                self.outputs[f"page{use}"].configure(state="normal")
+                self.outputs[f"page{use}"].insert("end", self.err)
+                self.outputs[f"page{use}"].configure(state="disabled")
+        self.closes[f"page{use}"].configure(state="normal")
+        if self.run_command.returncode != 0:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['failed'][l_use])        
+    def go(self, wanted):
+        if self.useds["page1"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 1), daemon=False)
+            self.thread.start()
+        elif self.useds["page2"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 2), daemon=False)
+            self.thread.start()
+        elif self.useds["page3"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 3), daemon=False)
+            self.thread.start()
+        elif self.useds["page4"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 4), daemon=False)
+            self.thread.start()
+        elif self.useds["page5"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 5), daemon=False)
+            self.thread.start()
+        elif self.useds["page6"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 6), daemon=False)
+            self.thread.start()
+        elif self.useds["page7"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 7), daemon=False)
+            self.thread.start()
+        elif self.useds["page8"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 8), daemon=False)
+            self.thread.start()
+        elif self.useds["page9"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 9), daemon=False)
+            self.thread.start()
+        elif self.useds["page10"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 10), daemon=False)
+            self.thread.start()
+        elif self.useds["page11"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 11), daemon=False)
+            self.thread.start()
+        elif self.useds["page12"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 12), daemon=False)
+            self.thread.start()
+        elif self.useds["page13"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 13), daemon=False)
+            self.thread.start()
+        elif self.useds["page14"] == False:
+            self.thread = threading.Thread(target=lambda:self.do(wanted, self.entry.get(), 14), daemon=False)
+            self.thread.start()
+        else:
+            mb.showerror(l_dict['globals']['error'][l_use], l_dict['store']['all-slots-are-full'][l_use])
             return
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(f"{operation[0]} SYSTEMD_COLORS=0 systemctl {operation[1]} {self.entry.get()}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go(self, process: str):
-        self.thread = threading.Thread(target=lambda:self.do(process), daemon=False)
-        self.thread.start()
-
-class TraditionalScripts(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self.frame, text="Upgrade All Packages", command=lambda:self.go('update'))
-            self.button2 = ui.CTkButton(self.frame, text="Synchronize Distribution", command=lambda:self.go("dist_sync"))
-            self.button3 = ui.CTkButton(self.frame, text="Clean Package Cache", command=lambda:self.go("clean"))
-            self.button4 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go("remove"))
-            self.button5 = ui.CTkButton(self.frame, text="Fix Broken Dependencies", command=lambda:self.go("fix"))
-            self.button6 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go("history"))
-            self.button7 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go("list"))
-            self.button8 = ui.CTkButton(self.frame, text="List Installed Leaves", command=lambda:self.go("list2"))
-        elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go('update'))
-            self.button2 = ui.CTkButton(self.frame, text="Dağıtımı Senkronize Et", command=lambda:self.go("dist_sync"))
-            self.button3 = ui.CTkButton(self.frame, text="Paket Önbelleğini Temizle", command=lambda:self.go("clean"))
-            self.button4 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go("remove"))
-            self.button5 = ui.CTkButton(self.frame, text="Bozuk Bağımlılıkları Düzelt", command=lambda:self.go("fix"))
-            self.button6 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go("history"))
-            self.button7 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go("list"))
-            self.button8 = ui.CTkButton(self.frame, text="Kurulu Yaprakları Listele", command=lambda:self.go("list2"))
-        if not os.path.isfile(fedora):
-            self.button8.configure(state="disabled")
-        if os.path.isfile(fedora):
-            self.button5.configure(state="disabled")
-        if os.path.isfile(arch):
-            self.button2.configure(state="disabled")
-        if os.path.isfile(solus):
-            self.button2.configure(state="disabled")
-            self.button5.configure(state="disabled")
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button5.grid(row=4, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button6.grid(row=5, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button7.grid(row=6, column=0, sticky="nsew", pady=(0, 2.5), padx=(10, 0))
-        self.button8.grid(row=7, column=0, sticky="nsew", padx=(10, 0))
-    def do(self, operation: str):
-        self.button1.configure(state="disabled")
-        self.button2.configure(state="disabled")
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        self.button5.configure(state="disabled")
-        self.button6.configure(state="disabled")
-        self.button7.configure(state="disabled")
-        if os.path.isfile(fedora):
-            self.button8.configure(state="disabled")
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            if operation == 'update':
-                add_operation(f"Updating All Packages", self.time)
-            elif operation == "dist_sync":
-                add_operation(f"Synchronizing Distribution", self.time)
-            elif operation == "clean":
-                add_operation(f"Cleaning Up Package Cache", self.time)
-            elif operation == "remove":
-                add_operation(f"Removing Unnecessary Packages", self.time)
-            elif operation == "fix":
-                add_operation(f"Fixing Broken Dependencies", self.time)
-            elif operation == "history":
-                add_operation(f"Showing History", self.time)
-            elif operation == "list":
-                add_operation(f"Listing Installed Packages", self.time)
-            elif operation == "list2":
-                add_operation(f"Listing Installed Leaves", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'update':
-                add_operation(f"Tüm Paketler Güncelleniyor", self.time)
-            elif operation == "dist_sync":
-                add_operation(f"Dağıtım Senkronize Ediliyor", self.time)
-            elif operation == "clean":
-                add_operation(f"Paket Önbelleği Temizleniyor", self.time)
-            elif operation == "remove":
-                add_operation(f"Gereksiz Paketler Kaldırılıyor", self.time)
-            elif operation == "fix":
-                add_operation(f"Bozuk Bağımlılıklar Düzeltiliyor", self.time)
-            elif operation == "history":
-                add_operation(f"Geçmiş Gösteriliyor", self.time)
-            elif operation == "list":
-                add_operation(f"Kurulu Paketler Listeleniyor", self.time)
-            elif operation == "list2":
-                add_operation(f"Kurulu Yapraklar Listeleniyor", self.time)
-        if os.path.isfile(debian):
-            if operation == 'update':
-                self.command = 'pkexec apt -y upgrade'
-            elif operation == "dist_sync":
-                self.command = 'pkexec apt -y dist-upgrade'
-            elif operation == "clean":
-                self.command = 'pkexec apt-get -y- autoclean'
-            elif operation == "remove":
-                self.command = 'pkexec apt -y autoremove'
-            elif operation == "fix":
-                self.command = 'pkexec bash -c "apt-get -y install -f ; dpkg --configure -a ; aptitude -y install"'
-            elif operation == "history":
-                self.command = 'cat /var/log/dpkg.log'
-            elif operation == "list":
-                self.command = 'dpkg --list | grep ^i'
-        elif os.path.isfile(fedora):
-            if operation == 'update':
-                self.command = 'pkexec dnf5 -y --nogpgcheck upgrade'
-            elif operation == "dist_sync":
-                self.command = 'pkexec dnf5 -y --nogpgcheck distro-sync'
-            elif operation == "clean":
-                self.command = 'pkexec dnf5 -y --nogpgcheck clean all'
-            elif operation == "remove":
-                self.command = 'pkexec dnf5 -y --nogpgcheck autoremove'
-            elif operation == "history":
-                self.command = 'dnf5 history list'
-            elif operation == "list":
-                self.command = 'dnf5 list --installed'
-            elif operation == "list2":
-                self.command = 'dnf5 leaves'
-        elif os.path.isfile(solus):
-            if operation == 'update':
-                self.command = 'pkexec eopkg -y upgrade'
-            elif operation == "clean":
-                self.command = 'pkexec eopkg -y dc'
-            elif operation == "remove":
-                self.command = 'pkexec eopkg -y rmf'
-            elif operation == "history":
-                self.command = 'eopkg history'
-            elif operation == "list":
-                self.command = 'eopkg list-installed'
-        elif os.path.isfile(arch):
-            if operation == 'update':
-                self.command = 'pkexec pacman --noconfirm -Syu'
-            elif operation == "clean":
-                self.command = 'pkexec pacman --noconfirm -Scc'
-            elif operation == "remove":
-                self.command = 'pacman --noconfirm -Qdtq | pacman --noconfirm -Rs -'
-            elif operation == "fix":
-                self.command = 'pacman --noconfirm -Dk'
-            elif operation == "history":
-                self.command = 'cat /var/log/pacman.log'
-            elif operation == "list":
-                self.command = 'pacman -Q'
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(self.command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")
-        if os.path.isfile(en):
-            if operation == 'update':
-                delete_operation(f"Updating All Packages", self.time)
-            elif operation == "dist_sync":
-                delete_operation(f"Synchronizing Distribution", self.time)
-            elif operation == "clean":
-                delete_operation(f"Cleaning Up Package Cache", self.time)
-            elif operation == "remove":
-                delete_operation(f"Removing Unnecessary Packages", self.time)
-            elif operation == "fix":
-                delete_operation(f"Fixing Broken Dependencies", self.time)
-            elif operation == "history":
-                delete_operation(f"Showing History", self.time)
-            elif operation == "list":
-                delete_operation(f"Listing Installed Packages", self.time)
-            elif operation == "list2":
-                delete_operation(f"Listing Installed Leaves", self.time)
-        elif os.path.isfile(tr):
-            if operation == 'update':
-                delete_operation(f"Tüm Paketler Güncelleniyor", self.time)
-            elif operation == "dist_sync":
-                delete_operation(f"Dağıtım Senkronize Ediliyor", self.time)
-            elif operation == "clean":
-                delete_operation(f"Paket Önbelleği Temizleniyor", self.time)
-            elif operation == "remove":
-                delete_operation(f"Gereksiz Paketler Kaldırılıyor", self.time)
-            elif operation == "fix":
-                delete_operation(f"Bozuk Bağımlılıklar Düzeltiliyor", self.time)
-            elif operation == "history":
-                delete_operation(f"Geçmiş Gösteriliyor", self.time)
-            elif operation == "list":
-                delete_operation(f"Kurulu Paketler Listeleniyor", self.time)
-            elif operation == "list2":
-                delete_operation(f"Yapraklar Listeleniyor", self.time)
-        self.button1.configure(state="normal")
-        if os.path.isfile(debian) or os.path.isfile(fedora):
-            self.button2.configure(state="normal")
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
-        if os.path.isfile(debian) or os.path.isfile(arch):
-            self.button5.configure(state="normal")
-        self.button6.configure(state="normal")
-        self.button7.configure(state="normal")
-        if os.path.isfile(fedora):
-            self.button8.configure(state="normal")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go(self, process: str):
-        t = threading.Thread(target=lambda:self.do(process), daemon=False)
-        t.start()
-
-class FlatpakScripts(ui.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.textbox = ui.CTkTextbox(self)
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        self.textbox.configure(state="disabled")
-        self.frame = ui.CTkFrame(self, fg_color="transparent")
-        self.frame.grid(row=0, column=1, sticky="nsew")
-        self.frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
-        if os.path.isfile(en):
-            self.button1 = ui.CTkButton(self.frame, text="Update All Packages", command=lambda:self.go("update -y"))
-            self.button2 = ui.CTkButton(self.frame, text="Remove Unnecessary Packages", command=lambda:self.go("uninstall --unused -y"))
-            self.button3 = ui.CTkButton(self.frame, text="Repair Flatpak Installation", command=lambda:self.go("repair"))
-            self.button4 = ui.CTkButton(self.frame, text="Show History", command=lambda:self.go("history"))
-            self.button5 = ui.CTkButton(self.frame, text="List Installed Packages", command=lambda:self.go("list"))
-        elif os.path.isfile(tr):
-            self.button1 = ui.CTkButton(self.frame, text="Tüm Paketleri Güncelle", command=lambda:self.go("update -y"))
-            self.button2 = ui.CTkButton(self.frame, text="Gereksiz Paketleri Kaldır", command=lambda:self.go("uninstall --unused -y"))
-            self.button3 = ui.CTkButton(self.frame, text="Flatpak Kurulumunu Onar", command=lambda:self.go("repair"))
-            self.button4 = ui.CTkButton(self.frame, text="Geçmişi Göster", command=lambda:self.go("history"))
-            self.button5 = ui.CTkButton(self.frame, text="Kurulu Paketleri Listele", command=lambda:self.go("list"))            
-        self.button1.grid(row=0, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button2.grid(row=1, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button3.grid(row=2, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button4.grid(row=3, column=0, sticky="nsew", pady=(0, 5), padx=(10, 0))
-        self.button5.grid(row=4, column=0, sticky="nsew", padx=(10, 0))
-    def do(self, operation: str):
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                return
-        self.button1.configure(state="disabled")
-        self.button2.configure(state="disabled")
-        self.button3.configure(state="disabled")
-        self.button4.configure(state="disabled")
-        self.button5.configure(state="disabled")
-        self.time = str(time.strftime("%H:%M:%S", time.localtime()))
-        if os.path.isfile(en):
-            if operation == "update -y":
-                add_operation(f"Updating All Packages (Flatpak)", self.time)
-            elif operation == "uninstall --unused -y":
-                add_operation(f"Removing Unnecessary Packages (Flatpak)", self.time)
-            elif operation == "repair":
-                add_operation(f"Repairing Flatpak Installation", self.time)
-            elif operation == "history":
-                add_operation(f"Getting History (Flatpak)", self.time)
-            elif operation == "list":
-                add_operation(f"Getting Installed Packages (Flatpak)", self.time)
-        elif os.path.isfile(tr):
-            if operation == "update -y":
-                add_operation(f"Tüm Paketler Güncelleniyor (Flatpak)", self.time)
-            elif operation == "uninstall --unused -y":
-                add_operation(f"Gereksiz Paketler Kaldırılıyor (Flatpak)", self.time)
-            elif operation == "repair":
-                add_operation(f"Flatpak Kurulumu Onarılıyor", self.time)
-            elif operation == "history":
-                add_operation(f"Geçmiş Alınıyor (Flatpak)", self.time)
-            elif operation == "list":
-                add_operation(f"Kurulu Paketler Alınıyor (Flatpak)", self.time)
-        if not os.path.isfile("/usr/bin/flatpak") and not os.path.isfile("/bin/flatpak"):
-            install_flatpak()
-            if ask_f == False:
-                if os.path.isfile(en):
-                    self.status.configure(text="Ready")
-                elif os.path.isfile(tr):
-                    self.status.configure(text="Hazır")
-                return
-        self.textbox.configure(state="normal")
-        self.textbox.delete("0.0", 'end')
-        self.textbox.configure(state="disabled")
-        with subprocess.Popen(f"flatpak {operation}", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True, bufsize=1) as self.run_command:
-            for self.out in self.run_command.stdout:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.out)
-                self.textbox.configure(state="disabled")
-            for self.err in self.run_command.stderr:
-                self.textbox.configure(state="normal")
-                self.textbox.insert("end", self.err)
-                self.textbox.configure(state="disabled")
-        if os.path.isfile(en):
-            if operation == "update -y":
-                delete_operation(f"Updating All Packages (Flatpak)", self.time)
-            elif operation == "uninstall --unused -y":
-                delete_operation(f"Removing Unnecessary Packages (Flatpak)", self.time)
-            elif operation == "repair":
-                delete_operation(f"Repairing Flatpak Installation", self.time)
-            elif operation == "history":
-                delete_operation(f"Getting History (Flatpak)", self.time)
-            elif operation == "list":
-                delete_operation(f"Getting Installed Packages (Flatpak)", self.time)
-        elif os.path.isfile(tr):
-            if operation == "update -y":
-                delete_operation(f"Tüm Paketler Güncelleniyor (Flatpak)", self.time)
-            elif operation == "uninstall --unused -y":
-                delete_operation(f"Gereksiz Paketler Kaldırılıyor (Flatpak)", self.time)
-            elif operation == "repair":
-                delete_operation(f"Flatpak Kurulumu Onarılıyor", self.time)
-            elif operation == "history":
-                delete_operation(f"Geçmiş Alınıyor (Flatpak)", self.time)
-            elif operation == "list":
-                delete_operation(f"Kurulu Paketler Alınıyor (Flatpak)", self.time)
-        self.button1.configure(state="normal")
-        self.button2.configure(state="normal")
-        self.button3.configure(state="normal")
-        self.button4.configure(state="normal")
-        self.button5.configure(state="normal")
-        if self.run_command.returncode == 0:
-            mb.showinfo(lang['globals']["information"][lang_], lang['globals']['completed'][lang_])
-        else:
-            mb.showerror(lang['globals']['error'][lang_], lang['globals']['failed'][lang_])
-    def go(self, process: str):
-        t = threading.Thread(target=lambda:self.do(process), daemon=False)
-        t.start()
+    def close(self, caller: str):
+        self.labels[f"page{caller}"].configure(text=f"{l_dict['operations']['process'][l_use]} {caller}")
+        self.outputs[f"page{caller}"].configure(state="normal")
+        self.outputs[f"page{caller}"].delete("0.0", 'end')
+        self.outputs[f"page{caller}"].configure(state="disabled")
+        self.closes[f"page{caller}"].configure(state="disabled")
+        self.useds[f"page{caller}"] = False
 
 class Store(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1633,24 +1617,36 @@ class Store(ui.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.tabview = ui.CTkTabview(self, corner_radius=25)
         self.tabview.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-        self.packages_tab = self.tabview.add(lang['store']['packages'][lang_])
-        self.deswmscs_tab = self.tabview.add(lang['store']['deswmscs'][lang_])
-        self.scripts_tab = self.tabview.add(lang['store']['scripts'][lang_])
-        self.systemdservices_tab = self.tabview.add(f"Systemd\n{lang['store']['services'][lang_]}")
+        self.packages_tab = self.tabview.add(l_dict['store']['packages'][l_use])
         self.packages_tab.grid_columnconfigure(0, weight=1)
         self.packages_tab.grid_rowconfigure(0, weight=1)
-        self.packages_frame = Packages(self.packages_tab, fg_color="transparent")
-        self.packages_frame.grid(row=0, column=0, sticky="nsew")
+        self.deswmscs_tab = self.tabview.add(l_dict['store']['deswmscs'][l_use])
         self.deswmscs_tab.grid_columnconfigure(0, weight=1)
         self.deswmscs_tab.grid_rowconfigure(0, weight=1)
-        self.deswmscs_frame = DEsWMsCs(self.deswmscs_tab, fg_color="transparent")
-        self.deswmscs_frame.grid(row=0, column=0, sticky="nsew")
+        self.scripts_tab = self.tabview.add(l_dict['store']['scripts'][l_use])
         self.scripts_tab.grid_columnconfigure(0, weight=1)
         self.scripts_tab.grid_rowconfigure(0, weight=1)
-        self.scripts_frame = Scripts(self.scripts_tab, fg_color="transparent")
-        self.scripts_frame.grid(row=0, column=0, sticky="nsew")
+        self.systemdservices_tab = self.tabview.add(f"Systemd\n{l_dict['store']['services'][l_use]}{l_dict['globals']['i'][l_use]}")
         self.systemdservices_tab.grid_columnconfigure(0, weight=1)
         self.systemdservices_tab.grid_rowconfigure(0, weight=1)
+        self.packages_thread = threading.Thread(target=self.packages, daemon=True)
+        self.packages_thread.start()
+        self.deswmcs_thread = threading.Thread(target=self.deswmcs, daemon=True)
+        self.deswmcs_thread.start()
+        self.scripts_thread = threading.Thread(target=self.scripts, daemon=True)
+        self.scripts_thread.start()
+        self.systemdservices_thread = threading.Thread(target=self.systemdservices, daemon=True)
+        self.systemdservices_thread.start()
+    def packages(self):
+        self.packages_frame = Packages(self.packages_tab, fg_color="transparent")
+        self.packages_frame.grid(row=0, column=0, sticky="nsew")
+    def deswmcs(self):
+        self.deswmscs_frame = DEsWMsCs(self.deswmscs_tab, fg_color="transparent")
+        self.deswmscs_frame.grid(row=0, column=0, sticky="nsew")
+    def scripts(self):
+        self.scripts_frame = Scripts(self.scripts_tab, fg_color="transparent")
+        self.scripts_frame.grid(row=0, column=0, sticky="nsew")
+    def systemdservices(self):
         self.systemdservices_frame = SystemdServices(self.systemdservices_tab, fg_color="transparent")
         self.systemdservices_frame.grid(row=0, column=0, sticky="nsew")
 
@@ -2133,38 +2129,41 @@ class Root(ui.CTk):
         self.tabview = ui.CTkTabview(self, corner_radius=50)
         self.tabview.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
         if dt.date.today().strftime("%d/%m") == "04/12":
-            if os.path.isfile(en):
-                self.title(f"GrelinTB says at {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}: Today is developer's (MuKonqi) birthday!")
-            elif os.path.isfile(tr):
-                self.title(f'Vakit {str(dt.datetime.now().strftime('%d/%m/%Y %H:%M:%S'))}, GrelinTB söyler: Bugün geliştiricinin (MuKonqi) doğum günü!')
+            self.title(f"GrelinTB - {str(dt.datetime.now().strftime('%d/%m/%Y'))}: {l_dict['root']['04-12-2008'][l_use]}")
         if dt.datetime.now().weekday() == 0:
             self.check_update_thread = threading.Thread(target=lambda:Sidebar.check_update(self, "startup"), daemon=True)
             self.check_update_thread.start()
-        if os.path.isfile(en):
-            self.tab_startup = self.tabview.add("Startup")
-            self.tab_notes_and_documents = self.tabview.add("Notes and Documents")
-            self.tab_store = self.tabview.add("Store")
-            self.tab_tools = self.tabview.add("Tools")
-        elif os.path.isfile(tr):
-            self.tab_startup = self.tabview.add("Başlangıç")
-            self.tab_notes_and_documents = self.tabview.add("Notlar ve Belgeler")
-            self.tab_store = self.tabview.add("Mağaza")
-            self.tab_tools = self.tabview.add("Araçlar")
-        self.tab_startup.grid_columnconfigure(0, weight=1)
-        self.tab_startup.grid_rowconfigure(0, weight=1)
-        self.startup_frame=Startup(self.tab_startup)
+        self.startup_tab = self.tabview.add(l_dict['root']['startup'][l_use])
+        self.startup_tab.grid_columnconfigure(0, weight=1)
+        self.startup_tab.grid_rowconfigure(0, weight=1)
+        self.nad_tab = self.tabview.add(l_dict['root']['nad'][l_use])
+        self.nad_tab.grid_columnconfigure(0, weight=1)
+        self.nad_tab.grid_rowconfigure(0, weight=1)
+        self.store_tab = self.tabview.add(l_dict['root']['store'][l_use])
+        self.store_tab.grid_columnconfigure(0, weight=1)
+        self.store_tab.grid_rowconfigure(0, weight=1)
+        self.tools_tab = self.tabview.add(l_dict['root']['tools'][l_use])
+        self.tools_tab.grid_columnconfigure(0, weight=1)
+        self.tools_tab.grid_rowconfigure(0, weight=1)
+        self.startup_thread = threading.Thread(target=self.startup, daemon=True)
+        self.startup_thread.start()
+        self.nad_thread = threading.Thread(target=self.nad, daemon=True)
+        self.nad_thread.start()
+        self.store_thread = threading.Thread(target=self.store, daemon=True)
+        self.store_thread.start()
+        self.tools_thread = threading.Thread(target=self.tools, daemon=True)
+        self.tools_thread.start()
+    def startup(self):
+        self.startup_frame=Startup(self.startup_tab)
         self.startup_frame.grid(row=0, column=0, sticky="nsew")
-        self.tab_notes_and_documents.grid_columnconfigure(0, weight=1)
-        self.tab_notes_and_documents.grid_rowconfigure(0, weight=1)
-        self.notes_and_documents_frame=NotesAndDocuments(self.tab_notes_and_documents)
-        self.notes_and_documents_frame.grid(row=0, column=0, sticky="nsew")
-        self.tab_store.grid_columnconfigure(0, weight=1)
-        self.tab_store.grid_rowconfigure(0, weight=1)
-        self.store_frame=Store(self.tab_store)
+    def nad(self):
+        self.nad_frame=NotesAndDocuments(self.nad_tab)
+        self.nad_frame.grid(row=0, column=0, sticky="nsew")
+    def store(self):
+        self.store_frame=Store(self.store_tab)
         self.store_frame.grid(row=0, column=0, sticky="nsew")
-        self.tab_tools.grid_columnconfigure(0, weight=1)
-        self.tab_tools.grid_rowconfigure(0, weight=1)
-        self.tools_frame=Tools(self.tab_tools)
+    def tools(self):
+        self.tools_frame=Tools(self.tools_tab)
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
 
 if __name__ == "__main__":
