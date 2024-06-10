@@ -10,7 +10,7 @@
     },
     "questions": {
         "reboot": ["Your system needs to be restarted for the changes to be completed.\nDo you want to reboot immediately?", "Değişikliklerin tamamlanması için sisteminizin yeniden başlatılması gerekiyor.\nHemen yeniden başlatmak ister misiniz?"],
-        "install": [" can't found on your system.\nWe can try installing it.\nDo you approve it?", " sisteminizde bulunamadı.\nBiz sisteminize onu yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?"],
+        "install": ["can't found on your system.\nWe can try installing it.\nDo you approve it?", "sisteminizde bulunamadı.\nBiz sisteminize onu yüklemeyi deneyebiliriz.\nOnaylıyor musunuz?"],
         "grelintb": ["GrelinTB's user interface needs restarting.\nDo you want to restart the GrelinTB user interface?", "GrelinTB'nin kullanıcı arayüzü yeniden başlatılmaya ihtiyaç duyuyor.\nGrelinTB kullanıcı arayüzünü yeniden başlatmak istiyor musunuz?"]
     },
     "operations": {
@@ -125,7 +125,7 @@
         "save-error": ["The note or document could not be saved.", "Not veya belge kaydedilemedi."]
     },
     "store": {
-        "packages": ["Packages", "Paketler"],
+        "packages": ["Package(s)", "Paket(ler)"],
         "deswmscs": ["Desktop Environments\nWindow Managers & Compositors", "Masaüstü Ortamları\nPencere Yöneticileri & Dizgiciler"],
         "scripts": ["Scripts", "Betikler"],
         "services": ["Services", "Servisler"],
@@ -156,17 +156,51 @@
         "stop": ["Stop", "Durdur"],
         "service-name-error": ["Please enter a service name.", "Lütfen bir servis adı girin."]
     },
-    "configure-bashrc-and-zshrc": {
-        
-    },
-    "change-pc-name": {
-
-    },
-    "about-some-distributions": {
-
-    },
-    "calcer": {
-
+    "tools": {
+        "bashrczshrc": ["Configure Bashrc and Zshrc", "Bashrc ve Zshrc'yi Yapılandır"],
+        "options": ["Options", "Seçenekler"],
+        "file": ["File", "Dosya"],
+        "add-without": ["Add Without Colors", "Renkler Olmadan Ekle"],
+        "add-with": ["Add With Colors", "Renklerle Ekle"],
+        "undo": ["Undo", "Geri Al"],
+        "welcome": ["Welcome Text", "Karşılama Metni"],
+        "system": ["System Informations", "Sistem Bilgileri"],
+        "memory": ["Memory Consumption", "Bellek Tüketimi"],
+        "last": ["Last Change", "Son Değişiklik"],
+        "session": ["Changes In This Session", "Bu Oturumdaki Değişiklikler"],
+        "all": ["All Changes", "Tüm Değişiklikler"],
+        "save": ["Save", "Kaydet"],
+        "hello": ["Hello", "Merhabalar"],
+        "computername": ["Change Computer's Name", "Bilgisayarın Adını Değiştir"],
+        "current": ["Current name of computer: ", "Bilgisayarın mevcut ismi: "],
+        "new": ["New Name for Computer", "Bilgisayar için Yeni İsim"],
+        "apply": ["Apply", "Uygula"],
+        "distros": ["About Some Distributions", "Bazı Dağıtımlar Hakkında"],
+        "source": ["The source of the informations are the distributions' own websites and my own knowledge and experience.", "Bilgilerin kaynağı dağıtımların kendi internet siteleri ve kendi bilgilerim ile deneyimleridir."],
+        "open": ["Open Website", "İnternet Sitesini Aç"],
+        "fedora": ["It's a semi-rolling distribution known for its innovative steps supported by Red Hat.\nIt's the base for new releases of RHEL.\nPackage variety is also good because of main repositories and COPR.\nThe rotations it offers are great for many purposes (desktop environment, etc.).\n\nPersonal note: It's my main distribution, my favorite. I recommend you to try it.\nThe fact that it is semi-rolling, the variety of packages, the rotations attract me.", 
+        "Red Hat tarafından desteklenen yenilikçi adımlarıyla tanınan yarı yuvarlanan dağıtım.\nKendisi RHEL'in yeni sürümleri için taban olmakta.\nGerek ana depolar gerek COPR sayesinde paket çeşitliliği de iyi.\nSunduğu döndürmeler birçok amaç (masaüstü ortamı vb.) için iyi.\nKişisel not: Kendisi ana dağıtımım, favorim. Denemenizi öneririm.\nYarı yuvarlanan olması, paket çeşitliliğinin bol olması, döndürmeleri beni cezbediyor."],
+        "pop": ["It's a Debian-based distribution developed by System76.\nIt also offers a separate download option for Nvidia on its website.\nIt uses customized GNOME but will switch to COSMIC.\nCOSMIC, I think, will be loved for its simple but desirable customization options.\nBy the way, the use of systemd-boot prevents it from being installed on non-UEFI systems.\n\nPersonal note: It's my favorite of the Debian-based ones, it's nice, it can be tried.",
+        "System76'nın geliştirdiği, Debian tabanlı bir dağıtım.\nSitesinde Nvidia için ayrı bir indirme seçeneği de sunuyor.\nÖzelleştirilmiş GNOME kullanmakta fakat COSMIC'e geçilecek.\nCOSMIC, bence basit ama istenen kişiselleştirme seçenekleriyle sevilecek.\nBu arada systemd-boot kullanması UEFI olmayan sistemlerde kurulmasını önlüyor.\n\nKişisel not: Kendisi Debian tabanlılar içinde favorim, güzeldir, denenebilir."],
+        "opensuse": ["The tool called YaST helps people in many matters.\nThe package variety and especially the up-to-dateness are good, it is a rolling distribution.\n\nPersonal note: I did not like the installation process very much.\nAlso, I do not like rolling distributions.\nBut because of YaST, it can be tried.", 
+        "YaST adlı aracı birçok konuda insanlara yardım eder.\nPaket çeşitliliği ve özellikle güncellik iyi, kendisi yuvarlanan bir dağıtım.\n\nKişisel not: Kurulum sürecini pek sevemedim.\nAyrıca yuvarlanan dağıtımları pek sevmem.\nAma YaST sayesinde denenebilir."],
+        "arch": ["", 
+        ""],
+        "gentoo": ["", 
+        ""],
+        "mint": ["", 
+        ""],
+        "mx": ["", 
+        ""],
+        "debian": ["", 
+        ""],
+        "ubuntu": ["", 
+        ""],
+        "calcer": ["Calcer", "Hesapçı"],
+        "previous": ["Previous Calculations", "Önceki Hesaplamalar"],
+        "delete": ["Delete History", "Geçmişi Sil"],
+        "clear": ["Clear", "Temizle"],
+        "error": ["Possible syntax error: ", "Muhtemel söz dizimi hatası: "]
     },
     "root": {
         "04-12-2008": ["Today is developer's (MuKonqi) birthday. Happy birthday!", "Bugün geliştircinin (MuKonqi) doğum günü. İyi ki doğdun!"],
