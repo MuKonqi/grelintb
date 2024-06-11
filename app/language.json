@@ -41,8 +41,11 @@
         "idle": ["Status: Idle", "Durum: Boşta"],
         "running": ["Status: Running", "Durum: Çalışıyor"],
         "updated": ["GrelinTB updated.", "GrelinTB güncellendi."],
+        "update-failed": ["GrelinTB failed to update.", "GrelinTB güncellenemedi."],
         "reset": ["GrelinTB reset.", "GrelinTB sıfırlandı."],
-        "uninstalled": ["GrelinTB uninstalled.", "GrelinTB kaldırıldı."]
+        "reset-failed": ["GrelinTB failed to reset.", "GrelinTB sıfırlanamadı."],
+        "uninstalled": ["GrelinTB uninstalled.", "GrelinTB kaldırıldı."],
+        "uninstall-failed": ["GrelinTB failed to uninstall.", "GrelinTB kaldırılamadı."]
     },
     "changelog": {
         "changelogs": ["Changelogs: ", "Değişiklik Günlükleri: "],

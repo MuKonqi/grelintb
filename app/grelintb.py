@@ -238,7 +238,6 @@ def install_app(appname: str, packagename: str):
     elif ask_a == False:
         mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['cancelled'][l_use])
 def restart_grelintb():
-    global ask_g
     ask_g = mb.askyesno(l_dict['globals']['warning'][l_use], l_dict['questions']['grelintb'][l_use])
     if ask_g == True:
         root.destroy()
@@ -346,9 +345,12 @@ class Sidebar(ui.CTkFrame):
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
     def update(self, string: str):
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
-        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
-        restart_grelintb()
+        self.command = subprocess.Popen("pkexec /usr/local/bin/grelintb/update.sh", shell=True)
+        if self.command.returncode == 0:
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
+            restart_grelintb()
+        else:
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["update-error"][l_use])
     def check_update(self, caller: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -386,14 +388,19 @@ class Sidebar(ui.CTkFrame):
         elif caller != "startup":
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
     def reset(self):
-        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
-        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
-        restart_grelintb()
+        self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
+        if self.command.returncode == 0:
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
+            restart_grelintb()
+        else:
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-error"][l_use])
     def uninstall(self):
-        root.destroy()
-        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
-        mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']['uninstalled'][l_use])
-        sys.exit(0)
+        self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
+        if self.command.returncode == 0:
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["uninstalled"][l_use])
+            root.destroy()
+        else:
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["uninstall-error"][l_use])
     def change_theme(self, new_theme: str):
         if new_theme == "GrelinTB":
             os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
