@@ -344,13 +344,13 @@ class Sidebar(ui.CTkFrame):
         self.credit_mb = mb.askyesno(l_dict['credit']['credit'][l_use], l_dict['credit']['label'][l_use])
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
-    def update(self, string: str):
+    def update(self):
         self.command = subprocess.Popen("pkexec /usr/local/bin/grelintb/update.sh", shell=True)
         if self.command.returncode == 0:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
             restart_grelintb()
         else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["update-error"][l_use])
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["update-failed"][l_use])
     def check_update(self, caller: str):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
@@ -367,9 +367,9 @@ class Sidebar(ui.CTkFrame):
             self.label1 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['major'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
             self.label2 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['minor'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
             if caller == 'sidebar':
-                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self, 'sidebar'))
+                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self))
             elif caller == "startup":
-                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self, "startup"))
+                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self))
             with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
                 self.cl_major_text = self.cl_major_file.read()
             with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
@@ -393,14 +393,14 @@ class Sidebar(ui.CTkFrame):
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
             restart_grelintb()
         else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-error"][l_use])
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-failed"][l_use])
     def uninstall(self):
         self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
         if self.command.returncode == 0:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["uninstalled"][l_use])
             root.destroy()
         else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["uninstall-error"][l_use])
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["uninstall-failed"][l_use])
     def change_theme(self, new_theme: str):
         if new_theme == "GrelinTB":
             os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
