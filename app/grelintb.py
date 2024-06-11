@@ -868,6 +868,7 @@ class Packages(ui.CTkFrame):
         for f_prettyname, f_name in self.flatpaks:
             self.flatpaks_number += 1
             ui.CTkButton(self.mainbar, text=f_prettyname, command=lambda f_name = f_name: self.insert(f_name)).grid(row=self.flatpaks_number, column=1, sticky="nsew", pady=(0, 10), padx=25)        
+        self.ask_f = None
         self.pages = {}
         self.labels = {}
         self.outputs = {}

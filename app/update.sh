@@ -84,7 +84,7 @@ function update {
     rm -rf /usr/local/bin/grelintb/
     mkdir /usr/local/bin/grelintb
     cd /tmp
-    git clone https://github.com/mukonqi/grelintb.git
+    git clone https://github.com/mukonqi/grelintb.git -b dev
     chmod +x grelintb/app/*
     cp grelintb/app/grelintb.py /usr/bin/grelintb
     cp grelintb/app/grelintb.desktop /usr/share/applications/
