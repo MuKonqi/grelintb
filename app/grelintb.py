@@ -180,7 +180,7 @@ except:
         import distro
     except:
         print("Installing other requirements with --break-system-packages parameter...")
-        os.system(f"pip install -r {requirements} ; {__file__}")
+        os.system(f"pip install -r {requirements} --break-system-packages ; {__file__}")
         sys.exit(0)
 
 if os.path.isfile(system):
