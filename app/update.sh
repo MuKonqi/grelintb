@@ -43,42 +43,6 @@ function update {
     if ! [ -d /usr/local/bin/ ]; then
         mkdir /usr/local/bin/
     fi
-        function install_git {
-        if [ -f /etc/debian_version ]; then
-            pkexec apt -y install git
-        elif [ -f /etc/solus-release ]; then
-            pkexec eopkg install git
-        elif [ -f /etc/arch-release ]; then
-            pkexec pacman --noconfirm -S git
-        fi
-    }
-    if [[ ! -f /bin/git ]] && [[ ! -f /usr/bin/git ]]; then
-        install_git
-    fi
-    function install_pip {
-        if [ -f /etc/debian_version ]; then
-            pkexec apt -y install pip
-        elif [ -f /etc/solus-release ]; then
-            pkexec eopkg install pip
-        elif [ -f /etc/arch-release ]; then
-            pkexec pacman --noconfirm -S pip
-        fi
-    }
-    if [[ ! -f /bin/pip ]] && [[ ! -f /usr/bin/pip ]]; then
-        install_pip
-    fi
-    function install_python3 {
-        if [ -f /etc/debian_version ]; then
-            pkexec apt -y install python3
-        elif [ -f /etc/solus-release ]; then
-            pkexec eopkg install python3
-        elif [ -f /etc/arch-release ]; then
-            pkexec pacman  --noconfirm -S python3
-        fi
-    }
-    if [[ ! -f /bin/python3 ]] && [[ ! -f /usr/bin/python3 ]]; then
-        install_python3
-    fi
     rm /usr/bin/grelintb
     rm /usr/share/applications/grelintb.desktop
     rm -rf /usr/local/bin/grelintb/

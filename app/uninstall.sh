@@ -40,7 +40,8 @@ function uninstall {
     rm /usr/bin/grelintb
     rm /usr/share/applications/grelintb.desktop
     rm -rf /usr/local/bin/grelintb/
-    echo -e "GrelinTB was uninstalled from your system."
+    echo -e "GrelinTB uninstalled."
+    exit 0
 }
 if  [ -f /etc/debian_version ]; then
     uninstall

@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
+
 import os
 import sys
 import locale
@@ -26,6 +27,7 @@ import socket
 import platform
 import time
 import json
+
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -183,6 +185,7 @@ except:
         os.system(f"pip install -r {requirements} --break-system-packages ; {__file__}")
         sys.exit(0)
 
+
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -199,6 +202,7 @@ elif os.path.isfile(blue):
     ui.set_default_color_theme('blue')
 elif os.path.isfile(green):
     ui.set_default_color_theme('green')
+
 
 def update_status():
     if process_number <= 0:
@@ -346,6 +350,7 @@ class Sidebar(ui.CTkFrame):
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
     def update(self):
         self.command = subprocess.Popen("pkexec /usr/local/bin/grelintb/update.sh", shell=True)
+        self.command.communicate()
         if self.command.returncode == 0:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
             restart_grelintb()
@@ -389,6 +394,7 @@ class Sidebar(ui.CTkFrame):
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
     def reset(self):
         self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
+        self.command.communicate()
         if self.command.returncode == 0:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
             restart_grelintb()
@@ -396,6 +402,7 @@ class Sidebar(ui.CTkFrame):
             mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-failed"][l_use])
     def uninstall(self):
         self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
+        self.command.communicate()
         if self.command.returncode == 0:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["uninstalled"][l_use])
             root.destroy()
@@ -1925,46 +1932,39 @@ class Root(ui.CTk):
         self.tools_frame=Tools(self.tools_tab)
         self.tools_frame.grid(row=0, column=0, sticky="nsew")
 
+
 if __name__ == "__main__":
     if "-h" in sys.argv[1:] or '--help' in sys.argv[1:]:
         print(f"{l_dict['cli']['copyright'][l_use]}\n{l_dict['cli']['welcome'][l_use]}{username}!\n{l_dict['cli']['information'][l_use]}\n{l_dict['cli']['version-info'][l_use]}{version_current}\n{l_dict['cli']['developer-info'][l_use]}\n{l_dict['cli']['license-info'][l_use]}\n{l_dict['cli']['credit-info'][l_use]}\n{l_dict['cli']['parameters'][l_use]}\n{l_dict['cli']['help'][l_use]}\n{l_dict['cli']['info'][l_use]}\n{l_dict['cli']['changelog'][l_use]}\n{l_dict['cli']['developer'][l_use]}\n{l_dict['cli']['license'][l_use]}\n{l_dict['cli']['credit'][l_use]}\n{l_dict['cli']['update'][l_use]}\n{l_dict['cli']['reset'][l_use]}\n{l_dict['cli']['uninstall'][l_use]}\n{l_dict['cli']['none'][l_use]}")
-        sys.exit(0)
     elif "-i" in sys.argv[1:] or "--info" in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io/grelintb/index.html", shell=True)
-        sys.exit(0)
     elif '-ch' in sys.argv[1:] or '--changelog' in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as cl_major_file:
             cl_major_text = cl_major_file.read()
         with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as cl_minor_file:
             cl_minor_text = cl_minor_file.read()
         print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{cl_major_text}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{cl_minor_text}")
-        sys.exit(0)
     elif '-dev' in sys.argv[1:] or '--developer' in sys.argv[1:]:
         subprocess.Popen("xdg-open https://mukonqi.github.io", shell=True)
-        sys.exit(0)
     elif '-l' in sys.argv[1:] or "--license" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
             print(l_file.read())
-        sys.exit(0)
     elif '-c' in sys.argv[1:] or '--credit' in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
-        sys.exit(0)
     elif 'up' in sys.argv[1:] or 'update' in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
             print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
             question = input(l_dict['cli']['want'][l_use])
             if question.lower() == "y" or question.lower() == "e":
-                os.system("pkexec /usr/local/bin/grelintb/update.sh")          
+                os.system("pkexec /usr/local/bin/grelintb/update.sh")     
         else:
             print(l_dict['changelog']['up-to-date'][l_use])
-        sys.exit(0)
     elif 'rs' in sys.argv[1:] or 'reset' in sys.argv[1:]:
         os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
-        sys.exit(0)
     elif 'un' in sys.argv[1:] or 'uninstall' in sys.argv[1:]:
         os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
-        sys.exit(0)
     else:
         root = Root(className="grelintb")
         root.mainloop()
+    sys.exit(0)
