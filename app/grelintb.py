@@ -31,20 +31,45 @@ debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
 solus = "/etc/solus-release"
 arch = "/etc/arch-release"
-requirements = "/home/mukonqi/works/grelintb/app/requirements.txt"
+requirements = "/usr/local/bin/grelintb/requirements.txt"
+username = getpass.getuser()
+config = f"/home/{username}/.config/grelintb/"
+local = f"/home/{username}/.local/share/grelintb/"
+notes = f"/home/{username}/Notes/"
+en = f"/home/{username}/.config/grelintb/language/en.txt"
+tr = f"/home/{username}/.config/grelintb/language/tr.txt"
+system = f"/home/{username}/.config/grelintb/appearance/system.txt"
+light = f"/home/{username}/.config/grelintb/appearance/light.txt"
+dark = f"/home/{username}/.config/grelintb/appearance/dark.txt"
+grelintb = f"/home/{username}/.config/grelintb/theme/grelintb.txt"
+random = f"/home/{username}/.config/grelintb/theme/random.txt"
+dark_blue = f"/home/{username}/.config/grelintb/theme/dark_blue.txt"
+blue = f"/home/{username}/.config/grelintb/theme/blue.txt"
+green = f"/home/{username}/.config/grelintb/theme/green.txt"
 process_number = 0
 current_operations = []
-
-if not os.path.isfile(debian) and not os.path.isfile(fedora) and not os.path.isfile(solus) and os.path.isfile(arch):
+if os.path.isfile(debian):
+    pkg_type = "DEB"
+    pkg_mngr = "APT & DPKG"
+elif os.path.isfile(fedora):
+    pkg_type = "RPM"
+    pkg_mngr = "DNF"
+elif os.path.isfile(solus):
+    pkg_type = "EOPKG"
+    pkg_mngr = "EOPKG"
+elif os.path.isfile(arch):
+    pkg_type = "Pacman"
+    pkg_mngr = "Pacman"
+else:
     print("The distribution you are using is not supported from GrelinTB. Please use Debian GNU/Linux, Fedora Linux, Solus and Arch Linux based distributions for GrelinTB. (1)")
     sys.exit(1)
 try:
     with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
-        version_current = version_file.readline()
+        version_current = version_file.read().replace("\n", "")
 except:
     print("Version file not found. (2)")
     sys.exit(2)
-if not os.path.isfile(requirements):
+if not os.path.isfile(requirements) and not os.path.isfile("/home/mukonqi/works/grelintb/app/requirements.txt"):
     print("Requirements file not found. (3)")
     sys.exit(3)
 if "root" in sys.argv[1:]:
@@ -58,6 +83,56 @@ if "root" in sys.argv[1:]:
 elif os.getuid() == 0:
     print("GrelinTB already asks you for root rights when the need arises. (5)")
     sys.exit(5)
+if not os.path.isdir(config):
+    os.system(f"mkdir {config}")
+if not os.path.isdir(local):
+    os.system(f"mkdir {local}")
+if not os.path.isdir(f"{config}language/") or (not os.path.isfile(en) and not os.path.isfile(tr)):
+    if locale.getlocale()[0] == "tr_TR":
+        os.system(f"cd {config} ; mkdir language ; cd language ; touch tr.txt")
+    else:
+        os.system(f"cd {config} ; mkdir language ; cd language ; touch en.txt")
+if not os.path.isdir(f"{config}appearance/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
+    os.system(f"cd {config} ; mkdir appearance ; cd appearance ; touch system.txt")
+if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(grelintb) and not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
+    os.system(f"cd {config} ; mkdir theme ; cd theme ; touch grelintb.txt")
+if not os.path.isdir(notes):
+    os.system(f"mkdir {notes}")
+if not os.path.isdir(f"{notes}.backups"):
+    os.system(f"mkdir {notes}.backups")
+if not os.path.isdir(f"{local}backups"):
+    os.system(f"cd {local} ; mkdir backups")
+if not os.path.isdir(f"{local}backups/bashrc"):
+    os.system(f"cd {local}backups ; mkdir bashrc")
+if not os.path.isdir(f"{local}backups/zshrc"):
+    os.system(f"cd {local}backups ; mkdir zshrc")
+if not os.path.isfile(f"/home/{username}/.bashrc"):
+    os.system(f"cd /home/{username} ; touch .bashrc")
+if not os.path.isfile(f"/home/{username}/.zshrc"):
+    os.system(f"cd /home/{username} ; touch .zshrc")
+if not os.path.isfile(f"{local}backups/bashrc/first"):
+    os.system(f"cp /home/{username}/.bashrc {local}backups/bashrc/first")
+if not os.path.isfile(f"{local}backups/zshrc/first"):
+    os.system(f"cp /home/{username}/.zshrc {local}backups/zshrc/first")
+os.system(f"cp /home/{username}/.bashrc {local}backups/bashrc/session")
+os.system(f"cp /home/{username}/.zshrc {local}backups/zshrc/session")
+if os.path.isfile(en):
+    l_use = 0
+elif os.path.isfile(tr):
+    l_use = 1
+try:
+    if "set-language" in sys.argv[1:] or not os.path.isfile("/usr/local/bin/grelintb/language.json"):
+        with open("/home/mukonqi/works/grelintb/app/language.json", "r") as language_file:
+            l_read = language_file.read()
+    else:
+        with open("/usr/local/bin/grelintb/language.json", "r") as language_file:
+            l_read = language_file.read()
+    l_dict = json.loads(l_read, object_pairs_hook=dict)
+except:
+    print("Language file not found. (6)")
+    sys.exit(6)
+if "set-version" in sys.argv[1:]:
+    version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
 
 try:
     from tkinter import messagebox as mb
@@ -107,79 +182,7 @@ except:
         print("Installing other requirements with --break-system-packages parameter...")
         os.system(f"pip install -r {requirements} ; {__file__}")
         sys.exit(0)
-        
-username = getpass.getuser()
-config = f"/home/{username}/.config/grelintb/"
-local = f"/home/{username}/.local/share/grelintb/"
-notes = f"/home/{username}/Notes/"
-en = f"/home/{username}/.config/grelintb/language/en.txt"
-tr = f"/home/{username}/.config/grelintb/language/tr.txt"
-system = f"/home/{username}/.config/grelintb/appearance/system.txt"
-light = f"/home/{username}/.config/grelintb/appearance/light.txt"
-dark = f"/home/{username}/.config/grelintb/appearance/dark.txt"
-grelintb = f"/home/{username}/.config/grelintb/theme/grelintb.txt"
-random = f"/home/{username}/.config/grelintb/theme/random.txt"
-dark_blue = f"/home/{username}/.config/grelintb/theme/dark_blue.txt"
-blue = f"/home/{username}/.config/grelintb/theme/blue.txt"
-green = f"/home/{username}/.config/grelintb/theme/green.txt"
-if os.path.isfile(debian):
-    pkg_type = "DEB"
-    pkg_mngr = "APT & DPKG"
-elif os.path.isfile(fedora):
-    pkg_type = "RPM"
-    pkg_mngr = "DNF"
-elif os.path.isfile(solus):
-    pkg_type = "EOPKG"
-    pkg_mngr = "EOPKG"
-elif os.path.isfile(arch):
-    pkg_type = "Pacman"
-    pkg_mngr = "Pacman"
 
-if not os.path.isdir(config):
-    os.system(f"mkdir {config}")
-if not os.path.isdir(local):
-    os.system(f"mkdir {local}")
-if not os.path.isdir(f"{config}language/") or (not os.path.isfile(en) and not os.path.isfile(tr)):
-    if locale.getlocale()[0] == "tr_TR":
-        os.system(f"cd {config} ; mkdir language ; cd language ; touch tr.txt")
-    else:
-        os.system(f"cd {config} ; mkdir language ; cd language ; touch en.txt")
-if not os.path.isdir(f"{config}appearance/") or (not os.path.isfile(system) and not os.path.isfile(light) and not os.path.isfile(dark)):
-    os.system(f"cd {config} ; mkdir appearance ; cd appearance ; touch system.txt")
-if not os.path.isdir(f"{config}theme/") or (not os.path.isfile(grelintb) and not os.path.isfile(random) and not os.path.isfile(dark_blue) and not os.path.isfile(blue) and not os.path.isfile(green)):
-    os.system(f"cd {config} ; mkdir theme ; cd theme ; touch grelintb.txt")
-if not os.path.isdir(notes):
-    os.system(f"mkdir {notes}")
-if not os.path.isdir(f"{notes}.backups"):
-    os.system(f"mkdir {notes}.backups")
-if not os.path.isdir(f"{local}backups"):
-    os.system(f"cd {local} ; mkdir backups")
-if not os.path.isdir(f"{local}backups/bashrc"):
-    os.system(f"cd {local}backups ; mkdir bashrc")
-if not os.path.isdir(f"{local}backups/zshrc"):
-    os.system(f"cd {local}backups ; mkdir zshrc")
-if not os.path.isfile(f"/home/{username}/.bashrc"):
-    os.system(f"cd /home/{username} ; touch .bashrc")
-if not os.path.isfile(f"/home/{username}/.zshrc"):
-    os.system(f"cd /home/{username} ; touch .zshrc")
-if not os.path.isfile(f"{local}backups/bashrc/first"):
-    os.system(f"cp /home/{username}/.bashrc {local}backups/bashrc/first")
-if not os.path.isfile(f"{local}backups/zshrc/first"):
-    os.system(f"cp /home/{username}/.zshrc {local}backups/zshrc/first")
-os.system(f"cp /home/{username}/.bashrc {local}backups/bashrc/session")
-os.system(f"cp /home/{username}/.zshrc {local}backups/zshrc/session")
-
-if os.path.isfile(en):
-    l_use = 0
-elif os.path.isfile(tr):
-    l_use = 1
-try:
-    with open("/home/mukonqi/works/grelintb/app/language.json", "r") as language_file:
-        l_read = language_file.read()
-    l_dict = json.loads(l_read, object_pairs_hook=dict)
-except:
-    print("Language file not found. (6)")
-    sys.exit(6)
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -196,10 +199,6 @@ elif os.path.isfile(blue):
     ui.set_default_color_theme('blue')
 elif os.path.isfile(green):
     ui.set_default_color_theme('green')
-if "sv" in sys.argv[1:]:
-    version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
-if "st" in sys.argv[1:]:
-    ui.set_default_color_theme("/home/mukonqi/works/grelintb/app/theme.json")
 
 def update_status():
     if process_number <= 0:
@@ -306,7 +305,8 @@ class Sidebar(ui.CTkFrame):
         self.window.minsize(540, 540)
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
-        self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
+        self.frame = ui.CTkFrame(self.window, fg_color="transparent")
+        self.frame.grid_rowconfigure((1, 3), weight=1)
         self.frame.grid_columnconfigure(0, weight=1)
         self.frame.grid(row=0, column=0, sticky="nsew")
         self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_current}")
@@ -322,7 +322,7 @@ class Sidebar(ui.CTkFrame):
         self.textbox2 = ui.CTkTextbox(self.frame)
         self.textbox2.insert("0.0", self.cl_minor_text)
         self.textbox2.configure(state="disabled")
-        self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+        self.label1.grid(row=0, column=0, sticky="nsew", pady=(10, 5))
         self.textbox1.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
         self.label2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
         self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
@@ -357,7 +357,8 @@ class Sidebar(ui.CTkFrame):
             self.window.minsize(540, 540)
             self.window.grid_rowconfigure(0, weight=1)
             self.window.grid_columnconfigure(0, weight=1)
-            self.frame = ui.CTkScrollableFrame(self.window, fg_color="transparent")
+            self.frame = ui.CTkFrame(self.window, fg_color="transparent")
+            self.frame.grid_rowconfigure((1, 3), weight=1)
             self.frame.grid_columnconfigure(0, weight=1)
             self.frame.grid(row=0, column=0, sticky="nsew")
             self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_latest}")
@@ -377,7 +378,7 @@ class Sidebar(ui.CTkFrame):
             self.textbox2 = ui.CTkTextbox(self.frame)
             self.textbox2.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
             self.textbox2.configure(state="disabled")
-            self.label1.grid(row=0, column=0, sticky="nsew", pady=(0, 5))
+            self.label1.grid(row=0, column=0, sticky="nsew", pady=(10, 5))
             self.textbox1.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.label2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
             self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
@@ -1771,94 +1772,6 @@ class Distros(ui.CTkFrame):
             self.tabview.tab(self.name).rowconfigure(0, weight=1)
             ui.CTkLabel(self.tabview.tab(self.name), text=self.content).grid(row=0, column=0, sticky="nsew")
             ui.CTkButton(self.tabview.tab(self.name), text=l_dict['tools']['open'][l_use], command=lambda website = self.website:subprocess.Popen(f"xdg-open {website}", shell=True)).grid(row=1, column=0, sticky="nsew", pady=(10, 0))
-        # if os.path.isfile(en):
-        #     self.text1 = ui.CTkLabel(self.distro1, text="MX Linux is a cooperative venture between the antiX and MX Linux communities."+
-        #         "\nDesigned to combine high stability and robust performance."+
-        #         "\nMX's graphical tools and tools from antiX make it easy to use.")
-        #     self.button1 = ui.CTkButton(self.distro1, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
-        #     self.text2 = ui.CTkLabel(self.distro2, text="Linux Mint is designed to work out of the box."+
-        #         "\nIt comes fully equipped with the applications most people need."+
-        #         "\n\nNote from GrelinTB developer: I really recommend it for first time Linux users.")
-        #     self.button2 = ui.CTkButton(self.distro2, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
-        #     self.text3 = ui.CTkLabel(self.distro3, text="EndeavorOS doesn't bother installing Arch manually."+
-        #         "\nwithout the hassle of installing it manually for both x86_64 and ARM systems."+
-        #         "\nAfter installation, you’re provided with good environment and guide.")
-        #     self.button3 = ui.CTkButton(self.distro3, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
-        #     self.text4 = ui.CTkLabel(self.distro4, text="Debian, although very old, is still supported."+
-        #         "\nToday, most of distributions are based on it."+
-        #         "\nDebian offers a very stable experience, but this makes it less up-to-date.")
-        #     self.button4 = ui.CTkButton(self.distro4, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
-        #     self.text5 = ui.CTkLabel(self.distro5, text="Manjaro is a distribution based on Arch Linux. It is aimed at the end user."+
-        #         "\n\nNote from GrelinTB developer: For Arch base, I suggest you look for other alternatives.")
-        #     self.button5 = ui.CTkButton(self.distro5, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
-        #     self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu targets many audiences. There are many variants."+
-        #         "\n\nNote from GrelinTB developer: In Ubuntu, telemetry is turned on by default, but it can be turned off."+
-        #         "\nAt worst, it forces you to use Snap. Personally, I prefer Flatpak over Snap."+
-        #         "\nPersonally, instead of Ubuntu, I recommend Linux Mint with Pop!_OS.")
-        #     self.button6 = ui.CTkButton(self.distro6, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
-        #     self.text7 = ui.CTkLabel(self.distro7, text="Fedora is powered by Red Hat. Fedora is the test environment for RHEL."+
-        #         "\nFedora has many spins for different desktop environments."+
-        #         "\n\nNote from GrelinTB developer: I think Fedora is the middle ground of ease, stability, up-to-date."+
-        #         "\nFedora is one of the distributions I recommend and like.")
-        #     self.button7 = ui.CTkButton(self.distro7, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
-        #     self.text8 = ui.CTkLabel(self.distro8, text="Pop!_OS is an Ubuntu based distribution developed by System76."+
-        #         "\nIt offers a separate download option for Nvidia users."+
-        #         "\nBy default it uses Systemd-boot instead of GRUB."+
-        #         "\nIt currently uses customized GNOME, but its own desktop environment (Cosmic) is being built.")
-        #     self.button8 = ui.CTkButton(self.distro8, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
-        #     self.text9 = ui.CTkLabel(self.distro9, text="Target audience is users migrating from Windows and Mac."+
-        #         "\nIts purpose is ease of use."+
-        #         "\n\nNote from GrelinTB developer: I find the Pro version logic absurd."+
-        #         "\nBecause I think Zorin OS has no advantages over the others.")
-        #     self.button9 = ui.CTkButton(self.distro9, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
-        #     self.text10 = ui.CTkLabel(self.distro10, text="The only distribution here that GrelinTB does not support."+
-        #         "\nIt targets many audiences and has its own tools. Its tools are often praised."+
-        #         "\nTumbleweed (more up-to-date), Leap (more stable).")
-        #     self.button10 = ui.CTkButton(self.distro10, text="Open Website", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
-        # elif os.path.isfile(tr):
-        #     self.text1 = ui.CTkLabel(self.distro1, text="MX Linux, antiX ve MX Linux toplulukları arasında bir işbirliği girişimidir."+
-        #         "\nYüksek kararlılık ve sağlam performansla birleştirmek için tasarlanmıştır."+
-        #         "\nMX'in grafiksel araçları ve antiX'in araçları kullanımı kolaylaştırır.")
-        #     self.button1 = ui.CTkButton(self.distro1, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://mxlinux.org/", shell=True))
-        #     self.text2 = ui.CTkLabel(self.distro2, text="Linux Mint, kutudan çıktığı gibi çalışmak üzere tasarlanmıştır."+
-        #         "\nÇoğu insanın ihtiyaç duyduğu uygulamalarla tam donanımlı olarak gelir."+
-        #         "\n\nGrelinTB geliştiricisinin notu: İlk kez Linux kullanacaklar için gerçekten öneririm.")
-        #     self.button2 = ui.CTkButton(self.distro2, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://linuxmint.com/", shell=True))
-        #     self.text3 = ui.CTkLabel(self.distro3, text="EndeavourOS, Arch'ı manuel olarak yükleme zahmetine sokmaz."+
-        #         "\nKendisi Arch deneyimi sağlayan Arch tabanlı bir dağıtımdır."+
-        #         "\nKurulumdan sonra, size iyi bir ortam ve rehber sağlanır.")
-        #     self.button3 = ui.CTkButton(self.distro3, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://endeavouros.com/", shell=True))
-        #     self.text4 = ui.CTkLabel(self.distro4, text="Debian, çok eski olmasına rağmen halen desteklenmektedir."+
-        #         "\nBugün çoğu dağıtım onu taban alır."+
-        #         "\nDebian çok stabil bir deneyim sunar fakat bu güncelliği azaltır.")
-        #     self.button4 = ui.CTkButton(self.distro4, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://debian.org/", shell=True))
-        #     self.text5 = ui.CTkLabel(self.distro5, text="Manjaro, Arch Linux tabanlı bir dağıtımdır. Son kullanıcıyı hedef alır."+
-        #         "\n\nGrelinTB geliştiricisinin notu: Arch tabanı için başka alternatiflere yönelmenizi öneririm.")
-        #     self.button5 = ui.CTkButton(self.distro5, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://manjaro.org/", shell=True))
-        #     self.text6 = ui.CTkLabel(self.distro6, text="Ubuntu birçok kitleyi hedefler. Birçok türevi vardır."+
-        #         "\n\nGrelinTB geliştiricisinin notu: Ubuntu'da varsayılan olarak telemetriler açık gelir ama kapıtabilir."+
-        #         "\nEn kötüsü ise sizi Snap kullanmaya zorlar. Şahsen ben Snap yerine Flatpak tercih ederim."+
-        #         "\nŞahsen Ubuntu yerine, Pop!_OS ile Linux Mint öneririm.")
-        #     self.button6 = ui.CTkButton(self.distro6, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://ubuntu.com/", shell=True))
-        #     self.text7 = ui.CTkLabel(self.distro7, text="Fedora, Red Hat tarafından desteklenmektedir. Fedora, RHEL için test ortamıdır."+
-        #         "\nFedora'nın farklı masaüstü ortamları için birçok döndürmesi vardır."+
-        #         "\n\nGrelinTB geliştiricisinin notu: Bence Fedora; kolaylığın, stabilliğin, güncelliğin tam ortasıdır."+
-        #         "\nFedora, önerdiğim ve sevdiğim dağıtımlardandır.")
-        #     self.button7 = ui.CTkButton(self.distro7, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://fedoraproject.org/", shell=True))
-        #     self.text8 = ui.CTkLabel(self.distro8, text="Pop!_OS, System76 tarafından geliştirilen Ubuntu tabanlı bir dağıtımdır."+
-        #         "\nNvidia kullanıcıları için ayrı bir indirme seçeneği sunar."+
-        #         "\nVarsayılan olarak GRUB yerine Systemd-boot kullanır."+
-        #         "\nŞu anda özelleştirilmiş GNOME kullanmakta fakat kendi masaüstü ortamı (Cosmic) yapılmakta.")
-        #     self.button8 = ui.CTkButton(self.distro8, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://pop.system76.com/", shell=True))
-        #     self.text9 = ui.CTkLabel(self.distro9, text="Hedef kitlesi Windows'tan ve Mac'ten geçen kullanıcılardır."+
-        #         "\nAmacı ise kullanım kolaylığıdır."
-        #         "\n\nGrelinTB geliştiricisinin notu: Ben Pro sürüm mantığını saçma buluyorum."+
-        #         "\nÇünkü bence Zorin OS'un diğerlerine göre artısı yok.")
-        #     self.button9 = ui.CTkButton(self.distro9, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://zorin.com/", shell=True))
-        #     self.text10 = ui.CTkLabel(self.distro10, text="Burada GrelinTB'nin desteklemediği tek dağıtım."+
-        #         "\nBirçok kitleyi hedef alır ve kendi araçları vardır. Araçları çok sık övülmektedir."+
-        #         "\nTumbleweed (daha güncel), Leap (daha stabil) olarak ikiye ayrılır.")
-        #     self.button10 = ui.CTkButton(self.distro10, text="İnternet Sitesini Aç", command=lambda:subprocess.Popen("xdg-open https://opensuse.org/", shell=True))
 
 class Calcer(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -1870,10 +1783,11 @@ class Calcer(ui.CTkFrame):
         self.history_button = ui.CTkButton(self, text=l_dict['tools']['delete'][l_use], command=self.delete_history)
         self.entry = ui.CTkEntry(self)
         self.history_text = ui.CTkTextbox(self, fg_color="transparent")
-        if os.path.isfile(f"{local}calc-history"):
-            with open(f"{local}calc-history", "r") as self.file:
-                self.output = self.file.read()
-            self.history_text.insert("0.0", self.output)
+        if not os.path.isfile(f"{local}calc-history"):
+            os.system(f"touch {local}calc-history")
+        with open(f"{local}calc-history", "r") as self.file:
+            self.output = self.file.read()
+        self.history_text.insert("0.0", self.output)
         self.history_text.configure(state="disabled")
         self.entry.grid(row=0, column=0, columnspan=4, sticky="nsew", pady=2.5, padx=2.5)
         self.button1 = ui.CTkButton(self, text="0", command=lambda:self.entry.insert("end", "0")).grid(row=1, column=0, sticky="nsew", pady=2.5, padx=2.5)
@@ -1961,7 +1875,6 @@ class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.title("GrelinTB")
-        self.geometry("960x540")
         self.minsize(960, 540)
         self.icon = pi(file = '/usr/local/bin/grelintb/icon.png')
         self.wm_iconphoto(True, self.icon)
