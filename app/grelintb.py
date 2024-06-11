@@ -386,14 +386,12 @@ class Sidebar(ui.CTkFrame):
         elif caller != "startup":
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
     def reset(self):
-        os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
         mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
         restart_grelintb()
     def uninstall(self):
         root.destroy()
-        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
-        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
         mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']['uninstalled'][l_use])
         sys.exit(0)
     def change_theme(self, new_theme: str):
@@ -479,15 +477,13 @@ class Startup(ui.CTkFrame):
         self.ram_usage.grid(row=9, column=2, pady=(0, 10))
         self.swap_usage.grid(row=9, column=3, pady=(0, 10))
         self.refresh_button.grid(row=1, column=0, pady=(10, 0), sticky="nsew")
-        self.weather_thread = threading.Thread(target=lambda:self.weather_def(), daemon=True)
+        self.weather_thread = threading.Thread(target=lambda:self.weather.configure(text=l_dict['startup']['weather'][l_use]+subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]), daemon=True)
         self.weather_thread.start()
         self.packages_thread = threading.Thread(target=lambda:self.packages_def(), daemon=True)
         self.packages_thread.start()
-        self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage_def(), daemon=True)
+        self.cpu_usage_thread = threading.Thread(target=lambda:self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}"), daemon=True)
         self.cpu_usage_thread.start()
         self.other_def("startup")
-    def weather_def(self):
-        self.weather.configure(text=l_dict['startup']['weather'][l_use]+subprocess.Popen('curl -H "Accept-en" wttr.in/?format="%l:+%C+%t+%w+%h+%M"', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])
     def packages_def(self):
         if os.path.isfile(debian):
             self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('dpkg --list | grep ^i | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (DEB), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
@@ -497,8 +493,6 @@ class Startup(ui.CTkFrame):
             self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('eopkg --list-installed | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (EOPKG), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
         elif os.path.isfile(arch):
             self.packages.configure(text=f"{l_dict['startup']['packages'][l_use]}{subprocess.Popen('pacman -Q | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (PACMAN), {subprocess.Popen('flatpak list | wc --lines', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]} (Flatpak)".replace("\n", ""))
-    def cpu_usage_def(self):
-        self.cpu_usage.configure(text=f"CPU: %{str(psutil.cpu_percent(5))}")
     def other_def(self, mode: str):
         self.temps_ok = False
         self.fans_ok = False
@@ -1876,6 +1870,7 @@ class Root(ui.CTk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.title("GrelinTB")
+        self.geometry("960x540")
         self.minsize(960, 540)
         self.icon = pi(file = '/usr/local/bin/grelintb/icon.png')
         self.wm_iconphoto(True, self.icon)
@@ -1942,8 +1937,7 @@ if __name__ == "__main__":
         sys.exit(0)
     elif '-l' in sys.argv[1:] or "--license" in sys.argv[1:]:
         with open("/usr/local/bin/grelintb/LICENSE.txt", "r") as l_file:
-            l_text = l_file.read()
-        print(l_text)
+            print(l_file.read())
         sys.exit(0)
     elif '-c' in sys.argv[1:] or '--credit' in sys.argv[1:]:
         subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048")
@@ -1959,12 +1953,10 @@ if __name__ == "__main__":
             print(l_dict['changelog']['up-to-date'][l_use])
         sys.exit(0)
     elif 'rs' in sys.argv[1:] or 'reset' in sys.argv[1:]:
-        os.system("pkexec /usr/local/bin/grelintb/reset.sh")
-        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
         sys.exit(0)
     elif 'un' in sys.argv[1:] or 'uninstall' in sys.argv[1:]:
-        os.system("pkexec /usr/local/bin/grelintb/uninstall.sh")
-        os.system(f"rm -rf /home/{username}/.config/grelintb")
+        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
         sys.exit(0)
     else:
         root = Root(className="grelintb")
