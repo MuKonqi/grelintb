@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import os
 import sys
 import locale
@@ -27,7 +26,6 @@ import socket
 import platform
 import time
 import json
-
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -184,7 +182,6 @@ except:
         print("Installing other requirements with --break-system-packages parameter...")
         os.system(f"pip install -r {requirements} --break-system-packages ; {__file__}")
         sys.exit(0)
-
 
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
@@ -349,9 +346,11 @@ class Sidebar(ui.CTkFrame):
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
     def update(self):
-        self.command = subprocess.Popen("pkexec /usr/local/bin/grelintb/update.sh", shell=True)
-        self.command.communicate()
-        if self.command.returncode == 0:
+        os.system("pkexec /usr/local/bin/grelintb/update.sh")
+        with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
+            version_current = version_file.read().replace("\n", "")
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        if version_latest == version_current:
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
             restart_grelintb()
         else:
@@ -393,17 +392,18 @@ class Sidebar(ui.CTkFrame):
         elif caller != "startup":
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
     def reset(self):
-        self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
-        self.command.communicate()
-        if self.command.returncode == 0:
+        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
+        with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
+            version_current = version_file.read().replace("\n", "")
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        if version_latest == version_current and not os.path.isdir(f"/home/{username}/.config/grelintb"):
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
             restart_grelintb()
         else:
             mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-failed"][l_use])
     def uninstall(self):
-        self.command = subprocess.Popen(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb", shell=True)
-        self.command.communicate()
-        if self.command.returncode == 0:
+        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
+        if not os.path.isfile("/usr/bin/grelintb") and not os.path.isfile("/usr/share/applications/grelintb.desktop") and not os.path.isdir("/usr/local/bin/grelintb"):
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["uninstalled"][l_use])
             root.destroy()
         else:
