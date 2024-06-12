@@ -128,7 +128,7 @@
         "save-error": ["The note or document could not be saved.", "Not veya belge kaydedilemedi."]
     },
     "store": {
-        "packages": ["Package(s)", "Paket(ler)"],
+        "packages": ["Packages", "Paketler"],
         "deswmscs": ["Desktop Environments\nWindow Managers & Compositors", "Masaüstü Ortamları\nPencere Yöneticileri & Dizgiciler"],
         "scripts": ["Scripts", "Betikler"],
         "services": ["Services", "Servisler"],
@@ -137,8 +137,8 @@
         "close": ["Close", "Kapat"],
         "all-slots-are-full": ["All the slots are full. At least close a output and try.", "Tüm slotlar dolu. En azından bir tane çıktıyı kapatıp deneyin."],
         "proprietary": ["\n(Proprietary)", "\n(Özel Mülk)"],
-        "packages-name-error": ["Please enter name(s) of package(s).", "Lütfen paket(ler)in ad(lar)ını girin."],
-        "deswmscs-name-error": ["Please select a desktop environment or window managers or a ompositors.", "Lütfen bir masaüstü ortamı ya da pencere yöneticisi ya da dizgici seçin."],
+        "packages-name-error": ["Please enter name of package(s).", "Lütfen paket(ler)in adını girin."],
+        "deswmscs-name-error": ["Please select a desktop environment or a window manager or a compositor.", "Lütfen bir masaüstü ortamı ya da pencere yöneticisi ya da dizgici seçin."],
         "dnf-nosupport": ["DNF doesn't support reinstalling groups.", "DNF grupları yeniden kurmayı desteklemez."],
         "update": ["Update All Packages", "Tüm Paketleri Güncelle"],
         "sync": ["Synchronize Distribution", "Dağıtımı Senkronize Et"],

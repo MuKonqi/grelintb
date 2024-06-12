@@ -266,12 +266,12 @@ def manage_grelintb(process, mode):
             mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar'][process][l_use])
             restart_grelintb()
         elif mode == "cli":
-            print(f"Successful! {l_dict['sidebar'][f"{process}-failed"][l_use]}")
+            print({l_dict['sidebar'][f"{process}-failed"][l_use]})
     else:
         if mode == "gui":
             mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar'][f"{process}-failed"][l_use])
         elif mode == "cli":
-            print(f"Error: {l_dict['sidebar'][f"{process}-failed"][l_use]} (7)")
+            print(f"{l_dict['sidebar'][f"{process}-failed"][l_use]} (7)")
             sys.exit(7)
 
 class Sidebar(ui.CTkFrame):
@@ -390,11 +390,6 @@ class Sidebar(ui.CTkFrame):
             self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_latest}")
             self.label1 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['major'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
             self.label2 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['minor'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-            self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:manage_grelintb("update", "gui"))
-            with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
-                self.cl_major_text = self.cl_major_file.read()
-            with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
-                self.cl_minor_text = self.cl_minor_file.read()
             self.textbox1 = ui.CTkTextbox(self.frame)
             self.textbox1.insert("0.0", str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]))
             self.textbox1.configure(state="disabled")
@@ -405,6 +400,7 @@ class Sidebar(ui.CTkFrame):
             self.textbox1.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
             self.label2.grid(row=2, column=0, sticky="nsew", pady=(0, 5))
             self.textbox2.grid(row=3, column=0, sticky="nsew", padx=10, pady=(0, 10))
+            self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:manage_grelintb("update", "gui"))
             self.button.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         elif caller != "startup":
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])

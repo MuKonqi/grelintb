@@ -1,6 +1,6 @@
 Name:           grelintb
 Version:        1.5.0
-Release:        20
+Release:        21
 Summary:        Great toolbox for some Linux distributions.
 License:        GPLv3+
 URL:            https://github.com/mukonqi/grelintb
@@ -46,10 +46,11 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 * Wed Jun 12 2024 MuKonqi (Muhammed S.) <mukonqi@gmail.com>
 --- General
 - The language system has completely changed: Now the language texts are pulled from a json file. This made the code cleaner.
-- Optimization has been done: All features now run as a separate thread. Also, the number of lines of code has been reduced from 2595 to 1970, although the interface has been greatly refreshed and beautified thanks to the use of dynamic variables and loops.
+- Optimization has been done: All features now run as a separate thread. Also, the number of lines of code has been reduced from 2595 to 1970, although the interface has been greatly refreshed and beautified because of using dynamic variables, loops etc.
 - Unnecessary message boxes etc. have been removed.
 - Fixed various bugs (e.g. incorrect detection for Arch Linux base).
 - Removed reset.sh file.
+- Removed the primary changelog.
 --- Sidebar
 - The change logs windows have been overhauled.
 - Changed “Ready” to “Idle” in the status text.
