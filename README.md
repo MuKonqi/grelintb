@@ -27,8 +27,8 @@
 - Creating (only for notes), editing, renaming, restoring (only for notes), deleting notes and documents.
 ### Store
 - Packages (DEB / RPM / EOPKG / Pacman and Flatpak): Searching, installing, reinstalling, uninstalling and updating recommend or any packages.
-- Desktop Environments, Window Managers & Compotisors: Installing, reinstalling, uninstalling and updating some desktop environemtns and window managers.
-- Scripts: Updating all packages, synchronizing distribution (only for APT & DPKG / DNF), cleaning package cache (only for APT & DPKG / DNF / EOPKG / Pacman), removing unnecessary packages, fixing broken dependencies (only for APT & DPKG / Pacman), repairing Flatpak installation (only for Flatpak), showing history, listing installed packages and listing leaves (only for DNF).
+- Desktop Environments, Window Managers & Compotisors: Installing, reinstalling, uninstalling and updating some desktop environemtns, window managers and compotisors.
+- Scripts (APT & DPKG / DNF / EOPKG / Pacman and Flatpak): Updating all packages, synchronizing distribution (only for APT & DPKG / DNF), cleaning package cache (only for APT & DPKG / DNF / EOPKG / Pacman), removing unnecessary packages, fixing broken dependencies (only for APT & DPKG / Pacman), repairing Flatpak installation (only for Flatpak), showing history, listing installed packages and listing leaves (only for DNF).
 - Systemd Services: Getting the status of any service or enabling, disabling, starting and stopping it.
 ### Tools
 - Configuring Bashrc and Zshrc.
@@ -74,7 +74,7 @@
 ![Systemd Services](./gallery/Systemd%20Services.png)
 ![Systemd Services (Example Slot)](./gallery/Systemd%20Services%20Slot.png)
 ![Configure Bashrc and Zshrc (Options)](./gallery/Configure%20Bashrc%20and%20Zshrc%20Options.png)
-![Configure Bashrc and Zshrc (File](./gallery/Configure%20Bashrc%20and%20Zshrc%20File.png)
+![Configure Bashrc and Zshrc (File)](./gallery/Configure%20Bashrc%20and%20Zshrc%20File.png)
 ![Change Computer's Name](./gallery/Change%20Computer's%20Name.png)
 ![About Some Distributions](./gallery/About%20Some%20Distributions.png)
 ![Calcer](./gallery/Calcer.png)
