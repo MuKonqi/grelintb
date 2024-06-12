@@ -1954,7 +1954,7 @@ if __name__ == "__main__":
     elif 'up' in sys.argv[1:] or 'update' in sys.argv[1:]:
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
-            print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
+            print(f" | {l_dict['changelog']['major'][l_use]}{version_latest}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n | {l_dict['changelog']['minor'][l_use]}{version_latest}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
             question = input(l_dict['cli']['want'][l_use])
             if question.lower() == "y" or question.lower() == "e":
                 manage_grelintb("update", "cli")  
