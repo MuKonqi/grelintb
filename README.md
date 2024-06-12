@@ -21,8 +21,7 @@
 - A list to changing language (English, Turkish).
 - A button to showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
 ### Startup
-- Showing warious informations (weather forecast, system, hardware usages, fans, tempatures, battery).
-- Refreshing these informations.
+- Showing various informations (weather forecast, system, hardware usages, fans, tempatures, battery) and refreshing these informations.
 ### Notes and Documents
 - Creating (only for notes), editing, renaming, restoring (only for notes), deleting notes and documents.
 ### Store

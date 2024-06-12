@@ -9,7 +9,7 @@ Source0:        %{name}-1.tar.gz
 Requires:       dnf5 python3 python3-tkinter python3-pip git curl coreutils xdg-utils
 
 %description
-GrelinTB comes with various tools. Here are examples: Useful informations about the system etc., a simple note and document editor, a simple store for packages and DEs and WMs, various scripts for package managers, a simple configuration tool for Bashrc and Zshrc, a tool to change the name of the computer, information about some distributions and a simple calcer.
+GrelinTB comes with various tools. Here are examples: Useful informations about the system etc., a note and document editor and manager, a store for packages and DEs and WMs and Compotisors, various scripts for package managers, a simple configuration tool for Bashrc and Zshrc, a tool to change the name of the computer, information about some distributions and a simple calcer.
 
 %prep
 %setup -q
