@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GrelinTB.  If not, see <https://www.gnu.org/licenses/>.
 
+
 import os
 import sys
 import locale
@@ -26,6 +27,7 @@ import socket
 import platform
 import time
 import json
+
 
 debian = "/etc/debian_version"
 fedora = "/etc/fedora-release"
@@ -134,6 +136,7 @@ except:
 if "set-version" in sys.argv[1:]:
     version_current = sys.argv[(sys.argv[1:].index("set-version") + 2)]
 
+
 try:
     from tkinter import messagebox as mb
     from tkinter import filedialog as fd
@@ -183,6 +186,7 @@ except:
         os.system(f"pip install -r {requirements} --break-system-packages ; {__file__}")
         sys.exit(0)
 
+
 if os.path.isfile(system):
     ui.set_appearance_mode("System")
 elif os.path.isfile(light):
@@ -206,6 +210,7 @@ def update_status():
         status.configure(text=l_dict['sidebar']['idle'][l_use])
     else:
         status.configure(text=f"{l_dict['sidebar']['running'][l_use]} ({process_number})")
+    
 def add_operation(operation: str, time: str):
     global current_operations, process_number
     process_number = process_number + 1
@@ -216,10 +221,12 @@ def delete_operation(operation: str, time: str):
     process_number = process_number - 1
     update_status()
     current_operations.remove([operation, time])
+
 def restart_system():
     ask_r = mb.askyesno(l_dict['globals']['warning'][l_use], l_dict['questions']['reboot'][l_use])
     if ask_r == True:
         os.system("pkexec reboot")
+
 def install_app(appname: str, packagename: str):
     global ask_a
     global process_number
@@ -238,11 +245,34 @@ def install_app(appname: str, packagename: str):
         delete_operation(f"{l_dict['operations']['install'][l_use]}: {appname}", time_process)
     elif ask_a == False:
         mb.showerror(l_dict['globals']['error'][l_use], l_dict['globals']['cancelled'][l_use])
+
 def restart_grelintb():
     ask_g = mb.askyesno(l_dict['globals']['warning'][l_use], l_dict['questions']['grelintb'][l_use])
     if ask_g == True:
         root.destroy()
         os.system(__file__)
+def manage_grelintb(process, mode):
+    if process == "update" or process == "reset":
+        os.system(f"pkexec /usr/local/bin/grelintb/update.sh")
+        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+        with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
+            version_current = version_file.read().replace("\n", "")
+    elif process == "uninstall":
+        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh")
+    if process == "reset" or process == "uninstall":
+        os.system(f"rm -rf {config}")
+    if (process == "update" and version_latest == version_current) or (process == "reset" and version_latest == version_current and not os.path.isdir(f"/home/{username}/.config/grelintb")) or (process == "reset" and not os.path.isfile("/usr/bin/grelintb") and not os.path.isfile("/usr/share/applications/grelintb.desktop") and not os.path.isdir("/usr/local/bin/grelintb")):
+        if mode == "gui":
+            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar'][process][l_use])
+            restart_grelintb()
+        elif mode == "cli":
+            print(f"Successful! {l_dict['sidebar'][f"{process}-failed"][l_use]}")
+    else:
+        if mode == "gui":
+            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar'][f"{process}-failed"][l_use])
+        elif mode == "cli":
+            print(f"Error: {l_dict['sidebar'][f"{process}-failed"][l_use]} (7)")
+            sys.exit(7)
 
 class Sidebar(ui.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -255,8 +285,8 @@ class Sidebar(ui.CTkFrame):
         self.license_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['license'][l_use]}GPLv3+", command=self.license, fg_color="transparent", text_color=["#000000", "#FFFFFF"])
         self.credit_b = ui.CTkButton(self, text=f"{l_dict['sidebar']['credit'][l_use]}G. M. Icons", command=self.credit, fg_color="transparent", text_color=["#000000", "#FFFFFF"])
         self.update_b = ui.CTkButton(self, text=l_dict['operations']['update'][l_use], command=lambda:self.check_update('sidebar'))
-        self.reset_b = ui.CTkButton(self, text=l_dict['operations']['reset'][l_use], command=self.reset)
-        self.uninstall_b = ui.CTkButton(self, text=l_dict['operations']['uninstall'][l_use], command=self.uninstall)
+        self.reset_b = ui.CTkButton(self, text=l_dict['operations']['reset'][l_use], command=lambda:manage_grelintb("reset", "gui"))
+        self.uninstall_b = ui.CTkButton(self, text=l_dict['operations']['uninstall'][l_use], command=lambda:manage_grelintb("reset", "gui"))
         self.theme_label = ui.CTkLabel(self, text=l_dict['sidebar']['theme'][l_use])
         self.theme_menu = ui.CTkOptionMenu(self, values=["GrelinTB", l_dict['sidebar']['random'][l_use], l_dict['sidebar']['dark-blue'][l_use], l_dict['sidebar']['blue'][l_use], l_dict['sidebar']['green'][l_use]], command=self.change_theme)
         self.appearance_label = ui.CTkLabel(self, text=l_dict['sidebar']['appearance'][l_use])
@@ -345,17 +375,7 @@ class Sidebar(ui.CTkFrame):
         self.credit_mb = mb.askyesno(l_dict['credit']['credit'][l_use], l_dict['credit']['label'][l_use])
         if self.credit_mb == True:
             subprocess.Popen(f"xdg-open https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aconstruction%3AFILL%400%3Bwght%40700%3BGRAD%40200%3Bopsz%4048", shell=True)
-    def update(self):
-        os.system("pkexec /usr/local/bin/grelintb/update.sh")
-        with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
-            version_current = version_file.read().replace("\n", "")
-        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        if version_latest == version_current:
-            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["updated"][l_use])
-            restart_grelintb()
-        else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["update-failed"][l_use])
-    def check_update(self, caller: str):
+    def check_update(self, caller):
         version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
         if version_latest != version_current:
             self.window = ui.CTkToplevel()
@@ -370,10 +390,7 @@ class Sidebar(ui.CTkFrame):
             self.window.title(f"{l_dict['changelog']['changelogs'][l_use]}{version_latest}")
             self.label1 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['major'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
             self.label2 = ui.CTkLabel(self.frame, text=f"{l_dict['changelog']['minor'][l_use]}{version_latest}", font=ui.CTkFont(size=14, weight="bold"))
-            if caller == 'sidebar':
-                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self))
-            elif caller == "startup":
-                self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:Sidebar.update(self))
+            self.button = ui.CTkButton(self.window, text=l_dict["operations"]["update"][l_use], command=lambda:manage_grelintb("update", "gui"))
             with open("/usr/local/bin/grelintb/major-changelog.txt", "r") as self.cl_major_file:
                 self.cl_major_text = self.cl_major_file.read()
             with open("/usr/local/bin/grelintb/minor-changelog.txt", "r") as self.cl_minor_file:
@@ -391,23 +408,6 @@ class Sidebar(ui.CTkFrame):
             self.button.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
         elif caller != "startup":
             mb.showinfo(l_dict['globals']['information'][l_use], l_dict['changelog']['up-to-date'][l_use])
-    def reset(self):
-        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
-        with open("/usr/local/bin/grelintb/version.txt", "r") as version_file:
-            version_current = version_file.read().replace("\n", "")
-        version_latest = subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/version.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
-        if version_latest == version_current and not os.path.isdir(f"/home/{username}/.config/grelintb"):
-            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["reset"][l_use])
-            restart_grelintb()
-        else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["reset-failed"][l_use])
-    def uninstall(self):
-        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
-        if not os.path.isfile("/usr/bin/grelintb") and not os.path.isfile("/usr/share/applications/grelintb.desktop") and not os.path.isdir("/usr/local/bin/grelintb"):
-            mb.showinfo(l_dict['globals']["information"][l_use], l_dict['sidebar']["uninstalled"][l_use])
-            root.destroy()
-        else:
-            mb.showerror(l_dict['globals']["error"][l_use], l_dict['sidebar']["uninstall-failed"][l_use])
     def change_theme(self, new_theme: str):
         if new_theme == "GrelinTB":
             os.system(f"rm {config}theme/* ; touch {config}theme/grelintb.txt")
@@ -1957,13 +1957,13 @@ if __name__ == "__main__":
             print(f" | {l_dict['changelog']['major'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/major-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}\n\n | {l_dict['changelog']['minor'][l_use]}{version_current}\n{str(subprocess.Popen('curl https://raw.githubusercontent.com/MuKonqi/grelintb/main/app/minor-changelog.txt', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True).communicate()[0])}")
             question = input(l_dict['cli']['want'][l_use])
             if question.lower() == "y" or question.lower() == "e":
-                os.system("pkexec /usr/local/bin/grelintb/update.sh")     
+                manage_grelintb("update", "cli")  
         else:
             print(l_dict['changelog']['up-to-date'][l_use])
     elif 'rs' in sys.argv[1:] or 'reset' in sys.argv[1:]:
-        os.system(f"pkexec /usr/local/bin/grelintb/reset.sh ; rm -rf /home/{username}/.config/grelintb")
+        manage_grelintb("reset", "cli")
     elif 'un' in sys.argv[1:] or 'uninstall' in sys.argv[1:]:
-        os.system(f"pkexec /usr/local/bin/grelintb/uninstall.sh ; rm -rf /home/{username}/.config/grelintb")
+        manage_grelintb("uninstall", "cli")
     else:
         root = Root(className="grelintb")
         root.mainloop()
