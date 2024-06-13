@@ -55,7 +55,7 @@ function install {
     exit 0
 }
 if [ -f /etc/debian_version ]; then
-    apt -y install python3 python3-tk python3-pip git curl xdg-utils
+    apt -y install python3 python3-tk python3-pip git curl coreutils xdg-utils
     install
 elif [ -f /etc/fedora-release ]; then
     cd /tmp
@@ -65,10 +65,10 @@ elif [ -f /etc/fedora-release ]; then
     echo -e "GrelinTB installed."
     exit 0
 elif [ -f /etc/solus-release ]; then
-    eopkg -y install python3 python3-tkinter pip git curl xdg-utils
+    eopkg -y install python3 python3-tkinter pip git curl coreutils xdg-utils
     install
 elif [ -f /etc/arch-release ]; then
-    pacman  --noconfirm -S python tk python-pip git curl xdg-utils
+    pacman  --noconfirm -S python tk python-pip git curl coreutils xdg-utils
     install
 else
     echo -e 'Error: The distribution you are using is not supported from GrelinTB. (2)'

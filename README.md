@@ -5,40 +5,40 @@
 
 ## Features
 ### Sidebar
-- A button with hidden style for showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).
-- A button with hidden style for showing version for opening current version's changelog.
-- A button with hidden style for opening [developer's website](https://mukonqi.github.io).
-- A button with hidden style for opening a window which showing license.
-- A button with hidden style for opening a window which showing credit.
-- A button for controling updates. If new version available, get the changelog of the new version and update to new version.
-- A button for resetting GrelinTB.
-- A button for uninstalling GrelinTB.
-- A list for changing color theme (random, dark blue, blue, green).
-- A list for Changing appearance mode (system, light, dark).
-- A list for Changing language (English, Turkish).
-- A button for showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
+- A button with hidden style to showing application's name for opening [GrelinTB's website](https://mukonqi.github.io/grelintb/index.html).
+- A button with hidden style to showing version for opening current version's changelog.
+- A button with hidden style to opening [developer's website](https://mukonqi.github.io).
+- A button with hidden style to opening a window which showing license.
+- A button with hidden style to opening a window which showing credit.
+- A button to controling updates. If new version available, get the changelogs of the new version and update to new version.
+- A button to resetting GrelinTB.
+- A button to uninstalling GrelinTB.
+- A label to show what the following setting is.
+- A list to changing theme (GrelinTB, random, dark blue, blue, green).
+- A label to show what the following setting is.
+- A list to changing appearance (system, light, dark).
+- A label to show what the following setting is.
+- A list to changing language (English, Turkish).
+- A button to showing status. If some processes are working, it opens a new window for displaying all processes with time if not it shows a warning message.
 ### Startup
-- Showing warious informations (weather forecast, system, usages, fans, tempatures, battery).
-- Refreshing these informations.
+- Showing various informations (weather forecast, system, hardware usages, fans, tempatures, battery) and refreshing these informations.
 ### Notes and Documents
-- Creating, editing, renaming, deleting notes or any documents.
+- Creating (only for notes), editing, renaming, restoring (only for notes), deleting notes and documents.
 ### Store
-- Traditional Applications: Searching, installing, reinstalling, uninstalling and updating predefined and desired applications.
-- Flatpak Applications: Searching, installing, reinstalling, uninstalling and updating desired applications.
-- Desktop Environments and Window Managers: Installing, reinstalling, uninstalling and updating some desktop environemtns and window managers.
-- Traditional Scripts: Updating all packages, making more complex updates, clearing package cache, removing unnecessary packages, fixing broken dependencies, showing history and listing installed packages.
-- Flatpak Scripts: Updating all packages, removing unnecessary packages, repairing Flatpak installation, showing history and listing installed packages.
+- Packages (DEB / RPM / EOPKG / Pacman and Flatpak): Searching, installing, reinstalling, uninstalling and updating recommend or any packages.
+- Desktop Environments, Window Managers & Compotisors: Installing, reinstalling, uninstalling and updating some desktop environemtns, window managers and compotisors.
+- Scripts (APT & DPKG / DNF / EOPKG / Pacman and Flatpak): Updating all packages, synchronizing distribution (only for APT & DPKG / DNF), cleaning package cache (only for APT & DPKG / DNF / EOPKG / Pacman), removing unnecessary packages, fixing broken dependencies (only for APT & DPKG / Pacman), repairing Flatpak installation (only for Flatpak), showing history, listing installed packages and listing leaves (only for DNF).
 - Systemd Services: Getting the status of any service or enabling, disabling, starting and stopping it.
 ### Tools
-- Configuring Bash and Zsh.
+- Configuring Bashrc and Zshrc.
 - Changing the name of the computer.
 - Showing some informations about some distributions.
-- Making simple math operations (basic calculator).
+- Making simple math operations (basic calcer).
 ### Also
 - GrelinTB can auto detect tr_TR locale when there is no config related with language setting. If locale tr_TR, set GrelinTB's language Turkish. If not set GrelinTB's language English.
 - GrelinTB can synchronize with the system theme (dark or light) when appearance setted to system.
-- Check GrelinTB updates every Monday.
-- Some parameters for terminal. Tip: Help page for all parameters: `grelintb help`
+- GrelinTB checks updates every Monday.
+- Some parameters for terminal. Tip: Help page for all parameters: `grelintb -h`
 ## Installation
 <p align="center"><a href="https://github.com/mukonqi/grelintb/releases/latest/download/grelintb.rpm"><img src="https://img.shields.io/badge/Download%20RPM-A4A62A" alt="Download RPM"></a></p>
 
@@ -59,20 +59,24 @@
 ![Changelog](./gallery/Changelog.png)
 ![License](./gallery/License.png)
 ![Updater](./gallery/Updater.png)
-![List of All Operations](./gallery/List%20of%20All%20Operations.png)
+![Running Processes](./gallery/Running%20Processes.png)
 ![Startup](./gallery/Startup.png)
 ![Notes and Documents](./gallery/Notes%20and%20Documents.png)
-![Traditional Packages](./gallery/Traditional%20Packages.png)
-![Flatpak Packages](./gallery/Flatpak%20Packages.png)
-![DEs and WMs](./gallery/DEs%20and%20WMs.png)
-![Traditional Scripts](./gallery/Traditional%20Scripts.png)
-![Flatpak Scripts](./gallery/Flatpak%20Scripts.png)
+![Notes and Documents (Example Slot 1)](./gallery/Notes%20and%20Documents%20Slot%201.png)
+![Notes and Documents (Example Slot 2)](./gallery/Notes%20and%20Documents%20Slot%202.png)
+![Packages](./gallery/Packages.png)
+![Packages (Example Slot)](./gallery/Packages%20Slot.png)
+![Desktop Environments, Window Managers & Compotisors](./gallery/Desktop%20Environments,%20Window%20Managers%20&%20Compotisors.png)
+![Desktop Environments, Window Managers & Compotisors (Example Slot)](./gallery/Desktop%20Environments,%20Window%20Managers%20&%20Compotisors%20Slot.png)
+![Scripts](./gallery/Scripts.png)
+![Scripts (Example Slot)](./gallery/Scripts%20Slot.png)
 ![Systemd Services](./gallery/Systemd%20Services.png)
-![Configure Bash and Zsh (Buttons)](./gallery/Configure%20Bash%20and%20Zsh%20(Buttons).png)
-![Configure Bash and Zsh (File)](./gallery/Configure%20Bash%20and%20Zsh%20(File).png)
+![Systemd Services (Example Slot)](./gallery/Systemd%20Services%20Slot.png)
+![Configure Bashrc and Zshrc (Options)](./gallery/Configure%20Bashrc%20and%20Zshrc%20Options.png)
+![Configure Bashrc and Zshrc (File)](./gallery/Configure%20Bashrc%20and%20Zshrc%20File.png)
 ![Change Computer's Name](./gallery/Change%20Computer's%20Name.png)
 ![About Some Distributions](./gallery/About%20Some%20Distributions.png)
-![Calculator](./gallery/Calculator.png)
+![Calcer](./gallery/Calcer.png)
 ## Stars
 - Let's give a ⭐ (star) to GrelinTB!
 

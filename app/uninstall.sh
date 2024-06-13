@@ -40,7 +40,7 @@ function uninstall {
     rm /usr/bin/grelintb
     rm /usr/share/applications/grelintb.desktop
     rm -rf /usr/local/bin/grelintb/
-    echo -e "GrelinTB was uninstalled from your system."
+    exit 0
 }
 if  [ -f /etc/debian_version ]; then
     uninstall
@@ -55,7 +55,7 @@ elif [ -f /etc/fedora-release ]; then
     if [ -d /usr/local/bin/grelintb/ ] ; then
         rm -rf /usr/local/bin/grelintb/
     fi
-    echo -e "GrelinTB uninstalled."
+    exit 0
 elif  [ -f /etc/solus-release ]; then
     uninstall
 elif  [ -f /etc/arch-release ]; then
