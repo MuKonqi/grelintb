@@ -36,7 +36,6 @@ cp * $RPM_BUILD_ROOT/usr/local/bin/grelintb
 /usr/local/bin/grelintb/major-changelog.txt
 /usr/local/bin/grelintb/minor-changelog.txt
 /usr/local/bin/grelintb/requirements.txt
-/usr/local/bin/grelintb/reset.sh
 /usr/local/bin/grelintb/theme.json
 /usr/local/bin/grelintb/uninstall.sh
 /usr/local/bin/grelintb/update.sh
